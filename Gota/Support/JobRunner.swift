@@ -42,10 +42,11 @@ final class JobRunner: ObservableObject {
         }
     }
 
-    /// macOS's own alert sounds: "Glass" (fitting for a drop) when done, "Basso" when it failed.
+    /// The alert sound chosen in System Settings → Sound, at its alert volume, so it fits whatever
+    /// the user already hears from their Mac instead of a sound of Gota's own.
     private static func playSound(failed: Bool) {
         guard Preferences.playSound else { return }
-        NSSound(named: failed ? "Basso" : "Glass")?.play()
+        NSSound.beep()
     }
 
     func reveal(_ result: JobResult) {
