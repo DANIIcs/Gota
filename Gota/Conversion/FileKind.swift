@@ -8,15 +8,18 @@ enum FileKind: Hashable, Sendable {
     case video
     case audio
     case document
+    case presentation
     case folder
     case other
 
     static let documentExtensions: Set<String> = ["docx", "doc", "odt", "rtf", "rtfd", "pages", "txt", "html", "htm"]
+    static let presentationExtensions: Set<String> = ["pptx", "ppt", "ppsx", "pps", "key", "odp"]
 
     static func of(_ url: URL) -> FileKind {
         let ext = url.pathExtension.lowercased()
-        // Checked first: .rtfd and .pages documents are folders (packages) on disk.
+        // Checked first: .rtfd, .pages and .key documents are folders (packages) on disk.
         if documentExtensions.contains(ext) { return .document }
+        if presentationExtensions.contains(ext) { return .presentation }
         if (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true {
             return .folder
         }

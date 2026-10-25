@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import UniformTypeIdentifiers
 
 /// Something that can turn a Word-like document (DOCX, DOC, ODT, RTF…) into a PDF.
 ///
@@ -18,10 +19,12 @@ extension DocumentEngine {
 }
 
 enum DocumentEngines {
-    /// Best fidelity first. The built-in engine is last and always there, so PDF never needs an install.
+    /// Best fidelity first. The built-in engine is last and always there, so text documents never need
+    /// an install; presentations need LibreOffice or Keynote.
     static let all: [any DocumentEngine] = [
         MicrosoftWordEngine(),
         LibreOfficeEngine(),
+        KeynoteEngine(),
         NativeDocumentEngine(),
     ]
 
@@ -49,9 +52,21 @@ enum DocumentEngines {
         }
     }
 
+    /// Every slide (or page) as an image, in a new folder next to the presentation.
+    static func toImages(_ input: URL, type: UTType) async throws -> URL {
+        try await Output.withTemporaryDirectory { scratch in
+            let pdf = scratch.appendingPathComponent("slides.pdf")
+            try await convert(input, to: pdf)
+            return try PDFTools.pagesToImages(pdf, type: type, namedAfter: input, suffix: "diapositivas", itemName: "Diapositiva")
+        }
+    }
+
     private static func convert(_ input: URL, to output: URL) async throws {
         guard let engine = preferred(for: input) else {
-            throw ConversionError.noEngine("Para convertir este documento a PDF instala LibreOffice.")
+            let isPresentation = FileKind.of(input) == .presentation
+            throw ConversionError.noEngine(isPresentation
+                ? "Para convertir presentaciones instala LibreOffice o Keynote."
+                : "Para convertir este documento a PDF instala LibreOffice.")
         }
         try await engine.convertToPDF(input, output: output)
     }
@@ -69,6 +84,11 @@ struct MicrosoftWordEngine: DocumentEngine {
 
     var isAvailable: Bool {
         Preferences.useMicrosoftWord && Self.isInstalled
+    }
+
+    /// Only what Word opens: it must never be handed a presentation.
+    func canConvert(_ input: URL) -> Bool {
+        ["docx", "doc", "rtf", "odt", "txt", "html", "htm"].contains(input.pathExtension.lowercased())
     }
 
     func convertToPDF(_ input: URL, output: URL) async throws {
@@ -147,6 +167,42 @@ struct LibreOfficeEngine: DocumentEngine {
         </oor:items>
         """
         try settings.write(to: user.appendingPathComponent("registrymodifications.xcu"), atomically: true, encoding: .utf8)
+    }
+}
+
+/// Apple's Keynote, driven by AppleScript: opens PowerPoint and Keynote files and exports a PDF.
+/// Free and on many Macs, but macOS asks once to let Gota control Keynote, so it comes after
+/// LibreOffice, which converts without asking.
+struct KeynoteEngine: DocumentEngine {
+    let name = "Keynote"
+
+    var isAvailable: Bool {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.iWork.Keynote") != nil
+    }
+
+    func canConvert(_ input: URL) -> Bool {
+        FileKind.presentationExtensions.contains(input.pathExtension.lowercased())
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        // Paths travel as arguments (argv), never pasted into the script text.
+        let script = """
+        on run argv
+            set inFile to POSIX file (item 1 of argv)
+            set outFile to POSIX file (item 2 of argv)
+            with timeout of 600 seconds
+                tell application "Keynote"
+                    -- If the user already has this presentation open, leave it open.
+                    set openNames to name of every document
+                    set theDoc to open inFile
+                    export theDoc to outFile as PDF
+                    if openNames does not contain (name of theDoc) then close theDoc saving no
+                end tell
+            end timeout
+        end run
+        """
+        try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, output.path], timeout: .seconds(660))
+        try Output.requireCreated(output, by: name)
     }
 }
 

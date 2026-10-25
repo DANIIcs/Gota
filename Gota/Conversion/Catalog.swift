@@ -97,6 +97,19 @@ enum Catalog {
             }
             return actions
 
+        case .presentation:
+            return [.eachFile(id: "slides-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) }
+                .producing(.pdf)]
+                + combined(files, id: "slides-pdf", title: "PDF", output: .pdf) { [try await DocumentEngines.toSinglePDF($0)] }
+                + [
+                    .eachFile(id: "slides-png", title: "PNG", symbol: "photo.on.rectangle") {
+                        try await DocumentEngines.toImages($0, type: .png)
+                    }.producing(.png),
+                    .eachFile(id: "slides-jpeg", title: "JPEG", symbol: "photo.stack") {
+                        try await DocumentEngines.toImages($0, type: .jpeg)
+                    }.producing(.jpeg),
+                ]
+
         case .folder, .other:
             return []
         }
@@ -159,7 +172,7 @@ enum Catalog {
                 },
             ]
 
-        case .audio, .document, .folder, .other:
+        case .audio, .document, .presentation, .folder, .other:
             return []
         }
     }

@@ -51,7 +51,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Documentos → PDF") {
+            Section("Documentos y presentaciones → PDF") {
                 Toggle("Usar Microsoft Word", isOn: $useMicrosoftWord)
                     .disabled(!MicrosoftWordEngine.isInstalled)
                 LabeledContent("LibreOffice") {
@@ -59,10 +59,15 @@ struct SettingsView: View {
                     Text(installed ? "Instalado" : "No encontrado")
                         .foregroundStyle(installed ? Color.green : Color.secondary)
                 }
+                LabeledContent("Keynote (presentaciones)") {
+                    let installed = KeynoteEngine().isAvailable
+                    Text(installed ? "Instalado" : "No encontrado")
+                        .foregroundStyle(installed ? Color.green : Color.secondary)
+                }
                 LabeledContent("macOS (integrado)") {
                     Text("Siempre disponible").foregroundStyle(Color.green)
                 }
-                Text("Gota usa el primero disponible. Word da el formato exacto, pero pide permisos la primera vez.")
+                Text("Gota usa el primero disponible. Word da el formato exacto y Keynote abre PowerPoint, pero ambos piden permiso la primera vez. Las presentaciones necesitan LibreOffice o Keynote.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -6,9 +6,20 @@ import UniformTypeIdentifiers
 /// PDF work with PDFKit (built into macOS).
 enum PDFTools {
     /// Every page as an image, in a new folder next to the PDF.
-    static func pagesToImages(_ input: URL, type: UTType, scale: CGFloat = 2) throws -> URL {
+    /// - Parameters:
+    ///   - namedAfter: the file the folder is named after and saved next to (default: the PDF itself),
+    ///     for PDFs made in a scratch folder from a presentation.
+    ///   - itemName: "Página 1.png"…, or "Diapositiva 1.png"… for slides.
+    static func pagesToImages(
+        _ input: URL,
+        type: UTType,
+        scale: CGFloat = 2,
+        namedAfter: URL? = nil,
+        suffix: String = "páginas",
+        itemName: String = "Página"
+    ) throws -> URL {
         let document = try open(input)
-        let folder = try Output.folder(for: input, suffix: "páginas")
+        let folder = try Output.folder(for: namedAfter ?? input, suffix: suffix)
         let ext = type.preferredFilenameExtension ?? "png"
         let digits = String(document.pageCount).count
 
@@ -21,7 +32,7 @@ enum PDFTools {
             guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
 
             let number = String(index + 1).leftPadded(to: digits)
-            let url = folder.appendingPathComponent("Página \(number)").appendingPathExtension(ext)
+            let url = folder.appendingPathComponent("\(itemName) \(number)").appendingPathExtension(ext)
             guard let destination = CGImageDestinationCreateWithURL(url as CFURL, type.identifier as CFString, 1, nil) else {
                 throw ConversionError.unsupported(ext.uppercased())
             }
