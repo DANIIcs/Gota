@@ -7,7 +7,7 @@ Start dragging a file in Finder, hold **⇧**, and drop it on a format. Everythi
 
 | Key while dragging | Wheel |
 |---|---|
-| **⇧ Shift** | Convert — images (PNG, JPEG, HEIC, TIFF, PDF), PDF → images/text, video (MP4, MOV, audio only), audio (M4A, WAV, AIFF), documents (PDF, Word, text, HTML) |
+| **⇧ Shift** | Convert — images (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word/images/text, video (MP4, MOV, audio only), audio (M4A, WAV, AIFF), documents (PDF, Word, text, HTML) |
 | **⌥ Option** | Tools — compress / resize images, merge / split / rotate PDFs, compress video to 720p |
 | **⌃ Control** | Actions — AirDrop, ZIP, copy path, reveal in Finder |
 
@@ -19,8 +19,8 @@ There are several radial converters for the Mac. Gota's goal is to **feel like p
   merges back like liquid, and it follows the system's own material — light/dark mode, accessibility settings and
   future macOS design updates.
 - **Native frameworks first** (ImageIO, PDFKit, AVFoundation, afconvert): small, fast, hardware accelerated.
-- **Faithful Word → PDF**: uses Microsoft Word itself when installed, LibreOffice otherwise, behind a pluggable engine
-  interface (see [docs/MOTORES.md](docs/MOTORES.md)).
+- **Word → PDF with nothing to install**: macOS's own text engine by default, LibreOffice when installed, and Microsoft
+  Word (exact layout) if you turn it on in Settings, behind a pluggable engine interface (see [docs/MOTORES.md](docs/MOTORES.md)).
 - **Private**: no network, no telemetry, never overwrites your files.
 
 ## Requirements

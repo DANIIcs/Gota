@@ -5,7 +5,7 @@ Empieza a arrastrar un archivo en Finder, presiona **⇧** y suéltalo sobre un 
 
 | Tecla mientras arrastras | Rueda |
 |---|---|
-| **⇧ Shift** | Convertir — imágenes (PNG, JPEG, HEIC, TIFF, PDF), PDF → imágenes/texto, video (MP4, MOV, solo audio), audio (M4A, WAV, AIFF), documentos (PDF, Word, texto, HTML) |
+| **⇧ Shift** | Convertir — imágenes (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word/imágenes/texto, video (MP4, MOV, solo audio), audio (M4A, WAV, AIFF), documentos (PDF, Word, texto, HTML) |
 | **⌥ Option** | Herramientas — comprimir/reducir imágenes, unir/dividir/rotar PDF, comprimir video a 720p |
 | **⌃ Control** | Acciones — AirDrop, ZIP, copiar ruta, mostrar en Finder |
 
@@ -17,8 +17,8 @@ Hay varios conversores con rueda para Mac. El objetivo de Gota es **sentirse par
   se vuelve a juntar como un líquido, usando el material del propio sistema (modo claro/oscuro, accesibilidad y las
   próximas actualizaciones de diseño de macOS).
 - **Primero lo nativo** (ImageIO, PDFKit, AVFoundation, afconvert): liviano, rápido y con aceleración por hardware.
-- **Word → PDF fiel**: usa Microsoft Word si está instalado, si no LibreOffice, detrás de una interfaz de motores
-  intercambiables (ver [docs/MOTORES.md](docs/MOTORES.md)).
+- **Word → PDF sin instalar nada**: por defecto usa el motor de texto de macOS, LibreOffice si está instalado y Microsoft
+  Word (formato exacto) si lo activas en Ajustes, detrás de una interfaz de motores intercambiables (ver [docs/MOTORES.md](docs/MOTORES.md)).
 - **Privado**: sin red, sin telemetría, nunca sobrescribe tus archivos.
 
 ## Requisitos

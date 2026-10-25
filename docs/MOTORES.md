@@ -33,8 +33,12 @@ Conclusiones:
 `Gota/Conversion/DocumentEngines.swift` define un protocolo `DocumentEngine` y una lista ordenada por fidelidad.
 Gota usa **el primero que esté instalado**:
 
-1. **Microsoft Word** (si está instalado) — vía AppleScript. Formato exacto.
+1. **Microsoft Word** (si está instalado **y** activado en Ajustes) — vía AppleScript. Formato exacto, pero macOS pide
+   permiso para controlar Word y Word (que vive en un sandbox) pide acceso a la carpeta: por eso no va por defecto.
 2. **LibreOffice** (gratis) — modo `--headless`.
+3. **macOS (integrado)** — `DocumentRenderer`: lee el documento con `NSAttributedString` y lo pagina con TextKit, el
+   mismo motor de TextEdit. Siempre disponible y sin permisos; respeta fuentes, estilos, listas y tablas, pero
+   columnas e imágenes flotantes pueden moverse. No lee `.pages`.
 3. *(futuro)* ONLYOFFICE, Oxi u opendoc cuando exporten PDF.
 
 Agregar un motor nuevo = crear un tipo que cumpla `DocumentEngine` y ponerlo en `DocumentEngines.all`.

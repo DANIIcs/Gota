@@ -68,7 +68,7 @@ Para detenerla: botón ■ en Xcode (o **⌘.**).
 ### Permisos de macOS que te van a pedir
 
 - **Notificaciones**: la primera vez. Acéptalas para ver "Listo: PNG".
-- **Controlar Microsoft Word** (solo si lo tienes y conviertes un .docx a PDF): acepta. Word puede pedir además permiso para la carpeta.
+- **Controlar Microsoft Word** (solo si activaste *Usar Microsoft Word* en Ajustes): acepta. Word puede pedir además permiso para la carpeta.
 - Si al presionar ⇧ mientras arrastras **no aparece la rueda**, ve a *Configuración del Sistema → Privacidad y seguridad → Monitoreo de entrada* y activa Gota. (Normalmente no hace falta; ver `docs/MOTORES.md` → notas técnicas.)
 
 > Como por defecto la app se firma "para correr localmente" (sin cuenta de Apple), cada vez que compilas
@@ -132,4 +132,4 @@ xcodebuild -scheme Gota -destination 'platform=macOS' test     # tests
 | Error de firma ("Signing for Gota requires a development team") | Revisa `Config/Base.xcconfig`: por defecto usa firma local (`GOTA_SIGN_IDENTITY = -`). Si creaste `Config/Local.xcconfig`, revisa tu Team ID. |
 | No aparece la gota en la barra de menú | Puede estar oculta detrás del notch: cierra otras apps de barra de menú o usa Bartender/Ice. |
 | La rueda no aparece | Asegúrate de **empezar a arrastrar antes** de presionar ⇧, y de arrastrar desde Finder o el Escritorio. Revisa "Monitoreo de entrada". |
-| Convertir .docx a PDF falla | Instala Microsoft Word o LibreOffice (ver Ajustes de Gota → Motor para Word → PDF). |
+| Un .pages no se convierte a PDF | Instala LibreOffice: el motor de macOS no lee Pages. |
