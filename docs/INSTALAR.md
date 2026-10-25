@@ -71,7 +71,7 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
 
    | Tecla | Rueda |
    |---|---|
-   | **⇧ Shift** | Convertir (PNG, JPEG, PDF, Word, MP4, M4A…) |
+   | **⇧ Shift** | Convertir (PNG, JPEG, PDF, Word, MP4, M4A…; PowerPoint y Keynote a PDF o imágenes) |
    | **⌥ Option** | Herramientas (comprimir, reducir, unir/dividir/rotar PDF…) |
    | **⌃ Control** | Acciones (AirDrop, ZIP, copiar ruta, mostrar en Finder) |
 
@@ -113,4 +113,5 @@ Puede que macOS vuelva a pedir el paso 3.
 | *"Gota está dañada y no se puede abrir"* | El zip se descargó a medias o lo descomprimió otra app. Vuelve a descargarlo y ábrelo con doble clic. |
 | La rueda no aparece | **Empieza a arrastrar primero** y luego pulsa la tecla. Arrastra desde Finder o el Escritorio. |
 | Un `.pages` no pasa a PDF | Instala [LibreOffice](https://www.libreoffice.org): el motor de macOS no lee Pages. |
+| Un PowerPoint (`.pptx`) no se convierte | Hace falta [LibreOffice](https://www.libreoffice.org) (sin permisos) o Keynote (gratis en la App Store; pide permiso una vez). |
 | Otra cosa | Abre un *Issue* en GitHub con lo que hiciste y una captura. Si es un fallo de seguridad, usa *Security → Report a vulnerability* (ver [SECURITY.md](../SECURITY.md)). |
