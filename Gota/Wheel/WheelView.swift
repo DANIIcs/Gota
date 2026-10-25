@@ -12,6 +12,7 @@ struct WheelView: View {
     @Namespace private var glassNamespace
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
+    @AppStorage(WheelMaterial.opacityKey) private var opacity = 0.0
     @AppStorage(WheelColor.key) private var colorChoice = WheelColor.automatic
 
     private let size = CGSize(width: WheelLayout.panelSize, height: WheelLayout.panelSize)
@@ -22,24 +23,24 @@ struct WheelView: View {
             wheel(at: context.date)
         }
         .frame(width: size.width, height: size.height)
+    }
+
+    /// The animations live here, inside the timeline's content: attached outside `TimelineView`
+    /// they no longer reached the bubbles, and the wheel stopped bursting open.
+    private func wheel(at date: Date) -> some View {
+        GlassEffectContainer(spacing: 34) {
+            ZStack {
+                ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
+                    bubble(for: item, at: index, date: date)
+                }
+                centerDrop(date: date)
+            }
+        }
+        .scaleEffect(model.isVisible ? 1 : 0.6)
+        .opacity(model.isVisible ? 1 : 0)
         .animation(openAnimation, value: model.isOpen)
         .animation(.easeOut(duration: 0.2), value: model.isVisible)
         .animation(.spring(duration: 0.22, bounce: 0.25), value: model.hovered)
-    }
-
-    private func wheel(at date: Date) -> some View {
-        ZStack {
-            GlassEffectContainer(spacing: 34) {
-                ZStack {
-                    ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
-                        bubble(for: item, at: index, date: date)
-                    }
-                    centerDrop(date: date)
-                }
-            }
-            .scaleEffect(model.isVisible ? 1 : 0.6)
-            .opacity(model.isVisible ? 1 : 0)
-        }
     }
 
     private var openAnimation: Animation {
@@ -59,14 +60,15 @@ struct WheelView: View {
         return ActionIcon(action: item, size: isHovered ? 38 : 32)
             .foregroundStyle(isHovered || colorChoice.isDark ? Color.white : Color.primary)
             .frame(width: side, height: side)
-            .modifier(BubbleSurface(material: material, tint: tint, strength: isHovered ? 1 : colorChoice.restingTint,
-                                    id: item.id, namespace: glassNamespace))
+            .bubbleSurface(material: material, opacity: opacity, tint: tint,
+                           strength: isHovered ? WheelColor.hoveredTint : colorChoice.restingTint,
+                           id: item.id, namespace: glassNamespace)
             .offset(offset)
             .accessibilityLabel(item.title)
     }
 
     /// What dropping would do: the hovered bubble's icon and name, or the mode and the file count.
-    /// The panel floats above the drag image (see `WheelPanel`), so Finder's file names don't hide it.
+    /// The visual panel floats above the drag image (see `WheelPanel`), so Finder's file names don't hide it.
     private func centerDrop(date: Date) -> some View {
         let hovered = model.hoveredItem
 
@@ -79,13 +81,14 @@ struct WheelView: View {
                 }
             }
             .frame(height: 30)
-            .transition(.scale(scale: 0.7).combined(with: .opacity))
+            .transition(.scale(scale: 0.6).combined(with: .opacity))
 
             Text(hovered?.title ?? model.mode.title)
                 .font(.system(size: 12, weight: .semibold))
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
                 .multilineTextAlignment(.center)
+                .contentTransition(.interpolate)
             Text(subtitle)
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
@@ -93,8 +96,8 @@ struct WheelView: View {
         .foregroundStyle(colorChoice.isDark ? Color.white : Color.primary)
         .padding(10)
         .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
-        .modifier(BubbleSurface(material: material, tint: colorChoice.color(at: date), strength: colorChoice.restingTint,
-                                id: "center", namespace: glassNamespace))
+        .bubbleSurface(material: material, opacity: opacity, tint: colorChoice.color(at: date),
+                       strength: colorChoice.restingTint, id: "center", namespace: glassNamespace)
     }
 
     private var subtitle: String {
@@ -103,36 +106,40 @@ struct WheelView: View {
     }
 }
 
-/// The surface of one bubble in the chosen material.
-/// Glass is never `.interactive()`: interactive glass leans towards the pointer and slid off its icon.
-private struct BubbleSurface: ViewModifier {
-    let material: WheelMaterial
-    let tint: Color
-    /// 0 = no tint, 1 = the hovered bubble's full color.
-    let strength: Double
-    let id: String
-    let namespace: Namespace.ID
-
-    func body(content: Content) -> some View {
-        switch material {
-        case .glass, .clear:
-            content
-                .glassEffect(glass, in: .circle)
-                .glassEffectID(id, in: namespace)
-        case .opaque:
-            content.background {
-                Circle()
-                    .fill(.background)
-                    .overlay(Circle().fill(tint.opacity(strength)))
-                    .overlay(Circle().strokeBorder(.separator, lineWidth: 0.5))
-                    .shadow(color: .black.opacity(0.25), radius: 6, y: 2)
-            }
+extension View {
+    /// A bubble: system glass, with Gota's own color and solidity painted on it.
+    ///
+    /// The color is drawn by Gota instead of `Glass.tint`: macOS mutes glass tints in windows of
+    /// apps that aren't active, and during a drag the active app is Finder, never Gota.
+    /// Glass is never `.interactive()`: interactive glass leans towards the pointer and slid off its icon.
+    /// - Parameters:
+    ///   - opacity: 0 is pure glass, 1 a solid bubble.
+    ///   - strength: how much of `tint` shows (0 none).
+    ///   - namespace: lets the container melt bubbles together; nil for previews.
+    func bubbleSurface(
+        material: WheelMaterial,
+        opacity: Double,
+        tint: Color,
+        strength: Double,
+        id: String,
+        namespace: Namespace.ID?
+    ) -> some View {
+        background {
+            Circle()
+                .fill(Color(nsColor: .windowBackgroundColor).opacity(opacity))
+                .overlay(Circle().fill(tint.opacity(strength)))
         }
+        .glassEffect(material.glass, in: .circle)
+        .optionalGlassID(id, in: namespace)
     }
 
-    private var glass: Glass {
-        let base: Glass = material == .clear ? .clear : .regular
-        return strength > 0 ? base.tint(tint.opacity(strength)) : base
+    @ViewBuilder
+    fileprivate func optionalGlassID(_ id: String, in namespace: Namespace.ID?) -> some View {
+        if let namespace {
+            glassEffectID(id, in: namespace)
+        } else {
+            self
+        }
     }
 }
 

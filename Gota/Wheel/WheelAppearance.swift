@@ -1,12 +1,13 @@
 import SwiftUI
 
-/// What the bubbles are made of. Chosen in Settings, read by `WheelView` through `@AppStorage`.
+/// The kind of glass the bubbles are made of. Chosen in Settings, read by `WheelView` through `@AppStorage`.
+/// How solid they look is a separate slider (`opacityKey`): 0 is pure glass, 1 fully opaque.
 enum WheelMaterial: String, CaseIterable, Identifiable {
     case glass
     case clear
-    case opaque
 
     static let key = "wheelMaterial"
+    static let opacityKey = "wheelOpacity"
 
     var id: Self { self }
 
@@ -14,8 +15,11 @@ enum WheelMaterial: String, CaseIterable, Identifiable {
         switch self {
         case .glass: "Liquid Glass"
         case .clear: "Transparente"
-        case .opaque: "Opaco"
         }
+    }
+
+    var glass: Glass {
+        self == .clear ? .clear : .regular
     }
 }
 
@@ -79,10 +83,13 @@ enum WheelColor: String, CaseIterable, Identifiable {
     var restingTint: Double {
         switch self {
         case .automatic: 0
-        case .spaceBlack: 0.65
+        case .spaceBlack: 0.75
         default: 0.3
         }
     }
+
+    /// The hovered bubble: clearly colored, but still a little see-through.
+    static let hoveredTint = 0.85
 
     /// Dark bubbles need light icons even when not hovered.
     var isDark: Bool { self == .spaceBlack }
