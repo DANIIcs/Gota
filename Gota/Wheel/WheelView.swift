@@ -73,10 +73,11 @@ struct WheelView: View {
         highlighted ? Glass.regular.tint(.accentColor) : Glass.regular
     }
 
-    /// Only an icon: the cursor sits on the center, and Finder draws the dragged files' names
+    /// Only the mode's icon: the cursor sits on the center, and Finder draws the dragged files' names
     /// (and the count badge) right there, so text in the center would be hidden.
+    /// It doesn't copy the hovered bubble's icon: that read as the icon sliding out of its bubble.
     private var centerDrop: some View {
-        Image(systemName: model.hoveredItem?.symbol ?? model.mode.symbol)
+        Image(systemName: model.mode.symbol)
             .font(.system(size: 26, weight: .semibold))
             .contentTransition(.symbolEffect(.replace))
             .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
