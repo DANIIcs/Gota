@@ -1,0 +1,81 @@
+# Gota — Xcode project definition (XcodeGen).
+# Generate the .xcodeproj with:  xcodegen
+# The .xcodeproj is NOT committed: this file is the source of truth.
+
+name: Gota
+
+options:
+  bundleIdPrefix: pe.danielc        # change to something unique to you (e.g. io.github.<your-user>)
+  deploymentTarget:
+    macOS: "26.0"                   # Liquid Glass (SwiftUI glassEffect) needs macOS 26+
+  createIntermediateGroups: true
+  developmentLanguage: es
+
+configFiles:
+  Debug: Config/Base.xcconfig
+  Release: Config/Base.xcconfig
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEAD_CODE_STRIPPING: YES
+  configs:
+    # Hardened runtime only for Release: with ad-hoc signing in Debug it would stop the tests from loading.
+    Release:
+      ENABLE_HARDENED_RUNTIME: YES
+
+targets:
+  Gota:
+    type: application
+    platform: macOS
+    sources:
+      - path: Gota
+    info:
+      path: Gota/Support/Info.plist
+      properties:
+        CFBundleDisplayName: Gota
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSUIElement: true                         # menu bar app: no Dock icon
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: "MIT License"
+        NSAppleEventsUsageDescription: "Gota usa Microsoft Word, si está instalado, para convertir documentos a PDF con el formato exacto."
+    entitlements:
+      path: Gota/Support/Gota.entitlements
+      properties:
+        com.apple.security.automation.apple-events: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(GOTA_BUNDLE_ID)
+        PRODUCT_NAME: Gota
+        # Target-level settings beat the xcconfig, so signing goes through variables Local.xcconfig can override.
+        CODE_SIGN_IDENTITY: $(GOTA_SIGN_IDENTITY)
+        CODE_SIGN_STYLE: $(GOTA_SIGN_STYLE)
+        DEVELOPMENT_TEAM: $(GOTA_TEAM)
+
+  GotaTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: GotaTests
+    dependencies:
+      - target: Gota
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(GOTA_BUNDLE_ID).tests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: $(GOTA_SIGN_IDENTITY)
+        CODE_SIGN_STYLE: $(GOTA_SIGN_STYLE)
+        DEVELOPMENT_TEAM: $(GOTA_TEAM)
+
+schemes:
+  Gota:
+    build:
+      targets:
+        Gota: all
+        GotaTests: [test]
+    test:
+      targets:
+        - GotaTests

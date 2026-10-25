@@ -1,0 +1,19 @@
+// Shared build settings for Gota.
+//
+// By default the app is signed "to run locally" (ad-hoc): no Apple account needed.
+// To sign with your own team (needed later for notarized releases), create
+// Config/Local.xcconfig (ignored by git) with, for example:
+//
+//   GOTA_TEAM = ABCDE12345
+//   GOTA_SIGN_IDENTITY = Apple Development
+//   GOTA_SIGN_STYLE = Automatic
+//   GOTA_BUNDLE_ID = io.github.your-user.gota
+//
+// Your Team ID is in Xcode → Settings → Accounts, or at developer.apple.com → Membership.
+
+GOTA_BUNDLE_ID = pe.danielc.gota
+GOTA_SIGN_IDENTITY = -
+GOTA_SIGN_STYLE = Manual
+GOTA_TEAM =
+
+#include? "Local.xcconfig"
