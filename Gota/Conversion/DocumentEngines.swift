@@ -9,23 +9,29 @@ import Foundation
 protocol DocumentEngine: Sendable {
     var name: String { get }
     var isAvailable: Bool { get }
+    func canConvert(_ input: URL) -> Bool
     func convertToPDF(_ input: URL, output: URL) async throws
 }
 
+extension DocumentEngine {
+    func canConvert(_ input: URL) -> Bool { true }
+}
+
 enum DocumentEngines {
-    /// Best fidelity first.
+    /// Best fidelity first. The built-in engine is last and always there, so PDF never needs an install.
     static let all: [any DocumentEngine] = [
         MicrosoftWordEngine(),
         LibreOfficeEngine(),
+        NativeDocumentEngine(),
     ]
 
-    static var preferred: (any DocumentEngine)? {
-        all.first { $0.isAvailable }
+    static func preferred(for input: URL) -> (any DocumentEngine)? {
+        all.first { $0.isAvailable && $0.canConvert(input) }
     }
 
     static func toPDF(_ input: URL) async throws -> URL {
-        guard let engine = preferred else {
-            throw ConversionError.noEngine("Para convertir documentos a PDF instala Microsoft Word o LibreOffice.")
+        guard let engine = preferred(for: input) else {
+            throw ConversionError.noEngine("Para convertir este documento a PDF instala LibreOffice.")
         }
         let output = Output.file(for: input, extension: "pdf")
         try await engine.convertToPDF(input, output: output)
@@ -34,12 +40,17 @@ enum DocumentEngines {
 }
 
 /// Microsoft Word itself, driven by AppleScript: the exact layout, because it *is* Word.
-/// The first time, macOS asks to let Gota control Word, and Word may ask for access to the folder.
+/// Off unless the user turns it on in Settings: the first time macOS asks to let Gota control Word,
+/// and Word (sandboxed) asks for access to the folder, which is too much friction for a default.
 struct MicrosoftWordEngine: DocumentEngine {
     let name = "Microsoft Word"
 
-    var isAvailable: Bool {
+    static var isInstalled: Bool {
         NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.microsoft.Word") != nil
+    }
+
+    var isAvailable: Bool {
+        Preferences.useMicrosoftWord && Self.isInstalled
     }
 
     func convertToPDF(_ input: URL, output: URL) async throws {
@@ -100,6 +111,23 @@ struct LibreOfficeEngine: DocumentEngine {
                 throw ConversionError.toolFailed(tool: name, output: "LibreOffice no generó el PDF.")
             }
             try FileManager.default.moveItem(at: produced, to: output)
+        }
+    }
+}
+
+/// macOS's own text system (see `DocumentRenderer`): always available, never asks for permissions.
+/// Keeps fonts, styles, lists and tables; complex Word layouts (columns, floating images) may shift.
+struct NativeDocumentEngine: DocumentEngine {
+    let name = "macOS (integrado)"
+    let isAvailable = true
+
+    func canConvert(_ input: URL) -> Bool {
+        DocumentRenderer.readableExtensions.contains(input.pathExtension.lowercased())
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        try await MainActor.run {
+            try DocumentRenderer.pdf(from: input, to: output)
         }
     }
 }

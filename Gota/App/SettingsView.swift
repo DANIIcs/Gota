@@ -3,6 +3,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(Preferences.revealInFinderKey) private var revealInFinder = false
+    @AppStorage(Preferences.useMicrosoftWordKey) private var useMicrosoftWord = false
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
 
@@ -25,14 +26,18 @@ struct SettingsView: View {
                 LabeledContent("⌃ Control", value: WheelMode.actions.title)
             }
 
-            Section("Motor para Word → PDF") {
-                ForEach(DocumentEngines.all, id: \.name) { engine in
-                    LabeledContent(engine.name) {
-                        Text(engine.isAvailable ? "Instalado" : "No encontrado")
-                            .foregroundStyle(engine.isAvailable ? Color.green : Color.secondary)
-                    }
+            Section("Documentos → PDF") {
+                Toggle("Usar Microsoft Word", isOn: $useMicrosoftWord)
+                    .disabled(!MicrosoftWordEngine.isInstalled)
+                LabeledContent("LibreOffice") {
+                    let installed = LibreOfficeEngine().isAvailable
+                    Text(installed ? "Instalado" : "No encontrado")
+                        .foregroundStyle(installed ? Color.green : Color.secondary)
                 }
-                Text("Gota usa el primero disponible, en este orden. Word da el formato exacto.")
+                LabeledContent("macOS (integrado)") {
+                    Text("Siempre disponible").foregroundStyle(Color.green)
+                }
+                Text("Gota usa el primero disponible. Word da el formato exacto, pero pide permisos la primera vez.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -61,6 +66,11 @@ struct SettingsView: View {
 
 enum Preferences {
     static let revealInFinderKey = "revealInFinder"
+    static let useMicrosoftWordKey = "useMicrosoftWord"
+
+    static var useMicrosoftWord: Bool {
+        UserDefaults.standard.bool(forKey: useMicrosoftWordKey)
+    }
 
     static var revealInFinder: Bool {
         UserDefaults.standard.bool(forKey: revealInFinderKey)
