@@ -79,11 +79,29 @@ enum WheelColor: String, CaseIterable, Identifiable {
         }
     }
 
+    /// What a bubble is painted with: the color, except space black, which is brushed metal
+    /// (lighter graphite where light hits the top-left, near black at the bottom-right).
+    func fill(phase: Double = 0, at date: Date = .now) -> AnyShapeStyle {
+        guard self == .spaceBlack else { return AnyShapeStyle(color(phase: phase, at: date)) }
+        return AnyShapeStyle(LinearGradient(
+            stops: [
+                .init(color: Color(white: 0.36), location: 0),
+                .init(color: Color(white: 0.17), location: 0.45),
+                .init(color: Color(white: 0.07), location: 1),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        ))
+    }
+
+    /// Metal catches light on its edge: a thin highlight around space black bubbles.
+    var hasMetalRim: Bool { self == .spaceBlack }
+
     /// How strongly bubbles that aren't hovered are tinted: "automatic" keeps the plain system glass.
     var restingTint: Double {
         switch self {
         case .automatic: 0
-        case .spaceBlack: 0.75
+        case .spaceBlack: 0.8
         default: 0.3
         }
     }

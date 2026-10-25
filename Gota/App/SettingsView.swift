@@ -108,8 +108,9 @@ private struct WheelPreview: View {
                             .foregroundStyle(hovered || color.isDark ? Color.white : Color.primary)
                             .frame(width: hovered ? 54 : 46, height: hovered ? 54 : 46)
                             .bubbleSurface(material: material, opacity: opacity,
-                                           tint: color.color(phase: Double(index) / 3, at: context.date),
+                                           tint: color.fill(phase: Double(index) / 3, at: context.date),
                                            strength: hovered ? WheelColor.hoveredTint : color.restingTint,
+                                           rim: color.hasMetalRim,
                                            id: "\(index)", namespace: nil)
                     }
                 }
@@ -150,7 +151,7 @@ private struct ColorSwatches: View {
         if color == .rgb {
             return AnyShapeStyle(AngularGradient(colors: [.red, .yellow, .green, .cyan, .blue, .purple, .red], center: .center))
         }
-        return AnyShapeStyle(color.color())
+        return color.fill()
     }
 }
 

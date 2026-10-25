@@ -55,14 +55,14 @@ struct WheelView: View {
         // Grow through the frame, not `scaleEffect`: the glass scaled from its corner while the icon
         // scaled from its center, so a hovered bubble's icon slid up and to the left of its glass.
         let side = WheelLayout.bubbleSize * (isHovered ? 1.18 : 1)
-        let tint = colorChoice.color(phase: Double(index) / Double(max(model.items.count, 1)), at: date)
+        let tint = colorChoice.fill(phase: Double(index) / Double(max(model.items.count, 1)), at: date)
 
         return ActionIcon(action: item, size: isHovered ? 38 : 32)
             .foregroundStyle(isHovered || colorChoice.isDark ? Color.white : Color.primary)
             .frame(width: side, height: side)
             .bubbleSurface(material: material, opacity: opacity, tint: tint,
                            strength: isHovered ? WheelColor.hoveredTint : colorChoice.restingTint,
-                           id: item.id, namespace: glassNamespace)
+                           rim: colorChoice.hasMetalRim, id: item.id, namespace: glassNamespace)
             .offset(offset)
             .accessibilityLabel(item.title)
     }
@@ -96,8 +96,9 @@ struct WheelView: View {
         .foregroundStyle(colorChoice.isDark ? Color.white : Color.primary)
         .padding(10)
         .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
-        .bubbleSurface(material: material, opacity: opacity, tint: colorChoice.color(at: date),
-                       strength: colorChoice.restingTint, id: "center", namespace: glassNamespace)
+        .bubbleSurface(material: material, opacity: opacity, tint: colorChoice.fill(at: date),
+                       strength: colorChoice.restingTint, rim: colorChoice.hasMetalRim,
+                       id: "center", namespace: glassNamespace)
     }
 
     private var subtitle: String {
@@ -115,19 +116,30 @@ extension View {
     /// - Parameters:
     ///   - opacity: 0 is pure glass, 1 a solid bubble.
     ///   - strength: how much of `tint` shows (0 none).
+    ///   - rim: a thin light edge, for the metallic look.
     ///   - namespace: lets the container melt bubbles together; nil for previews.
     func bubbleSurface(
         material: WheelMaterial,
         opacity: Double,
-        tint: Color,
+        tint: AnyShapeStyle,
         strength: Double,
+        rim: Bool = false,
         id: String,
         namespace: Namespace.ID?
     ) -> some View {
         background {
             Circle()
                 .fill(Color(nsColor: .windowBackgroundColor).opacity(opacity))
-                .overlay(Circle().fill(tint.opacity(strength)))
+                .overlay(Circle().fill(tint).opacity(strength))
+                .overlay {
+                    if rim {
+                        Circle().strokeBorder(
+                            LinearGradient(colors: [.white.opacity(0.45), .white.opacity(0.05), .white.opacity(0.2)],
+                                           startPoint: .topLeading, endPoint: .bottomTrailing),
+                            lineWidth: 1
+                        )
+                    }
+                }
         }
         .glassEffect(material.glass, in: .circle)
         .optionalGlassID(id, in: namespace)
