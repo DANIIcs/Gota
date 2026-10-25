@@ -116,9 +116,10 @@ struct LibreOfficeEngine: DocumentEngine {
         guard let soffice else { throw ConversionError.noEngine("LibreOffice no está instalado.") }
         try await Output.withTemporaryDirectory { scratch in
             // A private profile avoids clashing with a LibreOffice window the user has open.
-            let profile = scratch.appendingPathComponent("profile").absoluteString
+            let profile = scratch.appendingPathComponent("profile")
+            try Self.writeHardenedSettings(in: profile)
             try await Shell.run(soffice.path, [
-                "-env:UserInstallation=\(profile)",
+                "-env:UserInstallation=\(profile.absoluteString)",
                 "--headless", "--convert-to", "pdf",
                 "--outdir", scratch.path,
                 input.path,
@@ -130,6 +131,22 @@ struct LibreOfficeEngine: DocumentEngine {
             }
             try FileManager.default.moveItem(at: produced, to: output)
         }
+    }
+
+    /// A document can link to any file on the Mac (`file:///…`, `../`) or on the web, and LibreOffice
+    /// would embed it in the PDF: a crafted file could smuggle the user's pictures into a PDF they send
+    /// back. `BlockUntrustedRefererLinks` makes LibreOffice refuse links from documents it doesn't trust.
+    static func writeHardenedSettings(in profile: URL) throws {
+        let user = profile.appendingPathComponent("user")
+        try FileManager.default.createDirectory(at: user, withIntermediateDirectories: true)
+        let settings = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <item oor:path="/org.openoffice.Office.Common/Security/Scripting">\
+        <prop oor:name="BlockUntrustedRefererLinks" oor:op="fuse"><value>true</value></prop></item>
+        </oor:items>
+        """
+        try settings.write(to: user.appendingPathComponent("registrymodifications.xcu"), atomically: true, encoding: .utf8)
     }
 }
 
