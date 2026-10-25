@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage(Preferences.useMicrosoftWordKey) private var useMicrosoftWord = false
     @AppStorage(Preferences.playSoundKey) private var playSound = true
     @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
+    @AppStorage(WheelMaterial.opacityKey) private var opacity = 0.0
     @AppStorage(WheelColor.key) private var wheelColor = WheelColor.automatic
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
@@ -21,14 +22,24 @@ struct SettingsView: View {
                     Text(loginError).font(.caption).foregroundStyle(.red)
                 }
                 Toggle("Mostrar el resultado en Finder al terminar", isOn: $revealInFinder)
-                Toggle("Sonido al terminar", isOn: $playSound)
+                Toggle("Sonido al terminar (el de alerta de tu Mac)", isOn: $playSound)
             }
 
             Section("Apariencia de la rueda") {
+                WheelPreview(material: material, opacity: opacity, color: wheelColor)
                 Picker("Material", selection: $material) {
                     ForEach(WheelMaterial.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
+                LabeledContent("Opacidad") {
+                    HStack {
+                        Slider(value: $opacity, in: 0...1)
+                        Text(opacity, format: .percent.precision(.fractionLength(0)))
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                }
                 LabeledContent("Color") {
                     ColorSwatches(selection: $wheelColor)
                 }
@@ -75,6 +86,39 @@ struct SettingsView: View {
             loginError = error.localizedDescription
             launchAtLogin = SMAppService.mainApp.status == .enabled
         }
+    }
+}
+
+/// Three bubbles drawn exactly like the wheel's (the middle one hovered), so changes show live.
+private struct WheelPreview: View {
+    let material: WheelMaterial
+    let opacity: Double
+    let color: WheelColor
+
+    private let symbols = ["doc.richtext", "photo", "text.alignleft"]
+
+    var body: some View {
+        TimelineView(.animation(paused: color != .rgb)) { context in
+            GlassEffectContainer {
+                HStack(spacing: 22) {
+                    ForEach(symbols.indices, id: \.self) { index in
+                        let hovered = index == 1
+                        Image(systemName: symbols[index])
+                            .font(.system(size: hovered ? 20 : 17, weight: .semibold))
+                            .foregroundStyle(hovered || color.isDark ? Color.white : Color.primary)
+                            .frame(width: hovered ? 54 : 46, height: hovered ? 54 : 46)
+                            .bubbleSurface(material: material, opacity: opacity,
+                                           tint: color.color(phase: Double(index) / 3, at: context.date),
+                                           strength: hovered ? WheelColor.hoveredTint : color.restingTint,
+                                           id: "\(index)", namespace: nil)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .animation(.easeOut(duration: 0.2), value: opacity)
+        .accessibilityHidden(true)
     }
 }
 
