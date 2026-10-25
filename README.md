@@ -21,6 +21,7 @@ There are several radial converters for the Mac. Gota's goal is to **feel like p
 - **Native frameworks first** (ImageIO, PDFKit, AVFoundation, afconvert): small, fast, hardware accelerated.
 - **Word → PDF with nothing to install**: macOS's own text engine by default, LibreOffice when installed, and Microsoft
   Word (exact layout) if you turn it on in Settings, behind a pluggable engine interface (see [docs/MOTORES.md](docs/MOTORES.md)).
+- **Several files at once**: each on its own (*PDF*) or all in one file (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
 - **Private**: no network, no telemetry, never overwrites your files.
 
 ## Requirements

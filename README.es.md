@@ -19,6 +19,7 @@ Hay varios conversores con rueda para Mac. El objetivo de Gota es **sentirse par
 - **Primero lo nativo** (ImageIO, PDFKit, AVFoundation, afconvert): liviano, rápido y con aceleración por hardware.
 - **Word → PDF sin instalar nada**: por defecto usa el motor de texto de macOS, LibreOffice si está instalado y Microsoft
   Word (formato exacto) si lo activas en Ajustes, detrás de una interfaz de motores intercambiables (ver [docs/MOTORES.md](docs/MOTORES.md)).
+- **Varios archivos a la vez**: cada uno por separado (*PDF*) o todos en uno (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
 - **Privado**: sin red, sin telemetría, nunca sobrescribe tus archivos.
 
 ## Requisitos
