@@ -55,7 +55,7 @@ final class DocumentTests: XCTestCase {
             margins: NSEdgeInsets(top: 72, left: 72, bottom: 72, right: 72),
             to: pdf
         )
-        let docx = try PDFTools.toWord(pdf)
+        let docx = try PDFTools.toWord([pdf])
         XCTAssertEqual(docx.pathExtension, "docx")
         let back = try NSAttributedString(url: docx, options: [:], documentAttributes: nil).string
         XCTAssertTrue(back.contains("Uno"))

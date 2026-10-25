@@ -30,12 +30,30 @@ enum DocumentEngines {
     }
 
     static func toPDF(_ input: URL) async throws -> URL {
+        let output = Output.file(for: input, extension: "pdf")
+        try await convert(input, to: output)
+        return output
+    }
+
+    /// Every document to PDF, then all of them in one PDF, in the order they were dragged.
+    static func toSinglePDF(_ inputs: [URL]) async throws -> URL {
+        guard let first = inputs.first else { throw ConversionError.unsupported("sin archivos") }
+        return try await Output.withTemporaryDirectory { scratch in
+            var parts: [URL] = []
+            for (index, input) in inputs.enumerated() {
+                let part = scratch.appendingPathComponent("\(index).pdf")
+                try await convert(input, to: part)
+                parts.append(part)
+            }
+            return try PDFTools.merge(parts, namedAfter: first)
+        }
+    }
+
+    private static func convert(_ input: URL, to output: URL) async throws {
         guard let engine = preferred(for: input) else {
             throw ConversionError.noEngine("Para convertir este documento a PDF instala LibreOffice.")
         }
-        let output = Output.file(for: input, extension: "pdf")
         try await engine.convertToPDF(input, output: output)
-        return output
     }
 }
 

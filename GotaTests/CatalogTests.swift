@@ -1,3 +1,4 @@
+import PDFKit
 import XCTest
 @testable import Gota
 
@@ -76,5 +77,62 @@ final class CatalogTests: XCTestCase {
         XCTAssertEqual(first.lastPathComponent, "foto.png")
         FileManager.default.createFile(atPath: first.path, contents: Data())
         XCTAssertEqual(Output.file(for: input, extension: "png").lastPathComponent, "foto 2.png")
+    }
+}
+
+final class MultipleFilesTests: XCTestCase {
+    private var dir: URL!
+
+    override func setUpWithError() throws {
+        dir = FileManager.default.temporaryDirectory.appendingPathComponent("gota-tests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: dir)
+    }
+
+    private func ids(_ names: [String], _ mode: WheelMode) -> [String] {
+        Catalog.actions(for: names.map { dir.appendingPathComponent($0) }, mode: mode).map(\.id)
+    }
+
+    func testOneFileHasNoCombinedOption() {
+        XCTAssertFalse(ids(["a.pdf"], .convert).contains { $0.hasSuffix("-combined") })
+        XCTAssertFalse(ids(["a.pdf"], .actions).contains("action-zip-each"))
+    }
+
+    func testSeveralFilesOfferEachAndCombined() {
+        let pdfs = ids(["a.pdf", "b.pdf"], .convert)
+        XCTAssertTrue(pdfs.contains("pdf-docx") && pdfs.contains("pdf-docx-combined"))
+        XCTAssertTrue(pdfs.contains("pdf-text") && pdfs.contains("pdf-text-combined"))
+        let images = ids(["a.png", "b.jpg"], .convert)
+        XCTAssertTrue(images.contains("image-pdf") && images.contains("image-pdf-combined"))
+        let docs = ids(["a.docx", "b.rtf"], .convert)
+        XCTAssertTrue(docs.contains("doc-pdf") && docs.contains("doc-pdf-combined"))
+        XCTAssertTrue(ids(["a.png", "b.pdf"], .actions).contains("action-zip-each"))
+    }
+
+    func testCombinedTextKeepsTheDragOrder() throws {
+        func pdf(_ name: String, _ text: String) throws -> URL {
+            let url = dir.appendingPathComponent(name)
+            try DocumentRenderer.write(NSAttributedString(string: text), paper: DocumentRenderer.defaultPaper,
+                                       margins: NSEdgeInsets(top: 72, left: 72, bottom: 72, right: 72), to: url)
+            return url
+        }
+        let output = try PDFTools.text([try pdf("b.pdf", "Segundo"), try pdf("a.pdf", "Primero")])
+        XCTAssertEqual(output.lastPathComponent, "b unido.txt")
+        let text = try String(contentsOf: output, encoding: .utf8)
+        XCTAssertLessThan(try XCTUnwrap(text.range(of: "Segundo")).lowerBound, try XCTUnwrap(text.range(of: "Primero")).lowerBound)
+    }
+
+    func testDocumentsIntoOnePDF() async throws {
+        let a = dir.appendingPathComponent("a.txt"), b = dir.appendingPathComponent("b.txt")
+        try "Uno".write(to: a, atomically: true, encoding: .utf8)
+        try "Dos".write(to: b, atomically: true, encoding: .utf8)
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftWordKey)
+        let output = try await DocumentEngines.toSinglePDF([a, b])
+        XCTAssertEqual(output.lastPathComponent, "a unido.pdf")
+        XCTAssertEqual(output.deletingLastPathComponent().standardizedFileURL, dir.standardizedFileURL)
+        XCTAssertEqual(PDFDocument(url: output)?.pageCount, 2)
     }
 }

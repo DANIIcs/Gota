@@ -40,7 +40,7 @@ final class PDFToolsTests: XCTestCase {
     }
 
     func testPDFWithoutTextFailsInsteadOfWritingAnEmptyFile() throws {
-        XCTAssertThrowsError(try PDFTools.text(try makePDF()))
+        XCTAssertThrowsError(try PDFTools.text([try makePDF()]))
         XCTAssertFalse(FileManager.default.fileExists(atPath: dir.appendingPathComponent("doc.txt").path))
     }
 }

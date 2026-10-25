@@ -33,18 +33,19 @@ enum Catalog {
                     try ImageConverter.convert(file, to: type, quality: type == .png || type == .tiff ? nil : 0.9)
                 }
             }
-            actions.append(WheelAction(id: "image-pdf", title: "PDF", symbol: "doc.richtext") { files in
-                [try PDFTools.imagesToPDF(files)]
-            })
+            actions.append(.eachFile(id: "image-pdf", title: "PDF", symbol: "doc.richtext") { try PDFTools.imagesToPDF([$0]) })
+            actions += combined(files, id: "image-pdf", title: "PDF") { [try PDFTools.imagesToPDF($0)] }
             return actions
 
         case .pdf:
-            return [
-                .eachFile(id: "pdf-docx", title: "Word", symbol: "doc.text") { try PDFTools.toWord($0) },
-                .eachFile(id: "pdf-png", title: "PNG", symbol: "photo.on.rectangle") { try PDFTools.pagesToImages($0, type: .png) },
-                .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) },
-                .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text($0) },
-            ]
+            return [.eachFile(id: "pdf-docx", title: "Word", symbol: "doc.text") { try PDFTools.toWord([$0]) }]
+                + combined(files, id: "pdf-docx", title: "Word") { [try PDFTools.toWord($0)] }
+                + [
+                    .eachFile(id: "pdf-png", title: "PNG", symbol: "photo.on.rectangle") { try PDFTools.pagesToImages($0, type: .png) },
+                    .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) },
+                    .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text([$0]) },
+                ]
+                + combined(files, id: "pdf-text", title: "Texto") { [try PDFTools.text($0)] }
 
         case .video:
             var actions: [WheelAction] = []
@@ -79,6 +80,7 @@ enum Catalog {
             var actions: [WheelAction] = [
                 .eachFile(id: "doc-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) },
             ]
+            actions += combined(files, id: "doc-pdf", title: "PDF") { [try await DocumentEngines.toSinglePDF($0)] }
             // textutil can't read Pages documents: only the PDF engines (LibreOffice) can.
             guard !files.contains(where: { $0.pathExtension.lowercased() == "pages" }) else { return actions }
             let targets: [(id: String, title: String, symbol: String, format: String, extensions: Set<String>)] = [
@@ -96,6 +98,17 @@ enum Catalog {
         case .folder, .other:
             return []
         }
+    }
+
+    /// With several files, the "all in one file" twin of a per-file action ("PDF" → "PDF unido").
+    private static func combined(
+        _ files: [URL],
+        id: String,
+        title: String,
+        _ perform: @escaping @Sendable ([URL]) async throws -> [URL]
+    ) -> [WheelAction] {
+        guard files.count > 1 else { return [] }
+        return [WheelAction(id: "\(id)-combined", title: "\(title) unido", symbol: "square.stack", perform: perform)]
     }
 
     /// Converting to the format the files already have only makes a copy: don't offer it.
@@ -147,7 +160,7 @@ enum Catalog {
     // MARK: - Actions (⌃) — any file
 
     private static func general(_ files: [URL]) -> [WheelAction] {
-        [
+        var actions = [
             WheelAction(id: "action-airdrop", title: "AirDrop", symbol: "dot.radiowaves.left.and.right") { files in
                 await FileActions.airDrop(files)
                 return []
@@ -155,6 +168,12 @@ enum Catalog {
             WheelAction(id: "action-zip", title: "ZIP", symbol: "doc.zipper") { files in
                 [try await FileActions.zip(files)]
             },
+        ]
+        // "ZIP" already makes one archive with everything; with several files also offer one each.
+        if files.count > 1 {
+            actions.append(.eachFile(id: "action-zip-each", title: "ZIP c/u", symbol: "doc.zipper") { try await FileActions.zip([$0]) })
+        }
+        actions += [
             WheelAction(id: "action-copy-path", title: "Copiar ruta", symbol: "link") { files in
                 await FileActions.copyPaths(files)
                 return []
@@ -164,5 +183,6 @@ enum Catalog {
                 return []
             },
         ]
+        return actions
     }
 }

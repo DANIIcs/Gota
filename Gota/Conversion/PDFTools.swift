@@ -30,29 +30,32 @@ enum PDFTools {
     }
 
     /// The PDF's text layer as a .txt file (scanned PDFs have none; OCR comes later).
-    static func text(_ input: URL) throws -> URL {
-        let document = try open(input)
-        let text = document.string ?? ""
+    /// Several PDFs give one .txt with their texts in the order they were dragged.
+    static func text(_ inputs: [URL]) throws -> URL {
+        let text = try inputs.map { try open($0).string ?? "" }.joined(separator: "\n\n")
         // An empty .txt reported as "Listo" looks like a bug: say why instead.
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw ConversionError.unsupported("PDF sin texto (¿escaneado?)")
         }
-        let output = Output.file(for: input, extension: "txt")
+        let output = combinedOutput(for: inputs, extension: "txt")
         try text.write(to: output, atomically: true, encoding: .utf8)
         return output
     }
 
     /// The PDF's text, with its fonts and one Word page per PDF page, as an editable .docx.
     /// Written by macOS's own DOCX writer; images and exact layout are not kept.
-    static func toWord(_ input: URL) throws -> URL {
-        let document = try open(input)
+    /// Several PDFs give one document with all their pages, in the order they were dragged.
+    static func toWord(_ inputs: [URL]) throws -> URL {
         let text = NSMutableAttributedString()
-        for index in 0..<document.pageCount {
-            guard let page = document.page(at: index)?.attributedString else { continue }
-            if text.length > 0 {
-                text.append(NSAttributedString(string: "\u{0C}")) // becomes a Word page break
+        for input in inputs {
+            let document = try open(input)
+            for index in 0..<document.pageCount {
+                guard let page = document.page(at: index)?.attributedString else { continue }
+                if text.length > 0 {
+                    text.append(NSAttributedString(string: "\u{0C}")) // becomes a Word page break
+                }
+                text.append(page)
             }
-            text.append(page)
         }
         guard !text.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw ConversionError.unsupported("PDF sin texto (¿escaneado?)")
@@ -61,14 +64,15 @@ enum PDFTools {
             from: NSRange(location: 0, length: text.length),
             documentAttributes: [.documentType: NSAttributedString.DocumentType.officeOpenXML]
         )
-        let output = Output.file(for: input, extension: "docx")
+        let output = combinedOutput(for: inputs, extension: "docx")
         try data.write(to: output, options: .withoutOverwriting)
         return output
     }
 
     /// Several PDFs into one, in the order they were dragged.
-    static func merge(_ inputs: [URL]) throws -> URL {
-        guard let first = inputs.first else { throw ConversionError.unsupported("sin archivos") }
+    /// - Parameter namedAfter: the file the result is named after and saved next to (default: the first input).
+    static func merge(_ inputs: [URL], namedAfter: URL? = nil) throws -> URL {
+        guard let first = namedAfter ?? inputs.first else { throw ConversionError.unsupported("sin archivos") }
         let merged = PDFDocument()
         for input in inputs {
             let document = try open(input)
@@ -123,9 +127,14 @@ enum PDFTools {
             }
             document.insert(page, at: document.pageCount)
         }
-        let output = Output.file(for: first, extension: "pdf")
+        let output = combinedOutput(for: inputs, extension: "pdf")
         guard document.write(to: output) else { throw ConversionError.unsupported("PDF") }
         return output
+    }
+
+    /// "foto.pdf" for one file, "foto unido.pdf" when several were combined into it.
+    static func combinedOutput(for inputs: [URL], extension ext: String) -> URL {
+        Output.file(for: inputs[0], extension: ext, suffix: inputs.count > 1 ? "unido" : nil)
     }
 }
 
