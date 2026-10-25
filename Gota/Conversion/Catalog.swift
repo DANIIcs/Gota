@@ -46,44 +46,60 @@ enum Catalog {
             ]
 
         case .video:
-            return [
-                .eachFile(id: "video-mp4", title: "MP4", symbol: "film") {
+            var actions: [WheelAction] = []
+            if !all(files, haveExtension: ["mp4", "m4v"]) {
+                actions.append(.eachFile(id: "video-mp4", title: "MP4", symbol: "film") {
                     try await MediaConverter.export($0, preset: AVAssetExportPresetHighestQuality, as: .mp4, extension: "mp4")
-                },
-                .eachFile(id: "video-mov", title: "MOV", symbol: "film.stack") {
+                })
+            }
+            if !all(files, haveExtension: ["mov"]) {
+                actions.append(.eachFile(id: "video-mov", title: "MOV", symbol: "film.stack") {
                     try await MediaConverter.export($0, preset: AVAssetExportPresetHighestQuality, as: .mov, extension: "mov")
-                },
-                .eachFile(id: "video-m4a", title: "Solo audio", symbol: "waveform") {
-                    try await MediaConverter.export($0, preset: AVAssetExportPresetAppleM4A, as: .m4a, extension: "m4a")
-                },
-            ]
+                })
+            }
+            actions.append(.eachFile(id: "video-m4a", title: "Solo audio", symbol: "waveform") {
+                try await MediaConverter.export($0, preset: AVAssetExportPresetAppleM4A, as: .m4a, extension: "m4a")
+            })
+            return actions
 
         case .audio:
-            return [
-                .eachFile(id: "audio-m4a", title: "M4A", symbol: "waveform") {
-                    try await MediaConverter.audio($0, format: "m4af", data: "aac", extension: "m4a")
-                },
-                .eachFile(id: "audio-wav", title: "WAV", symbol: "waveform.path") {
-                    try await MediaConverter.audio($0, format: "WAVE", data: "LEI16", extension: "wav")
-                },
-                .eachFile(id: "audio-aiff", title: "AIFF", symbol: "waveform.path.ecg") {
-                    try await MediaConverter.audio($0, format: "AIFF", data: "BEI16", extension: "aiff")
-                },
+            let targets: [(id: String, title: String, symbol: String, format: String, data: String, ext: String)] = [
+                ("audio-m4a", "M4A", "waveform", "m4af", "aac", "m4a"),
+                ("audio-wav", "WAV", "waveform.path", "WAVE", "LEI16", "wav"),
+                ("audio-aiff", "AIFF", "waveform.path.ecg", "AIFF", "BEI16", "aiff"),
             ]
+            return targets.filter { !all(files, haveExtension: [$0.ext]) }.map { target in
+                .eachFile(id: target.id, title: target.title, symbol: target.symbol) {
+                    try await MediaConverter.audio($0, format: target.format, data: target.data, extension: target.ext)
+                }
+            }
 
         case .document:
-            return [
+            var actions: [WheelAction] = [
                 .eachFile(id: "doc-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) },
-                .eachFile(id: "doc-docx", title: "Word", symbol: "doc.text") { try await FileActions.textutil($0, to: "docx") },
-                .eachFile(id: "doc-txt", title: "Texto", symbol: "text.alignleft") { try await FileActions.textutil($0, to: "txt") },
-                .eachFile(id: "doc-html", title: "HTML", symbol: "chevron.left.forwardslash.chevron.right") {
-                    try await FileActions.textutil($0, to: "html")
-                },
             ]
+            // textutil can't read Pages documents: only the PDF engines (LibreOffice) can.
+            guard !files.contains(where: { $0.pathExtension.lowercased() == "pages" }) else { return actions }
+            let targets: [(id: String, title: String, symbol: String, format: String, extensions: Set<String>)] = [
+                ("doc-docx", "Word", "doc.text", "docx", ["docx"]),
+                ("doc-txt", "Texto", "text.alignleft", "txt", ["txt"]),
+                ("doc-html", "HTML", "chevron.left.forwardslash.chevron.right", "html", ["html", "htm"]),
+            ]
+            for target in targets where !all(files, haveExtension: target.extensions) {
+                actions.append(.eachFile(id: target.id, title: target.title, symbol: target.symbol) {
+                    try await FileActions.textutil($0, to: target.format)
+                })
+            }
+            return actions
 
         case .folder, .other:
             return []
         }
+    }
+
+    /// Converting to the format the files already have only makes a copy: don't offer it.
+    private static func all(_ files: [URL], haveExtension extensions: Set<String>) -> Bool {
+        files.allSatisfy { extensions.contains($0.pathExtension.lowercased()) }
     }
 
     // MARK: - Tools (⌥)

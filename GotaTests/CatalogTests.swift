@@ -27,6 +27,28 @@ final class CatalogTests: XCTestCase {
         XCTAssertTrue(ids.contains("image-JPEG"))
     }
 
+    func testMediaAndDocumentsDoNotOfferTheSameFormat() {
+        let video = Catalog.actions(for: [file("a.MP4")], mode: .convert).map(\.id)
+        XCTAssertFalse(video.contains("video-mp4"))
+        XCTAssertTrue(video.contains("video-mov"))
+
+        let audio = Catalog.actions(for: [file("a.wav")], mode: .convert).map(\.id)
+        XCTAssertEqual(audio, ["audio-m4a", "audio-aiff"])
+
+        let doc = Catalog.actions(for: [file("a.htm")], mode: .convert).map(\.id)
+        XCTAssertFalse(doc.contains("doc-html"))
+        XCTAssertTrue(doc.contains("doc-docx"))
+    }
+
+    func testMixedFormatsStillOfferEveryTarget() {
+        let ids = Catalog.actions(for: [file("a.wav"), file("b.mp3")], mode: .convert).map(\.id)
+        XCTAssertTrue(ids.contains("audio-wav"))
+    }
+
+    func testPagesOnlyOffersPDF() {
+        XCTAssertEqual(Catalog.actions(for: [file("a.pages")], mode: .convert).map(\.id), ["doc-pdf"])
+    }
+
     func testMergeOnlyWithSeveralPDFs() {
         let one = Catalog.actions(for: [file("a.pdf")], mode: .tools).map(\.id)
         let two = Catalog.actions(for: [file("a.pdf"), file("b.pdf")], mode: .tools).map(\.id)
