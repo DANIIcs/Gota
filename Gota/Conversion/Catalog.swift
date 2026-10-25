@@ -31,37 +31,39 @@ enum Catalog {
                 let (type, label) = target
                 return WheelAction.eachFile(id: "image-\(label)", title: label, symbol: "photo") { file in
                     try ImageConverter.convert(file, to: type, quality: type == .png || type == .tiff ? nil : 0.9)
-                }
+                }.producing(type)
             }
-            actions.append(.eachFile(id: "image-pdf", title: "PDF", symbol: "doc.richtext") { try PDFTools.imagesToPDF([$0]) })
-            actions += combined(files, id: "image-pdf", title: "PDF") { [try PDFTools.imagesToPDF($0)] }
+            actions.append(.eachFile(id: "image-pdf", title: "PDF", symbol: "doc.richtext") { try PDFTools.imagesToPDF([$0]) }.producing(.pdf))
+            actions += combined(files, id: "image-pdf", title: "PDF", output: .pdf) { [try PDFTools.imagesToPDF($0)] }
             return actions
 
         case .pdf:
-            return [.eachFile(id: "pdf-docx", title: "Word", symbol: "doc.text") { try PDFTools.toWord([$0]) }]
-                + combined(files, id: "pdf-docx", title: "Word") { [try PDFTools.toWord($0)] }
+            return [.eachFile(id: "pdf-docx", title: "Word", symbol: "doc.text") { try PDFTools.toWord([$0]) }.producing(docx)]
+                + combined(files, id: "pdf-docx", title: "Word", output: docx) { [try PDFTools.toWord($0)] }
                 + [
-                    .eachFile(id: "pdf-png", title: "PNG", symbol: "photo.on.rectangle") { try PDFTools.pagesToImages($0, type: .png) },
-                    .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) },
-                    .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text([$0]) },
+                    .eachFile(id: "pdf-png", title: "PNG", symbol: "photo.on.rectangle") { try PDFTools.pagesToImages($0, type: .png) }
+                        .producing(.png),
+                    .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) }
+                        .producing(.jpeg),
+                    .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text([$0]) }.producing(.plainText),
                 ]
-                + combined(files, id: "pdf-text", title: "Texto") { [try PDFTools.text($0)] }
+                + combined(files, id: "pdf-text", title: "Texto", output: .plainText) { [try PDFTools.text($0)] }
 
         case .video:
             var actions: [WheelAction] = []
             if !all(files, haveExtension: ["mp4", "m4v"]) {
                 actions.append(.eachFile(id: "video-mp4", title: "MP4", symbol: "film") {
                     try await MediaConverter.export($0, preset: AVAssetExportPresetHighestQuality, as: .mp4, extension: "mp4")
-                })
+                }.producing(.mpeg4Movie))
             }
             if !all(files, haveExtension: ["mov"]) {
                 actions.append(.eachFile(id: "video-mov", title: "MOV", symbol: "film.stack") {
                     try await MediaConverter.export($0, preset: AVAssetExportPresetHighestQuality, as: .mov, extension: "mov")
-                })
+                }.producing(.quickTimeMovie))
             }
             actions.append(.eachFile(id: "video-m4a", title: "Solo audio", symbol: "waveform") {
                 try await MediaConverter.export($0, preset: AVAssetExportPresetAppleM4A, as: .m4a, extension: "m4a")
-            })
+            }.producing(UTType(filenameExtension: "m4a") ?? .mpeg4Audio))
             return actions
 
         case .audio:
@@ -73,14 +75,14 @@ enum Catalog {
             return targets.filter { !all(files, haveExtension: [$0.ext]) }.map { target in
                 .eachFile(id: target.id, title: target.title, symbol: target.symbol) {
                     try await MediaConverter.audio($0, format: target.format, data: target.data, extension: target.ext)
-                }
+                }.producing(UTType(filenameExtension: target.ext) ?? .audio)
             }
 
         case .document:
             var actions: [WheelAction] = [
-                .eachFile(id: "doc-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) },
+                .eachFile(id: "doc-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) }.producing(.pdf),
             ]
-            actions += combined(files, id: "doc-pdf", title: "PDF") { [try await DocumentEngines.toSinglePDF($0)] }
+            actions += combined(files, id: "doc-pdf", title: "PDF", output: .pdf) { [try await DocumentEngines.toSinglePDF($0)] }
             // textutil can't read Pages documents: only the PDF engines (LibreOffice) can.
             guard !files.contains(where: { $0.pathExtension.lowercased() == "pages" }) else { return actions }
             let targets: [(id: String, title: String, symbol: String, format: String, extensions: Set<String>)] = [
@@ -91,7 +93,7 @@ enum Catalog {
             for target in targets where !all(files, haveExtension: target.extensions) {
                 actions.append(.eachFile(id: target.id, title: target.title, symbol: target.symbol) {
                     try await FileActions.textutil($0, to: target.format)
-                })
+                }.producing(UTType(filenameExtension: target.format) ?? .text))
             }
             return actions
 
@@ -105,11 +107,16 @@ enum Catalog {
         _ files: [URL],
         id: String,
         title: String,
+        output: UTType,
         _ perform: @escaping @Sendable ([URL]) async throws -> [URL]
     ) -> [WheelAction] {
         guard files.count > 1 else { return [] }
-        return [WheelAction(id: "\(id)-combined", title: "\(title) unido", symbol: "square.stack", perform: perform)]
+        let action = WheelAction(id: "\(id)-combined", title: "\(title) unido", symbol: "square.stack", perform: perform)
+        return [action.producing(output, combined: true)]
     }
+
+    /// Word's format, so its bubble shows the Word document icon (or Pages', whichever opens .docx here).
+    private static let docx = UTType(filenameExtension: "docx") ?? .data
 
     /// Converting to the format the files already have only makes a copy: don't offer it.
     private static func all(_ files: [URL], haveExtension extensions: Set<String>) -> Bool {
@@ -167,11 +174,11 @@ enum Catalog {
             },
             WheelAction(id: "action-zip", title: "ZIP", symbol: "doc.zipper") { files in
                 [try await FileActions.zip(files)]
-            },
+            }.producing(.zip, combined: files.count > 1),
         ]
         // "ZIP" already makes one archive with everything; with several files also offer one each.
         if files.count > 1 {
-            actions.append(.eachFile(id: "action-zip-each", title: "ZIP c/u", symbol: "doc.zipper") { try await FileActions.zip([$0]) })
+            actions.append(.eachFile(id: "action-zip-each", title: "ZIP c/u", symbol: "doc.zipper") { try await FileActions.zip([$0]) }.producing(.zip))
         }
         actions += [
             WheelAction(id: "action-copy-path", title: "Copiar ruta", symbol: "link") { files in

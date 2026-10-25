@@ -55,32 +55,40 @@ struct WheelView: View {
     private func bubble(for item: WheelAction, at index: Int) -> some View {
         let isHovered = model.hovered == item.id
         let offset = model.isOpen ? WheelLayout.offset(for: index, count: model.items.count) : .zero
+        // Grow through the frame, not `scaleEffect`: the glass scaled from its corner while the icon
+        // scaled from its center, so a hovered bubble's icon slid up and to the left of its glass.
+        let side = WheelLayout.bubbleSize * (isHovered ? 1.18 : 1)
 
-        return Image(systemName: item.symbol)
-            .font(.system(size: 20, weight: .semibold))
+        return ActionIcon(action: item, size: isHovered ? 38 : 32)
             .foregroundStyle(isHovered ? Color.white : Color.primary)
-            .frame(width: WheelLayout.bubbleSize, height: WheelLayout.bubbleSize)
+            .frame(width: side, height: side)
             .glassEffect(glass(highlighted: isHovered), in: .circle)
             .glassEffectID(item.id, in: glassNamespace)
-            .scaleEffect(isHovered ? 1.18 : 1)
             .offset(offset)
             .accessibilityLabel(item.title)
     }
 
     /// Not `.interactive()`: interactive glass leans towards the pointer, which pulled each bubble's glass
-    /// off its icon while hovering. The hover highlight is the tint and the scale instead.
+    /// off its icon while hovering. The hover highlight is the tint and the size instead.
     private func glass(highlighted: Bool) -> Glass {
         highlighted ? Glass.regular.tint(.accentColor) : Glass.regular
     }
 
-    /// Only the mode's icon: the cursor sits on the center, and Finder draws the dragged files' names
-    /// (and the count badge) right there, so text in the center would be hidden.
-    /// It doesn't copy the hovered bubble's icon: that read as the icon sliding out of its bubble.
+    /// The hovered bubble's icon (the mode's when none): no text, because the cursor sits on the center
+    /// and Finder draws the dragged files' names (and the count badge) right there.
     private var centerDrop: some View {
-        Image(systemName: model.mode.symbol)
-            .font(.system(size: 26, weight: .semibold))
-            .contentTransition(.symbolEffect(.replace))
-            .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
+        Group {
+            if let hovered = model.hoveredItem {
+                ActionIcon(action: hovered, size: 46)
+                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+                    .id(hovered.id)
+            } else {
+                Image(systemName: model.mode.symbol)
+                    .font(.system(size: 26, weight: .semibold))
+                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+            }
+        }
+        .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
             .glassEffect(.regular, in: .circle)
             .glassEffectID("center", in: glassNamespace)
     }
@@ -136,6 +144,37 @@ struct WheelDropDelegate: DropDelegate {
     func performDrop(info: DropInfo) -> Bool {
         MainActor.assumeIsolated {
             model.performHovered()
+        }
+    }
+}
+
+/// A bubble's picture: macOS's own icon for the format the action creates (the PDF, Word or PNG icon
+/// Finder shows), drawn as a small stack when several files become one; an SF Symbol for other actions.
+struct ActionIcon: View {
+    let action: WheelAction
+    let size: CGFloat
+
+    var body: some View {
+        if let type = action.output {
+            let icon = Image(nsImage: NSWorkspace.shared.icon(for: type))
+            if action.combined {
+                ZStack {
+                    icon.resizable()
+                        .frame(width: size * 0.85, height: size * 0.85)
+                        .rotationEffect(.degrees(-10))
+                        .offset(x: -size * 0.12, y: -size * 0.06)
+                        .opacity(0.8)
+                    icon.resizable()
+                        .frame(width: size * 0.85, height: size * 0.85)
+                        .offset(x: size * 0.1, y: size * 0.06)
+                }
+                .frame(width: size, height: size)
+            } else {
+                icon.resizable().frame(width: size, height: size)
+            }
+        } else {
+            Image(systemName: action.symbol)
+                .font(.system(size: size * 0.62, weight: .semibold))
         }
     }
 }

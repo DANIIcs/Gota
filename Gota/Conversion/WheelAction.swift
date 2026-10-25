@@ -1,4 +1,5 @@
 import Foundation
+import UniformTypeIdentifiers
 
 /// One bubble on the wheel: what it shows and what it does with the dropped files.
 /// `perform` returns the files it created (empty for actions like AirDrop).
@@ -6,7 +7,18 @@ struct WheelAction: Identifiable, Sendable {
     let id: String
     let title: String
     let symbol: String
+    /// The format it creates: the wheel shows macOS's own icon for it (as Finder does) instead of `symbol`.
+    var output: UTType?
+    /// Several files into one: the icon is drawn as a stack.
+    var combined = false
     let perform: @Sendable ([URL]) async throws -> [URL]
+
+    func producing(_ type: UTType, combined: Bool = false) -> WheelAction {
+        var action = self
+        action.output = type
+        action.combined = combined
+        return action
+    }
 
     /// Runs `transform` on every file, one after another, and collects the outputs.
     static func eachFile(
