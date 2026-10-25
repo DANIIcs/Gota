@@ -11,9 +11,20 @@ struct SettingsView: View {
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
 
+    /// Tabs, like the system's own settings windows: one long form grew taller than the screen.
     var body: some View {
+        TabView {
+            Tab("General", systemImage: "gearshape") { general }
+            Tab("Apariencia", systemImage: "paintpalette") { appearance }
+            Tab("Motores", systemImage: "doc.richtext") { engines }
+        }
+        .frame(width: 460)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var general: some View {
         Form {
-            Section("General") {
+            Section {
                 Toggle("Abrir Gota al iniciar sesión", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, enabled in
                         setLaunchAtLogin(enabled)
@@ -25,8 +36,21 @@ struct SettingsView: View {
                 Toggle("Sonido al terminar (el de alerta de tu Mac)", isOn: $playSound)
             }
 
-            Section("Apariencia de la rueda") {
+            Section("Teclas (mientras arrastras un archivo)") {
+                ForEach(WheelMode.allCases, id: \.self) { mode in
+                    LabeledContent("\(mode.key) \(mode.keyName)", value: mode.title)
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private var appearance: some View {
+        Form {
+            Section {
                 WheelPreview(material: material, opacity: opacity, color: wheelColor)
+            }
+            Section {
                 Picker("Material", selection: $material) {
                     ForEach(WheelMaterial.allCases) { Text($0.title).tag($0) }
                 }
@@ -44,13 +68,12 @@ struct SettingsView: View {
                     ColorSwatches(selection: $wheelColor)
                 }
             }
+        }
+        .formStyle(.grouped)
+    }
 
-            Section("Teclas (mientras arrastras un archivo)") {
-                ForEach(WheelMode.allCases, id: \.self) { mode in
-                    LabeledContent("\(mode.key) \(mode.keyName)", value: mode.title)
-                }
-            }
-
+    private var engines: some View {
+        Form {
             Section("Documentos y presentaciones → PDF") {
                 Toggle("Usar Microsoft Word", isOn: $useMicrosoftWord)
                     .disabled(!MicrosoftWordEngine.isInstalled)
@@ -67,14 +90,14 @@ struct SettingsView: View {
                 LabeledContent("macOS (integrado)") {
                     Text("Siempre disponible").foregroundStyle(Color.green)
                 }
+            }
+            Section {
                 Text("Gota usa el primero disponible. Word da el formato exacto y Keynote abre PowerPoint, pero ambos piden permiso la primera vez. Las presentaciones necesitan LibreOffice o Keynote.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .frame(width: 440)
-        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func setLaunchAtLogin(_ enabled: Bool) {
