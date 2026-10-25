@@ -14,6 +14,23 @@ enum WheelMode: String, CaseIterable, Sendable {
         }
     }
 
+    /// The key that opens this mode, as macOS writes it in menus.
+    var key: String {
+        switch self {
+        case .convert: "⇧"
+        case .tools: "⌥"
+        case .actions: "⌃"
+        }
+    }
+
+    var keyName: String {
+        switch self {
+        case .convert: "Shift"
+        case .tools: "Option"
+        case .actions: "Control"
+        }
+    }
+
     var symbol: String {
         switch self {
         case .convert: "arrow.triangle.2.circlepath"

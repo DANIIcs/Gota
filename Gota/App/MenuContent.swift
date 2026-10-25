@@ -10,7 +10,12 @@ struct MenuContent: View {
             Text("Procesando \(jobs.running)…")
         }
 
-        Text("Arrastra un archivo y presiona ⇧ convertir · ⌥ herramientas · ⌃ acciones")
+        // One short line per key: a single long hint was hard to read in the menu.
+        Section("Al arrastrar un archivo, mantén") {
+            ForEach(WheelMode.allCases, id: \.self) { mode in
+                Text("\(mode.key)  \(mode.title)")
+            }
+        }
 
         if !jobs.recent.isEmpty {
             Divider()

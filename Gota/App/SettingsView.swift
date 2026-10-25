@@ -21,9 +21,9 @@ struct SettingsView: View {
             }
 
             Section("Teclas (mientras arrastras un archivo)") {
-                LabeledContent("⇧ Shift", value: WheelMode.convert.title)
-                LabeledContent("⌥ Option", value: WheelMode.tools.title)
-                LabeledContent("⌃ Control", value: WheelMode.actions.title)
+                ForEach(WheelMode.allCases, id: \.self) { mode in
+                    LabeledContent("\(mode.key) \(mode.keyName)", value: mode.title)
+                }
             }
 
             Section("Documentos → PDF") {
