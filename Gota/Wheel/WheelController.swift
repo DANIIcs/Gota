@@ -3,11 +3,19 @@ import SwiftUI
 
 /// A borderless, transparent panel that floats above everything (even full-screen apps)
 /// without stealing focus from Finder, so the drag keeps going.
+///
+/// The wheel uses two of them on top of each other:
+/// - the *drop* panel, below the drag image: macOS only delivers a drag to windows under that layer;
+/// - the *visual* panel, just above the drag image so Finder's file names don't cover the center.
+///   It ignores the mouse, so the drag reaches the drop panel beneath it.
 final class WheelPanel: NSPanel {
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
 
-    static func make(content: NSView) -> WheelPanel {
+    static let dropLevel = NSWindow.Level.popUpMenu
+    static let visualLevel = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.draggingWindow)) + 1)
+
+    static func make(content: NSView, level: NSWindow.Level) -> WheelPanel {
         let panel = WheelPanel(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -17,9 +25,8 @@ final class WheelPanel: NSPanel {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = false // the glass draws its own depth
-        // Just above the drag image the system draws under the cursor: otherwise Finder's file
-        // names and count badge cover the center of the wheel and its text can't be read.
-        panel.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.draggingWindow)) + 1)
+        panel.level = level
+        panel.ignoresMouseEvents = level != dropLevel
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle]
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
@@ -33,7 +40,7 @@ final class WheelPanel: NSPanel {
 @MainActor
 final class WheelController {
     private let model: WheelModel
-    private var panel: WheelPanel?
+    private var panels: [WheelPanel] = []
     private var pendingHide: Task<Void, Never>?
     private var hideDeadline: ContinuousClock.Instant?
     /// Until then the wheel stays centered under the cursor: the user keeps moving while it opens.
@@ -51,10 +58,13 @@ final class WheelController {
         hideDeadline = nil
         model.prepare(mode: mode, files: files)
 
-        let panel = self.panel ?? makePanel()
-        panel.setFrame(frame(centeredOn: point), display: false)
+        if panels.isEmpty { makePanels() }
+        let frame = frame(centeredOn: point)
+        for panel in panels {
+            panel.setFrame(frame, display: false)
+            panel.orderFrontRegardless()
+        }
         settleDeadline = .now + WheelLayout.settleDuration
-        panel.orderFrontRegardless()
 
         // Let SwiftUI draw the closed drop first, then animate it open.
         Task { @MainActor [weak self] in
@@ -66,8 +76,9 @@ final class WheelController {
     /// While the wheel is still opening, keep it centered on the cursor; after that it stays put,
     /// so moving towards a bubble reaches it instead of dragging the wheel along.
     func follow(_ point: NSPoint) {
-        guard let settleDeadline, ContinuousClock.now < settleDeadline, let panel, panel.isVisible else { return }
-        panel.setFrameOrigin(frame(centeredOn: point).origin)
+        guard let settleDeadline, ContinuousClock.now < settleDeadline, panels.first?.isVisible == true else { return }
+        let origin = frame(centeredOn: point).origin
+        panels.forEach { $0.setFrameOrigin(origin) }
     }
 
     func switchMode(_ mode: WheelMode) {
@@ -94,19 +105,22 @@ final class WheelController {
             // Give the "bubbles back into the drop" animation time to play.
             try? await Task.sleep(for: .milliseconds(260))
             guard !Task.isCancelled else { return }
-            self.panel?.orderOut(nil)
+            self.panels.forEach { $0.orderOut(nil) }
             self.hideDeadline = nil
         }
     }
 
     // MARK: - Helpers
 
-    private func makePanel() -> WheelPanel {
-        let host = NSHostingView(rootView: WheelView(model: model))
-        host.sizingOptions = []
-        let panel = WheelPanel.make(content: host)
-        self.panel = panel
-        return panel
+    private func makePanels() {
+        let drop = NSHostingView(rootView: WheelDropTarget(model: model))
+        let visual = NSHostingView(rootView: WheelView(model: model))
+        drop.sizingOptions = []
+        visual.sizingOptions = []
+        panels = [
+            WheelPanel.make(content: drop, level: WheelPanel.dropLevel),
+            WheelPanel.make(content: visual, level: WheelPanel.visualLevel),
+        ]
     }
 
     /// The wheel's frame, centered on the cursor and kept inside the screen.

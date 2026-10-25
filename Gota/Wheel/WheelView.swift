@@ -22,8 +22,6 @@ struct WheelView: View {
             wheel(at: context.date)
         }
         .frame(width: size.width, height: size.height)
-        .contentShape(Circle())
-        .onDrop(of: [UTType.fileURL], delegate: WheelDropDelegate(model: model, size: size))
         .animation(openAnimation, value: model.isOpen)
         .animation(.easeOut(duration: 0.2), value: model.isVisible)
         .animation(.spring(duration: 0.22, bounce: 0.25), value: model.hovered)
@@ -31,13 +29,6 @@ struct WheelView: View {
 
     private func wheel(at date: Date) -> some View {
         ZStack {
-            // Fully transparent pixels let clicks and drops fall through to the window below
-            // (that could move the file in Finder!). An almost invisible disc keeps the whole
-            // wheel a drop target.
-            Circle()
-                .fill(Color.black.opacity(0.01))
-                .frame(width: size.width - 8, height: size.height - 8)
-
             GlassEffectContainer(spacing: 34) {
                 ZStack {
                     ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
@@ -142,6 +133,24 @@ private struct BubbleSurface: ViewModifier {
     private var glass: Glass {
         let base: Glass = material == .clear ? .clear : .regular
         return strength > 0 ? base.tint(tint.opacity(strength)) : base
+    }
+}
+
+/// The part of the wheel that receives the drag, in its own panel under the visual one
+/// (see `WheelPanel`). Fully transparent pixels let drops fall through to the window below,
+/// which could move the user's file in Finder: an almost invisible disc keeps the whole wheel a target.
+struct WheelDropTarget: View {
+    @ObservedObject var model: WheelModel
+
+    private let size = CGSize(width: WheelLayout.panelSize, height: WheelLayout.panelSize)
+
+    var body: some View {
+        Circle()
+            .fill(Color.black.opacity(0.01))
+            .frame(width: size.width - 8, height: size.height - 8)
+            .frame(width: size.width, height: size.height)
+            .contentShape(Circle())
+            .onDrop(of: [UTType.fileURL], delegate: WheelDropDelegate(model: model, size: size))
     }
 }
 

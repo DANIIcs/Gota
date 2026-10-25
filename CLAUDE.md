@@ -45,7 +45,7 @@ Xcode) and describe what they see.
 - Prefer built-in frameworks (ImageIO, PDFKit, AVFoundation, Vision, afconvert, textutil). Optional external engines
   (ffmpeg, pandoc, LibreOffice) must be detected, never required.
 - Everything runs locally: no network calls, no telemetry.
-- The wheel panel must stay a drop target over its whole disc (see the 1%-opacity circle in `WheelView`): if it ever lets
+- The wheel panel must stay a drop target over its whole disc (see the 1%-opacity circle in `WheelDropTarget`, which lives in its own panel below the drag image while the visual `WheelView` panel floats above it and ignores the mouse): if it ever lets
   a drop fall through, Finder would move the user's file.
 - Max 8 bubbles per mode. UI text is Spanish for now; keep strings short.
 - Add unit tests for logic changes (catalog, geometry, naming). Keep functions small and comment the *why*.
