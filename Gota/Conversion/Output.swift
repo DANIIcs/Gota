@@ -41,6 +41,14 @@ enum Output {
         return url
     }
 
+    /// Some tools (textutil, soffice) exit with 0 even when they could not convert,
+    /// so a result only counts if the file is really there.
+    static func requireCreated(_ url: URL, by tool: String) throws {
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            throw ConversionError.toolFailed(tool: tool, output: "no generó \(url.lastPathComponent).")
+        }
+    }
+
     /// A private scratch folder that is removed when `body` finishes.
     static func withTemporaryDirectory<T>(_ body: (URL) async throws -> T) async throws -> T {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("gota-\(UUID().uuidString)")

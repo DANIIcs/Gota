@@ -1,0 +1,37 @@
+import XCTest
+@testable import Gota
+
+/// Conversions must fail loudly when the tool produced nothing, not report a file that isn't there.
+final class ToolOutputTests: XCTestCase {
+    private var dir: URL!
+
+    override func setUpWithError() throws {
+        dir = FileManager.default.temporaryDirectory.appendingPathComponent("gota-tests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: dir)
+    }
+
+    func testRequireCreatedThrowsForMissingFile() {
+        XCTAssertThrowsError(try Output.requireCreated(dir.appendingPathComponent("nada.txt"), by: "test"))
+    }
+
+    /// textutil can't read .pages yet exits with 0: Gota used to call that a success.
+    func testTextutilFailureIsReported() async throws {
+        let pages = dir.appendingPathComponent("doc.pages")
+        try FileManager.default.createDirectory(at: pages, withIntermediateDirectories: false)
+        do {
+            _ = try await FileActions.textutil(pages, to: "txt")
+            XCTFail("textutil can't read this file, the conversion must throw")
+        } catch {}
+    }
+
+    func testTextutilConvertsPlainText() async throws {
+        let input = dir.appendingPathComponent("nota.txt")
+        try "hola".write(to: input, atomically: true, encoding: .utf8)
+        let output = try await FileActions.textutil(input, to: "html")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: output.path))
+    }
+}

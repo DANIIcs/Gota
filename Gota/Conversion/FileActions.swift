@@ -45,6 +45,7 @@ enum FileActions {
     static func textutil(_ input: URL, to format: String) async throws -> URL {
         let output = Output.file(for: input, extension: format)
         try await Shell.run("/usr/bin/textutil", ["-convert", format, "-output", output.path, input.path])
+        try Output.requireCreated(output, by: "textutil")
         return output
     }
 }
