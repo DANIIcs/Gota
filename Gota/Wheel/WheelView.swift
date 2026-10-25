@@ -63,8 +63,10 @@ struct WheelView: View {
             .accessibilityLabel(item.title)
     }
 
+    /// Not `.interactive()`: interactive glass leans towards the pointer, which pulled each bubble's glass
+    /// off its icon while hovering. The hover highlight is the tint and the scale instead.
     private func glass(highlighted: Bool) -> Glass {
-        highlighted ? Glass.regular.tint(.accentColor).interactive() : Glass.regular.interactive()
+        highlighted ? Glass.regular.tint(.accentColor) : Glass.regular
     }
 
     private var centerDrop: some View {
