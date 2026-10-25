@@ -15,7 +15,9 @@ enum PDFTools {
         for index in 0..<document.pageCount {
             guard let page = document.page(at: index) else { continue }
             let size = displaySize(of: page)
-            let image = page.thumbnail(of: NSSize(width: size.width * scale, height: size.height * scale), for: .mediaBox)
+            // A crafted PDF can declare a page meters wide: cap the image so it can't eat all memory.
+            let pageScale = min(scale, maxPagePixels / max(size.width, size.height, 1))
+            let image = page.thumbnail(of: NSSize(width: size.width * pageScale, height: size.height * pageScale), for: .mediaBox)
             guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
 
             let number = String(index + 1).leftPadded(to: digits)
@@ -139,6 +141,9 @@ enum PDFTools {
 }
 
 extension PDFTools {
+    /// Longest side of a page exported as an image (about 3× a 4K screen).
+    static let maxPagePixels: CGFloat = 10_000
+
     /// Password-protected PDFs open fine but have no readable pages: fail instead of producing empty output.
     static func open(_ input: URL) throws -> PDFDocument {
         guard let document = PDFDocument(url: input) else { throw ConversionError.unreadable(input) }
