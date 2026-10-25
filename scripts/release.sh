@@ -30,7 +30,8 @@ mkdir -p dist
 zip="dist/Gota-$version.zip"
 # ditto keeps the bundle's symlinks, permissions and signature intact (plain zip can break them).
 ditto -c -k --sequesterRsrc --keepParent "$app" "$zip"
-shasum -a 256 "$zip" | tee "$zip.sha256"
+# Written from inside dist/ so the file names just the zip: `shasum -c` then works in ~/Downloads.
+(cd dist && shasum -a 256 "${zip:t}" | tee "${zip:t}.sha256")
 
 if [[ "${1:-}" == "--publish" ]]; then
   echo "→ Publishing v$version"

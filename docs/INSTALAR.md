@@ -16,13 +16,14 @@ de arriba a la derecha.
 
 Cada versión publica también un archivo `.sha256` con la "huella" del zip. En Terminal:
 
+Descarga también `Gota-X.Y.Z.zip.sha256` en la misma carpeta y, en Terminal:
+
 ```bash
 cd ~/Downloads
-shasum -a 256 Gota-*.zip
+shasum -a 256 -c Gota-*.zip.sha256
 ```
 
-El código que aparece debe ser **idéntico** al del archivo `Gota-X.Y.Z.zip.sha256` de la página de la versión.
-Si no coincide, no abras la app y avisa en *Issues*.
+Debe responder `Gota-X.Y.Z.zip: OK`. Si dice `FAILED`, no abras la app y avisa en *Issues*.
 
 ## 2. Instalar
 
