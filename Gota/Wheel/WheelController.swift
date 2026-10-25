@@ -17,7 +17,9 @@ final class WheelPanel: NSPanel {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = false // the glass draws its own depth
-        panel.level = .popUpMenu
+        // Just above the drag image the system draws under the cursor: otherwise Finder's file
+        // names and count badge cover the center of the wheel and its text can't be read.
+        panel.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.draggingWindow)) + 1)
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle]
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false

@@ -11,10 +11,25 @@ struct WheelView: View {
     @ObservedObject var model: WheelModel
     @Namespace private var glassNamespace
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
+    @AppStorage(WheelColor.key) private var colorChoice = WheelColor.automatic
 
     private let size = CGSize(width: WheelLayout.panelSize, height: WheelLayout.panelSize)
 
     var body: some View {
+        // Redraws every frame only for the RGB rainbow; otherwise it's paused and costs nothing.
+        TimelineView(.animation(paused: colorChoice != .rgb || reduceMotion)) { context in
+            wheel(at: context.date)
+        }
+        .frame(width: size.width, height: size.height)
+        .contentShape(Circle())
+        .onDrop(of: [UTType.fileURL], delegate: WheelDropDelegate(model: model, size: size))
+        .animation(openAnimation, value: model.isOpen)
+        .animation(.easeOut(duration: 0.2), value: model.isVisible)
+        .animation(.spring(duration: 0.22, bounce: 0.25), value: model.hovered)
+    }
+
+    private func wheel(at date: Date) -> some View {
         ZStack {
             // Fully transparent pixels let clicks and drops fall through to the window below
             // (that could move the file in Finder!). An almost invisible disc keeps the whole
@@ -26,24 +41,14 @@ struct WheelView: View {
             GlassEffectContainer(spacing: 34) {
                 ZStack {
                     ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
-                        bubble(for: item, at: index)
+                        bubble(for: item, at: index, date: date)
                     }
-                    centerDrop
+                    centerDrop(date: date)
                 }
             }
             .scaleEffect(model.isVisible ? 1 : 0.6)
             .opacity(model.isVisible ? 1 : 0)
-
-            label
-                .offset(y: WheelLayout.labelOffset)
-                .opacity(model.isVisible ? 1 : 0)
         }
-        .frame(width: size.width, height: size.height)
-        .contentShape(Circle())
-        .onDrop(of: [UTType.fileURL], delegate: WheelDropDelegate(model: model, size: size))
-        .animation(openAnimation, value: model.isOpen)
-        .animation(.easeOut(duration: 0.2), value: model.isVisible)
-        .animation(.spring(duration: 0.22, bounce: 0.25), value: model.hovered)
     }
 
     private var openAnimation: Animation {
@@ -52,67 +57,91 @@ struct WheelView: View {
 
     // MARK: - Pieces
 
-    private func bubble(for item: WheelAction, at index: Int) -> some View {
+    private func bubble(for item: WheelAction, at index: Int, date: Date) -> some View {
         let isHovered = model.hovered == item.id
         let offset = model.isOpen ? WheelLayout.offset(for: index, count: model.items.count) : .zero
         // Grow through the frame, not `scaleEffect`: the glass scaled from its corner while the icon
         // scaled from its center, so a hovered bubble's icon slid up and to the left of its glass.
         let side = WheelLayout.bubbleSize * (isHovered ? 1.18 : 1)
+        let tint = colorChoice.color(phase: Double(index) / Double(max(model.items.count, 1)), at: date)
 
         return ActionIcon(action: item, size: isHovered ? 38 : 32)
-            .foregroundStyle(isHovered ? Color.white : Color.primary)
+            .foregroundStyle(isHovered || colorChoice.isDark ? Color.white : Color.primary)
             .frame(width: side, height: side)
-            .glassEffect(glass(highlighted: isHovered), in: .circle)
-            .glassEffectID(item.id, in: glassNamespace)
+            .modifier(BubbleSurface(material: material, tint: tint, strength: isHovered ? 1 : colorChoice.restingTint,
+                                    id: item.id, namespace: glassNamespace))
             .offset(offset)
             .accessibilityLabel(item.title)
     }
 
-    /// Not `.interactive()`: interactive glass leans towards the pointer, which pulled each bubble's glass
-    /// off its icon while hovering. The hover highlight is the tint and the size instead.
-    private func glass(highlighted: Bool) -> Glass {
-        highlighted ? Glass.regular.tint(.accentColor) : Glass.regular
-    }
+    /// What dropping would do: the hovered bubble's icon and name, or the mode and the file count.
+    /// The panel floats above the drag image (see `WheelPanel`), so Finder's file names don't hide it.
+    private func centerDrop(date: Date) -> some View {
+        let hovered = model.hoveredItem
 
-    /// The hovered bubble's icon (the mode's when none): no text, because the cursor sits on the center
-    /// and Finder draws the dragged files' names (and the count badge) right there.
-    private var centerDrop: some View {
-        Group {
-            if let hovered = model.hoveredItem {
-                ActionIcon(action: hovered, size: 46)
-                    .transition(.scale(scale: 0.7).combined(with: .opacity))
-                    .id(hovered.id)
-            } else {
-                Image(systemName: model.mode.symbol)
-                    .font(.system(size: 26, weight: .semibold))
-                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+        return VStack(spacing: 3) {
+            Group {
+                if let hovered {
+                    ActionIcon(action: hovered, size: 30).id(hovered.id)
+                } else {
+                    Image(systemName: model.mode.symbol).font(.system(size: 19, weight: .semibold))
+                }
             }
-        }
-        .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
-            .glassEffect(.regular, in: .circle)
-            .glassEffectID("center", in: glassNamespace)
-    }
+            .frame(height: 30)
+            .transition(.scale(scale: 0.7).combined(with: .opacity))
 
-    /// What dropping here would do, above the wheel: the one place the drag image never covers.
-    /// Outside the container so it doesn't melt into the top bubble.
-    private var label: some View {
-        HStack(spacing: 6) {
-            Text(model.hoveredItem?.title ?? model.mode.title)
-                .font(.system(size: 13, weight: .semibold))
+            Text(hovered?.title ?? model.mode.title)
+                .font(.system(size: 12, weight: .semibold))
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
+                .multilineTextAlignment(.center)
             Text(subtitle)
-                .font(.system(size: 12))
+                .font(.system(size: 10))
                 .foregroundStyle(.secondary)
         }
-        .lineLimit(1)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 6)
-        .glassEffect(.regular, in: .capsule)
-        .contentTransition(.numericText())
+        .foregroundStyle(colorChoice.isDark ? Color.white : Color.primary)
+        .padding(10)
+        .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
+        .modifier(BubbleSurface(material: material, tint: colorChoice.color(at: date), strength: colorChoice.restingTint,
+                                id: "center", namespace: glassNamespace))
     }
 
     private var subtitle: String {
         if model.items.isEmpty { return "Sin opciones" }
         return model.files.count == 1 ? "1 archivo" : "\(model.files.count) archivos"
+    }
+}
+
+/// The surface of one bubble in the chosen material.
+/// Glass is never `.interactive()`: interactive glass leans towards the pointer and slid off its icon.
+private struct BubbleSurface: ViewModifier {
+    let material: WheelMaterial
+    let tint: Color
+    /// 0 = no tint, 1 = the hovered bubble's full color.
+    let strength: Double
+    let id: String
+    let namespace: Namespace.ID
+
+    func body(content: Content) -> some View {
+        switch material {
+        case .glass, .clear:
+            content
+                .glassEffect(glass, in: .circle)
+                .glassEffectID(id, in: namespace)
+        case .opaque:
+            content.background {
+                Circle()
+                    .fill(.background)
+                    .overlay(Circle().fill(tint.opacity(strength)))
+                    .overlay(Circle().strokeBorder(.separator, lineWidth: 0.5))
+                    .shadow(color: .black.opacity(0.25), radius: 6, y: 2)
+            }
+        }
+    }
+
+    private var glass: Glass {
+        let base: Glass = material == .clear ? .clear : .regular
+        return strength > 0 ? base.tint(tint.opacity(strength)) : base
     }
 }
 
