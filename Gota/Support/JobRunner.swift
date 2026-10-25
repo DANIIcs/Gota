@@ -27,6 +27,7 @@ final class JobRunner: ObservableObject {
                 // `perform` is not tied to the main actor, so the heavy work runs off the UI thread.
                 let outputs = try await action.perform(files)
                 remember(JobResult(title: "\(action.title) · \(label)", outputs: outputs, failed: false))
+                Self.playSound(failed: false)
                 if !outputs.isEmpty {
                     Notifier.post(title: "Listo: \(action.title)", body: outputs.map(\.lastPathComponent).joined(separator: ", "))
                     if Preferences.revealInFinder {
@@ -35,9 +36,16 @@ final class JobRunner: ObservableObject {
                 }
             } catch {
                 remember(JobResult(title: "\(action.title) · \(label)", outputs: [], failed: true))
+                Self.playSound(failed: true)
                 Notifier.post(title: "No se pudo: \(action.title)", body: error.localizedDescription)
             }
         }
+    }
+
+    /// macOS's own alert sounds: "Glass" (fitting for a drop) when done, "Basso" when it failed.
+    private static func playSound(failed: Bool) {
+        guard Preferences.playSound else { return }
+        NSSound(named: failed ? "Basso" : "Glass")?.play()
     }
 
     func reveal(_ result: JobResult) {
