@@ -40,6 +40,7 @@ enum Catalog {
 
         case .pdf:
             return [
+                .eachFile(id: "pdf-docx", title: "Word", symbol: "doc.text") { try PDFTools.toWord($0) },
                 .eachFile(id: "pdf-png", title: "PNG", symbol: "photo.on.rectangle") { try PDFTools.pagesToImages($0, type: .png) },
                 .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) },
                 .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text($0) },

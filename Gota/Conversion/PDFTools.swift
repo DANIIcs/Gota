@@ -42,6 +42,30 @@ enum PDFTools {
         return output
     }
 
+    /// The PDF's text, with its fonts and one Word page per PDF page, as an editable .docx.
+    /// Written by macOS's own DOCX writer; images and exact layout are not kept.
+    static func toWord(_ input: URL) throws -> URL {
+        let document = try open(input)
+        let text = NSMutableAttributedString()
+        for index in 0..<document.pageCount {
+            guard let page = document.page(at: index)?.attributedString else { continue }
+            if text.length > 0 {
+                text.append(NSAttributedString(string: "\u{0C}")) // becomes a Word page break
+            }
+            text.append(page)
+        }
+        guard !text.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw ConversionError.unsupported("PDF sin texto (¿escaneado?)")
+        }
+        let data = try text.data(
+            from: NSRange(location: 0, length: text.length),
+            documentAttributes: [.documentType: NSAttributedString.DocumentType.officeOpenXML]
+        )
+        let output = Output.file(for: input, extension: "docx")
+        try data.write(to: output, options: .withoutOverwriting)
+        return output
+    }
+
     /// Several PDFs into one, in the order they were dragged.
     static func merge(_ inputs: [URL]) throws -> URL {
         guard let first = inputs.first else { throw ConversionError.unsupported("sin archivos") }
