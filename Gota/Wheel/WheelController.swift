@@ -34,6 +34,8 @@ final class WheelController {
     private var panel: WheelPanel?
     private var pendingHide: Task<Void, Never>?
     private var hideDeadline: ContinuousClock.Instant?
+    /// Until then the wheel stays centered under the cursor: the user keeps moving while it opens.
+    private var settleDeadline: ContinuousClock.Instant?
 
     init(model: WheelModel) {
         self.model = model
@@ -49,6 +51,7 @@ final class WheelController {
 
         let panel = self.panel ?? makePanel()
         panel.setFrame(frame(centeredOn: point), display: false)
+        settleDeadline = .now + WheelLayout.settleDuration
         panel.orderFrontRegardless()
 
         // Let SwiftUI draw the closed drop first, then animate it open.
@@ -56,6 +59,13 @@ final class WheelController {
             await Task.yield()
             self?.model.open()
         }
+    }
+
+    /// While the wheel is still opening, keep it centered on the cursor; after that it stays put,
+    /// so moving towards a bubble reaches it instead of dragging the wheel along.
+    func follow(_ point: NSPoint) {
+        guard let settleDeadline, ContinuousClock.now < settleDeadline, let panel, panel.isVisible else { return }
+        panel.setFrameOrigin(frame(centeredOn: point).origin)
     }
 
     func switchMode(_ mode: WheelMode) {

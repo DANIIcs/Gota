@@ -16,6 +16,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         monitor.onModeChange = { mode in
             wheel.switchMode(mode)
         }
+        monitor.onMove = { point in
+            wheel.follow(point)
+        }
         monitor.onDragEnd = {
             wheel.dragEnded()
         }

@@ -12,6 +12,8 @@ import AppKit
 final class DragMonitor {
     var onWheelRequest: ((WheelMode, NSPoint, [URL]) -> Void)?
     var onModeChange: ((WheelMode) -> Void)?
+    /// The cursor while the wheel is open (every tick), so the wheel can settle under it.
+    var onMove: ((NSPoint) -> Void)?
     var onDragEnd: (() -> Void)?
 
     private let dragPasteboard = NSPasteboard(name: .drag)
@@ -71,6 +73,9 @@ final class DragMonitor {
             }
         }
 
+        if currentMode != nil {
+            onMove?(NSEvent.mouseLocation)
+        }
         guard let mode = WheelMode.from(NSEvent.modifierFlags), mode != currentMode else { return }
         if currentMode == nil {
             onWheelRequest?(mode, NSEvent.mouseLocation, dragFiles)

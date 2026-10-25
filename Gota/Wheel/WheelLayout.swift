@@ -16,6 +16,8 @@ enum WheelLayout {
     static let centerSize: CGFloat = 92
     /// Pointer closer than this to the center selects nothing (lets you "cancel").
     static let deadZone: CGFloat = centerSize / 2 + 4
+    /// How long the wheel follows the cursor after appearing (about its opening animation).
+    static let settleDuration: Duration = .milliseconds(350)
     /// Bubbles shown at most per mode, so slices stay easy to hit.
     static let maxItems = 8
 
