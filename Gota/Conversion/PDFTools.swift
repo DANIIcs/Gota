@@ -121,7 +121,7 @@ enum PDFTools {
 
     /// Images into a single PDF, one page each, in the order they were dragged.
     static func imagesToPDF(_ inputs: [URL]) throws -> URL {
-        guard let first = inputs.first else { throw ConversionError.unsupported("sin archivos") }
+        guard !inputs.isEmpty else { throw ConversionError.unsupported("sin archivos") }
         let document = PDFDocument()
         for input in inputs {
             guard let image = NSImage(contentsOf: input), let page = PDFPage(image: image) else {
