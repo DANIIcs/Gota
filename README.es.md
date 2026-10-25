@@ -9,6 +9,17 @@ Empieza a arrastrar un archivo en Finder, presiona **⇧** y suéltalo sobre un 
 | **⌥ Option** | Herramientas — comprimir/reducir imágenes, unir/dividir/rotar PDF, comprimir video a 720p |
 | **⌃ Control** | Acciones — AirDrop, ZIP, copiar ruta, mostrar en Finder |
 
+## Descargar
+
+**[⬇︎ Descargar la última versión](https://github.com/DANIIcs/Gota/releases/latest)** — macOS 26 o posterior, Apple Silicon o Intel.
+
+1. Descarga `Gota-X.Y.Z.zip` en *Assets*, descomprímelo y mueve **Gota.app** a **Aplicaciones**.
+2. La primera vez macOS la bloquea porque aún no está notarizada por Apple: ve a **Ajustes del Sistema → Privacidad y
+   seguridad → Abrir igualmente**. Solo se hace una vez.
+3. Busca la 💧 en la barra de menú.
+
+Guía completa (comprobar la descarga, permisos, actualizar, desinstalar): **[docs/INSTALAR.md](docs/INSTALAR.md)**.
+
 ## ¿Por qué otro más?
 
 Hay varios conversores con rueda para Mac. El objetivo de Gota es **sentirse parte de macOS**:
@@ -22,9 +33,9 @@ Hay varios conversores con rueda para Mac. El objetivo de Gota es **sentirse par
 - **Varios archivos a la vez**: cada uno por separado (*PDF*) o todos en uno (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
 - **Privado**: sin red, sin telemetría, nunca sobrescribe tus archivos.
 
-## Requisitos
+## Compilar desde el código
 
-macOS 26 o superior. Para compilar: Xcode 26+ y [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+macOS 26 o superior, Xcode 26+ y [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 brew install xcodegen
@@ -32,7 +43,11 @@ xcodegen
 open Gota.xcodeproj   # luego ⌘R
 ```
 
-Guía completa paso a paso: [docs/GUIA.md](docs/GUIA.md).
+Guía completa paso a paso: [docs/GUIA.md](docs/GUIA.md). Para publicar una versión: `scripts/release.sh --publish`.
+
+## Seguridad
+
+Todo es local y Gota no se conecta a internet. Para reportar una vulnerabilidad en privado: [SECURITY.md](SECURITY.md).
 
 ## Estado
 

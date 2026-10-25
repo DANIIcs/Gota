@@ -11,6 +11,17 @@ Start dragging a file in Finder, hold **⇧**, and drop it on a format. Everythi
 | **⌥ Option** | Tools — compress / resize images, merge / split / rotate PDFs, compress video to 720p |
 | **⌃ Control** | Actions — AirDrop, ZIP, copy path, reveal in Finder |
 
+## Download
+
+**[⬇︎ Download the latest release](https://github.com/DANIIcs/Gota/releases/latest)** — macOS 26 or later, Apple Silicon or Intel.
+
+1. Download `Gota-X.Y.Z.zip` under *Assets*, unzip it and move **Gota.app** to **Applications**.
+2. The first time, macOS blocks it because it isn't notarized by Apple yet: go to **System Settings → Privacy &
+   Security → Open Anyway**. You only do this once.
+3. Look for the 💧 in the menu bar.
+
+Full guide (verifying the download, permissions, updating, uninstalling) — Spanish: **[docs/INSTALAR.md](docs/INSTALAR.md)**.
+
 ## Why another one?
 
 There are several radial converters for the Mac. Gota's goal is to **feel like part of macOS**:
@@ -24,9 +35,9 @@ There are several radial converters for the Mac. Gota's goal is to **feel like p
 - **Several files at once**: each on its own (*PDF*) or all in one file (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
 - **Private**: no network, no telemetry, never overwrites your files.
 
-## Requirements
+## Build from source
 
-macOS 26 or later. To build: Xcode 26+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+macOS 26 or later, Xcode 26+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 brew install xcodegen
@@ -34,7 +45,11 @@ xcodegen
 open Gota.xcodeproj   # then ⌘R
 ```
 
-Full setup guide (Spanish): [docs/GUIA.md](docs/GUIA.md).
+Full setup guide (Spanish): [docs/GUIA.md](docs/GUIA.md). To publish a release: `scripts/release.sh --publish`.
+
+## Security
+
+Everything runs locally and Gota never connects to the internet. To report a vulnerability privately: [SECURITY.md](SECURITY.md).
 
 ## Status
 

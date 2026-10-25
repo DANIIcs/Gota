@@ -107,21 +107,32 @@ xcodebuild -scheme Gota -destination 'platform=macOS' test     # tests
 - **Las animaciones se juzgan a ojo**: Claude no ve la pantalla. Corre la app, mira y dale feedback concreto ("el rebote es exagerado", "las burbujas se superponen con 8 opciones").
 - **Pídele tests** para la lógica (catálogo, geometría, nombres de archivo). Lo visual lo pruebas tú.
 
-## 4. Publicarlo como open source
+## 4. Publicar una versión para descargar
 
-1. Crea el repo en GitHub (por ejemplo `gota`) y súbelo:
+El código vive en https://github.com/DANIIcs/Gota. Para que la gente lo descargue sin compilar, se publica una
+**Release** con la app ya compilada (lo que ven los usuarios está en [INSTALAR.md](INSTALAR.md)).
+
+1. Sube el número de versión en `project.yml` (`MARKETING_VERSION`, por ejemplo `0.2.0`) y escribe las novedades en
+   `docs/RELEASE-NOTES.md`. Haz commit y push.
+2. Prueba el paquete sin publicarlo:
    ```bash
-   git init
-   git add .
-   git commit -m "Gota: primera versión"
-   git branch -M main
-   git remote add origin git@github.com:TU-USUARIO/gota.git
-   git push -u origin main
+   scripts/release.sh
    ```
-2. Cambia el bundle id a algo tuyo en `Config/Base.xcconfig` (`GOTA_BUNDLE_ID = io.github.TU-USUARIO.gota`).
-3. La licencia ya es **MIT** (`LICENSE`): cualquiera puede usarlo y contribuir. Pon tu nombre en el copyright.
-4. Agrega capturas o un GIF de la rueda al README: es lo que más atrae estrellas.
-5. **Releases para usuarios normales:** para que macOS no bloquee la app al abrirla, hay que **firmarla con Developer ID y notarizarla**. Eso requiere el Apple Developer Program (US$99/año). Mientras tanto, puedes publicar builds sin notarizar explicando el "Abrir igualmente" (lo hacen todos los proyectos que revisamos), o distribuir solo el código.
+   Compila en modo Release (universal: Apple Silicon + Intel), verifica la firma y deja `dist/Gota-X.Y.Z.zip` y su
+   `.sha256`. Ábrelo y comprueba que funciona.
+3. Publícalo:
+   ```bash
+   scripts/release.sh --publish
+   ```
+   Crea la etiqueta `vX.Y.Z` y la Release en GitHub con el zip y su huella SHA-256. Se niega si tienes cambios sin
+   commitear, para que lo publicado coincida con el código etiquetado.
+
+**Firma y notarización.** La app se firma "ad-hoc" (sin cuenta de Apple), por eso la primera vez hay que pulsar
+*Abrir igualmente*. Para que se abra sin avisos hace falta el Apple Developer Program (US$99/año): con él pones tu
+Team ID en `Config/Local.xcconfig` (ignorado por git), firmas con *Developer ID* y notarizas con `xcrun notarytool`.
+
+**Antes de cada versión**, revisa que no se cuele nada privado: `git status` limpio, sin `.env`, claves ni
+`Config/Local.xcconfig` en el repositorio.
 
 ## 5. Cuando algo falla
 
