@@ -7,13 +7,15 @@ import Foundation
 /// (SwiftUI coordinates: y grows downwards).
 enum WheelLayout {
     /// Side of the square panel that hosts the wheel.
-    static let panelSize: CGFloat = 340
+    static let panelSize: CGFloat = 400
     /// Distance from the center to each bubble's center.
     static let radius: CGFloat = 112
     /// Diameter of each bubble.
     static let bubbleSize: CGFloat = 58
     /// Diameter of the central drop.
     static let centerSize: CGFloat = 92
+    /// Vertical offset of the label capsule: just above the top bubble.
+    static let labelOffset: CGFloat = -(radius + bubbleSize / 2 + 30)
     /// Pointer closer than this to the center selects nothing (lets you "cancel").
     static let deadZone: CGFloat = centerSize / 2 + 4
     /// How long the wheel follows the cursor after appearing (about its opening animation).

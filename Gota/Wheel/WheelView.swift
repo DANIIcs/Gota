@@ -33,6 +33,10 @@ struct WheelView: View {
             }
             .scaleEffect(model.isVisible ? 1 : 0.6)
             .opacity(model.isVisible ? 1 : 0)
+
+            label
+                .offset(y: WheelLayout.labelOffset)
+                .opacity(model.isVisible ? 1 : 0)
         }
         .frame(width: size.width, height: size.height)
         .contentShape(Circle())
@@ -69,28 +73,32 @@ struct WheelView: View {
         highlighted ? Glass.regular.tint(.accentColor) : Glass.regular
     }
 
+    /// Only an icon: the cursor sits on the center, and Finder draws the dragged files' names
+    /// (and the count badge) right there, so text in the center would be hidden.
     private var centerDrop: some View {
-        let hovered = model.hoveredItem
+        Image(systemName: model.hoveredItem?.symbol ?? model.mode.symbol)
+            .font(.system(size: 26, weight: .semibold))
+            .contentTransition(.symbolEffect(.replace))
+            .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
+            .glassEffect(.regular, in: .circle)
+            .glassEffectID("center", in: glassNamespace)
+    }
 
-        return VStack(spacing: 3) {
-            Image(systemName: hovered?.symbol ?? model.mode.symbol)
-                .font(.system(size: 17, weight: .semibold))
-                .contentTransition(.symbolEffect(.replace))
-            Text(hovered?.title ?? model.mode.title)
-                .font(.system(size: 11, weight: .semibold))
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-                .multilineTextAlignment(.center)
-            if hovered == nil {
-                Text(subtitle)
-                    .font(.system(size: 9))
-                    .foregroundStyle(.secondary)
-            }
+    /// What dropping here would do, above the wheel: the one place the drag image never covers.
+    /// Outside the container so it doesn't melt into the top bubble.
+    private var label: some View {
+        HStack(spacing: 6) {
+            Text(model.hoveredItem?.title ?? model.mode.title)
+                .font(.system(size: 13, weight: .semibold))
+            Text(subtitle)
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
         }
-        .padding(8)
-        .frame(width: WheelLayout.centerSize, height: WheelLayout.centerSize)
-        .glassEffect(.regular, in: .circle)
-        .glassEffectID("center", in: glassNamespace)
+        .lineLimit(1)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 6)
+        .glassEffect(.regular, in: .capsule)
+        .contentTransition(.numericText())
     }
 
     private var subtitle: String {
