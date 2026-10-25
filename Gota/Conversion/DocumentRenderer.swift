@@ -13,11 +13,14 @@ enum DocumentRenderer {
     @MainActor
     static func pdf(from input: URL, to output: URL) throws {
         var attributes: NSDictionary?
-        let text: NSAttributedString
+        var text: NSAttributedString
         do {
             text = try NSAttributedString(url: input, options: [:], documentAttributes: &attributes)
         } catch {
             throw ConversionError.unreadable(input)
+        }
+        if ["html", "htm"].contains(input.pathExtension.lowercased()) {
+            text = keepingOnlyImages(in: input.deletingLastPathComponent(), from: text)
         }
         let info = attributes as? [NSAttributedString.DocumentAttributeKey: Any] ?? [:]
         let paper = (info[.paperSize] as? NSValue)?.sizeValue ?? .zero
@@ -28,6 +31,42 @@ enum DocumentRenderer {
             right: margin(info[.rightMargin])
         )
         try write(text, paper: paper.width > 0 && paper.height > 0 ? paper : defaultPaper, margins: margins, to: output)
+    }
+
+    /// An HTML page can point at any image on the Mac (`file:///…`, `../`) and macOS embeds it:
+    /// a crafted page could smuggle the user's pictures into a PDF they send back.
+    /// Keeps only images that are files inside the page's own folder; drops the rest.
+    static func keepingOnlyImages(in folder: URL, from text: NSAttributedString) -> NSAttributedString {
+        let result = NSMutableAttributedString(attributedString: text)
+        let all = NSRange(location: 0, length: result.length)
+        result.enumerateAttribute(.attachment, in: all, options: .reverse) { value, range, _ in
+            guard let attachment = value as? NSTextAttachment, !isFile(attachment, inside: folder) else { return }
+            result.replaceCharacters(in: range, with: "")
+        }
+        return result
+    }
+
+    /// Whether the attachment's bytes are those of a file (same name and content) under `folder`.
+    private static func isFile(_ attachment: NSTextAttachment, inside folder: URL) -> Bool {
+        guard let wrapper = attachment.fileWrapper,
+              let name = wrapper.preferredFilename ?? wrapper.filename,
+              let data = wrapper.regularFileContents else { return false }
+        let root = folder.resolvingSymlinksInPath().path + "/"
+        let files = FileManager.default.enumerator(
+            at: folder,
+            includingPropertiesForKeys: [.fileSizeKey],
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        )
+        var visited = 0
+        while let url = files?.nextObject() as? URL, visited < 5_000 {
+            visited += 1
+            guard url.lastPathComponent == name,
+                  (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize == data.count,
+                  url.resolvingSymlinksInPath().path.hasPrefix(root) // a link inside pointing outside doesn't count
+            else { continue }
+            if (try? Data(contentsOf: url)) == data { return true }
+        }
+        return false
     }
 
     static func write(_ text: NSAttributedString, paper: NSSize, margins: NSEdgeInsets, to output: URL) throws {
