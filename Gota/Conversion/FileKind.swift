@@ -31,6 +31,15 @@ enum FileKind: Hashable, Sendable {
         return .other
     }
 
+    /// Drops files that only look like documents: Office's lock files ("~$informe.docx", a few bytes
+    /// Word leaves next to an open document) and AppleDouble "._" files. Converting them can only fail.
+    static func convertible(_ urls: [URL]) -> [URL] {
+        urls.filter { url in
+            let name = url.lastPathComponent
+            return !name.hasPrefix("~$") && !name.hasPrefix("._")
+        }
+    }
+
     /// The kind shared by all files, or `.other` when they are mixed.
     static func common(_ urls: [URL]) -> FileKind {
         let kinds = Set(urls.map(of))

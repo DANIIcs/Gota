@@ -26,7 +26,7 @@ enum MediaConverter {
     static func audio(_ input: URL, format: String, data: String, extension ext: String) async throws -> URL {
         let output = Output.file(for: input, extension: ext)
         try await Shell.run("/usr/bin/afconvert", ["-f", format, "-d", data, input.path, output.path])
-        try Output.requireCreated(output, by: "afconvert")
+        try Output.requireCreated(output, by: "afconvert", from: input)
         return output
     }
 }

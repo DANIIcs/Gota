@@ -30,9 +30,9 @@ final class WheelModel: ObservableObject {
     // MARK: - Lifecycle
 
     func prepare(mode: WheelMode, files: [URL]) {
-        self.files = files
+        self.files = FileKind.convertible(files)
         self.mode = mode
-        self.items = Catalog.actions(for: files, mode: mode)
+        self.items = Catalog.actions(for: self.files, mode: mode)
         self.hovered = nil
         self.isOpen = false
         self.isVisible = false

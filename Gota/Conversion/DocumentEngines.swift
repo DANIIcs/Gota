@@ -185,7 +185,7 @@ enum AppleScriptExport {
         defer { try? FileManager.default.removeItem(at: beside) }
         // Paths travel as arguments (argv), never pasted into the script text.
         try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, beside.path], timeout: .seconds(660))
-        try Output.requireCreated(beside, by: app)
+        try Output.requireCreated(beside, by: app, from: input)
         try FileManager.default.moveItem(at: beside, to: output)
     }
 }
@@ -218,7 +218,7 @@ struct LibreOfficeEngine: DocumentEngine {
             let produced = scratch.appendingPathComponent(input.deletingPathExtension().lastPathComponent + ".pdf")
             // soffice exits with 0 even when it could not convert, so check the result exists.
             guard FileManager.default.fileExists(atPath: produced.path) else {
-                throw ConversionError.toolFailed(tool: name, output: "LibreOffice no generó el PDF.")
+                throw ConversionError.toolFailed(tool: name, output: "no pudo convertir «\(input.lastPathComponent)».")
             }
             try FileManager.default.moveItem(at: produced, to: output)
         }

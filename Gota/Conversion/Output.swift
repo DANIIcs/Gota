@@ -43,9 +43,10 @@ enum Output {
 
     /// Some tools (textutil, soffice) exit with 0 even when they could not convert,
     /// so a result only counts if the file is really there.
-    static func requireCreated(_ url: URL, by tool: String) throws {
+    /// - Parameter input: the user's file, named in the error (the output may be a hidden temporary name).
+    static func requireCreated(_ url: URL, by tool: String, from input: URL) throws {
         guard FileManager.default.fileExists(atPath: url.path) else {
-            throw ConversionError.toolFailed(tool: tool, output: "no generó \(url.lastPathComponent).")
+            throw ConversionError.toolFailed(tool: tool, output: "no pudo convertir «\(input.lastPathComponent)».")
         }
     }
 

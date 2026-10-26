@@ -15,7 +15,10 @@ final class ToolOutputTests: XCTestCase {
     }
 
     func testRequireCreatedThrowsForMissingFile() {
-        XCTAssertThrowsError(try Output.requireCreated(dir.appendingPathComponent("nada.txt"), by: "test"))
+        let input = dir.appendingPathComponent("informe.docx")
+        XCTAssertThrowsError(try Output.requireCreated(dir.appendingPathComponent(".gota-tmp.pdf"), by: "test", from: input)) { error in
+            XCTAssertTrue(error.localizedDescription.contains("informe.docx"), "the error names the user's file")
+        }
     }
 
     /// textutil can't read .pages yet exits with 0: Gota used to call that a success.

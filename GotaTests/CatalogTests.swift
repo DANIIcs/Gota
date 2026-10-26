@@ -57,6 +57,12 @@ final class CatalogTests: XCTestCase {
         XCTAssertTrue(two.contains("pdf-merge"))
     }
 
+    func testOfficeLockFilesAreIgnored() {
+        let files = [file("~$informe.docx"), file("informe.docx"), file("._foto.png")]
+        XCTAssertEqual(FileKind.convertible(files).map(\.lastPathComponent), ["informe.docx"])
+        XCTAssertTrue(FileKind.convertible([file("~$informe.docx")]).isEmpty)
+    }
+
     func testActionsWorkForAnyFile() {
         XCTAssertFalse(Catalog.actions(for: [file("a.unknownext")], mode: .actions).isEmpty)
     }
