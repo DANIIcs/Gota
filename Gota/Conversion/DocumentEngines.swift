@@ -21,8 +21,11 @@ extension DocumentEngine {
 enum DocumentEngines {
     /// Best fidelity first. The built-in engine is last and always there, so text documents never need
     /// an install; presentations need LibreOffice or Keynote.
+    /// Measured against Word and PowerPoint's own PDFs (docs/MOTORES.md): LibreOffice beats Keynote
+    /// and Pages, so it comes first among the engines that need no permission.
     static let all: [any DocumentEngine] = [
         MicrosoftWordEngine(),
+        MicrosoftPowerPointEngine(),
         LibreOfficeEngine(),
         KeynoteEngine(),
         NativeDocumentEngine(),
@@ -73,8 +76,8 @@ enum DocumentEngines {
 }
 
 /// Microsoft Word itself, driven by AppleScript: the exact layout, because it *is* Word.
-/// Off unless the user turns it on in Settings: the first time macOS asks to let Gota control Word,
-/// and Word (sandboxed) asks for access to the folder, which is too much friction for a default.
+/// Off unless the user turns Microsoft Office on in Settings: the first time macOS asks to let Gota control
+/// Word, and Word (sandboxed) asks for access to the folder, which is too much friction for a default.
 struct MicrosoftWordEngine: DocumentEngine {
     let name = "Microsoft Word"
 
@@ -83,7 +86,7 @@ struct MicrosoftWordEngine: DocumentEngine {
     }
 
     var isAvailable: Bool {
-        Preferences.useMicrosoftWord && Self.isInstalled
+        Preferences.useMicrosoftOffice && Self.isInstalled
     }
 
     /// Only what Word opens: it must never be handed a presentation.
@@ -92,30 +95,98 @@ struct MicrosoftWordEngine: DocumentEngine {
     }
 
     func convertToPDF(_ input: URL, output: URL) async throws {
-        // Paths travel as arguments (argv), never pasted into the script text.
+        // Word's dictionary can't iterate `documents` directly ("doesn't understand count"), so documents
+        // are looked up by index. The converted one is found by its path, never as "the active document":
+        // if Word failed to open the file, that would be another document the user has open, which
+        // would then be closed without saving.
         let script = """
         on run argv
             set inFile to POSIX file (item 1 of argv)
             set outPath to (POSIX file (item 2 of argv)) as text
             with timeout of 600 seconds
                 tell application "Microsoft Word"
-                    -- If the user already has this document open, leave it open (and its unsaved edits alone).
                     set wasOpen to false
-                    repeat with d in documents
-                        if (full name of d) is (inFile as text) then set wasOpen to true
+                    repeat with i from 1 to (count of documents)
+                        if (full name of document i) is (inFile as text) then set wasOpen to true
                     end repeat
                     open inFile
-                    set theDoc to active document
+                    set theDoc to missing value
+                    repeat with i from 1 to (count of documents)
+                        if (full name of document i) is (inFile as text) then set theDoc to document i
+                    end repeat
+                    if theDoc is missing value then error "Word no pudo abrir el archivo."
                     save as theDoc file name outPath file format format PDF
+                    -- Leave a document the user already had open (and its unsaved edits) alone.
                     if not wasOpen then close theDoc saving no
                 end tell
             end timeout
         end run
         """
-        try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, output.path], timeout: .seconds(660))
-        guard FileManager.default.fileExists(atPath: output.path) else {
-            throw ConversionError.toolFailed(tool: name, output: "Word no generó el PDF.")
-        }
+        try await AppleScriptExport.run(script, input: input, output: output, by: name)
+    }
+}
+
+/// Microsoft PowerPoint, driven by AppleScript: the exact layout for PowerPoint files.
+/// Turned on together with Word (Settings → Usar Microsoft Office).
+struct MicrosoftPowerPointEngine: DocumentEngine {
+    let name = "Microsoft PowerPoint"
+
+    static var isInstalled: Bool {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.microsoft.Powerpoint") != nil
+    }
+
+    var isAvailable: Bool {
+        Preferences.useMicrosoftOffice && Self.isInstalled
+    }
+
+    /// Keynote files aren't PowerPoint's: they go to LibreOffice or Keynote.
+    func canConvert(_ input: URL) -> Bool {
+        ["pptx", "ppt", "ppsx", "pps", "odp"].contains(input.pathExtension.lowercased())
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        // PowerPoint reports `full name` as a POSIX path (Word uses the old colon form).
+        let script = """
+        on run argv
+            set inFile to POSIX file (item 1 of argv)
+            set outPath to (POSIX file (item 2 of argv)) as text
+            with timeout of 600 seconds
+                tell application "Microsoft PowerPoint"
+                    set wasOpen to false
+                    repeat with i from 1 to (count of presentations)
+                        if (full name of presentation i) is (item 1 of argv) then set wasOpen to true
+                    end repeat
+                    open inFile
+                    set thePres to missing value
+                    repeat with i from 1 to (count of presentations)
+                        if (full name of presentation i) is (item 1 of argv) then set thePres to presentation i
+                    end repeat
+                    if thePres is missing value then error "PowerPoint no pudo abrir el archivo."
+                    save thePres in outPath as save as PDF
+                    if not wasOpen then close thePres saving no
+                end tell
+            end timeout
+        end run
+        """
+        try await AppleScriptExport.run(script, input: input, output: output, by: name)
+    }
+}
+
+/// Runs an export script for a sandboxed app (Word, PowerPoint, Keynote).
+///
+/// Those apps can only write where the user let them, usually the folder the document is in, and not
+/// in Gota's temporary folder (used for "PDF unido" and slide images). So they export next to the input,
+/// under a hidden temporary name, and Gota moves the result where it was asked for.
+enum AppleScriptExport {
+    static func run(_ script: String, input: URL, output: URL, by app: String) async throws {
+        let beside = input.deletingLastPathComponent()
+            .appendingPathComponent(".gota-\(UUID().uuidString)")
+            .appendingPathExtension(output.pathExtension)
+        defer { try? FileManager.default.removeItem(at: beside) }
+        // Paths travel as arguments (argv), never pasted into the script text.
+        try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, beside.path], timeout: .seconds(660))
+        try Output.requireCreated(beside, by: app)
+        try FileManager.default.moveItem(at: beside, to: output)
     }
 }
 
@@ -171,8 +242,8 @@ struct LibreOfficeEngine: DocumentEngine {
 }
 
 /// Apple's Keynote, driven by AppleScript: opens PowerPoint and Keynote files and exports a PDF.
-/// Free and on many Macs, but macOS asks once to let Gota control Keynote, so it comes after
-/// LibreOffice, which converts without asking.
+/// Free and on many Macs, but macOS asks once to let Gota control Keynote, and LibreOffice measured
+/// slightly more faithful (SSIM 0.97 vs 0.95 against PowerPoint), so it comes after LibreOffice.
 struct KeynoteEngine: DocumentEngine {
     let name = "Keynote"
 
@@ -201,8 +272,7 @@ struct KeynoteEngine: DocumentEngine {
             end timeout
         end run
         """
-        try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, output.path], timeout: .seconds(660))
-        try Output.requireCreated(output, by: name)
+        try await AppleScriptExport.run(script, input: input, output: output, by: name)
     }
 }
 
