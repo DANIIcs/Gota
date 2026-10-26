@@ -2,9 +2,8 @@
 # Builds docxide-pdf (https://github.com/sverrejb/docxide-pdf, Apache-2.0), Gota's most faithful
 # engine for .docx (docs/MOTORES.md), as a universal binary at build/engines/docxide-pdf.
 #
-# Pinned to REVISION, plus gota.patch:
-# - when a document asks for Calibri or Cambria and they aren't installed (no Office), use their
-#   metric-compatible clones Carlito and Caladea (bundled in Engines/Fonts) instead of Arial;
+# Pinned to REVISION (which already falls back to Carlito and Caladea, bundled in Engines/Fonts, for a
+# missing Calibri or Cambria), plus gota.patch:
 # - security updates found by `cargo audit`: zip 8.1 → 9 (RUSTSEC-2026-0367/0368/0369, extraction
 #   bugs docxide never reaches, but no reason to ship them), crossbeam-epoch, anyhow and memmap2. Needs Rust (rustup) with the
 # aarch64-apple-darwin and x86_64-apple-darwin targets. Without this binary Gota still builds and

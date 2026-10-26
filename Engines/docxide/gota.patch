@@ -493,16 +493,3 @@ index 1e11ae8..d20575a 100644
      let xml_content = names
          .iter()
          .find(|n| n.starts_with("word/theme/") && n.ends_with(".xml"))
-diff --git a/src/fonts/mod.rs b/src/fonts/mod.rs
-index 252d32c..1afeafb 100644
---- a/src/fonts/mod.rs
-+++ b/src/fonts/mod.rs
-@@ -418,6 +418,8 @@ fn known_font_alias(name: &str) -> Option<&'static str> {
-         "Liberation Sans" => Some("Arial"),
-         "Liberation Serif" => Some("Times New Roman"),
-         "Carlito" => Some("Calibri"),
-+        "Calibri" => Some("Carlito"),
-+        "Cambria" => Some("Caladea"),
-         "Palatino Linotype" => Some("Palatino"),
-         "標楷體" | "DFKai-SB" => Some("BiauKai"),
-         _ => None,

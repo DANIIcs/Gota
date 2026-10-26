@@ -72,7 +72,7 @@ recibe el motor ya compilado y no necesita Rust ni nada más.
 Engines/
 ├── docxide/
 │   ├── REVISION              versión exacta de docxide que usa Gota (fijada)
-│   ├── gota.patch            Calibri/Cambria → Carlito/Caladea si faltan, y actualizaciones de seguridad
+│   ├── gota.patch            actualizaciones de seguridad de sus dependencias
 │   ├── build.sh              descarga esa versión, aplica el parche y compila para Apple Silicon + Intel
 │   └── LICENSE
 ├── Fonts/                    Carlito (OFL) y Caladea (Apache-2.0), versiones originales; ver SOURCE.md
@@ -89,9 +89,11 @@ Engines/
 a `~/Library/Application Support/Gota/Fonts`. Si falta una de pago (Aptos) y se usa en el texto, avisa de que el PDF
 puede cambiar. Medido con un documento real en Poppins: 0,497 y 7 de 9 páginas sin la fuente, 0,859 y 9 de 9 con ella.
 
-**¿Por qué el parche?** En un Mac sin Office no existen Calibri ni Cambria, las fuentes por defecto de Word, y docxide
-las cambiaba por Arial: todo el texto se descolocaba (0,785 contra Word). Con sus clones de medidas idénticas sube a
-0,948, por encima de LibreOffice (0,909).
+**¿Por qué Carlito y Caladea?** En un Mac sin Office no existen Calibri ni Cambria, las fuentes por defecto de Word, y
+docxide las cambiaba por Arial: todo el texto se descolocaba (0,785 contra Word). Con sus clones de medidas idénticas
+sube a 0,948, por encima de LibreOffice (0,909). Gota lo propuso a docxide y ya viene de serie
+([PR #141](https://github.com/sverrejb/docxide-pdf/pull/141)), pero docxide no trae las fuentes: por eso siguen
+incluidas en Gota. El parche que queda solo actualiza dependencias con avisos de seguridad (zip 8.1 → 9 y otras).
 
 **Compilar sin Rust:** Gota compila igual, solo que sin docxide; los `.docx` usan entonces LibreOffice. El script de
 publicación, en cambio, se niega a empaquetar una versión sin el motor.

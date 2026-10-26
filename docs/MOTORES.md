@@ -36,8 +36,8 @@ Gota usa **el primero que esté disponible y sepa leer el archivo**:
 1. **Microsoft Word** y **Microsoft PowerPoint** (si están instalados **y** activas *Usar Microsoft Office* en
    Ajustes) — vía AppleScript. Formato exacto, porque son el original. macOS pide permiso para controlarlos y, como
    viven en un *sandbox*, pueden pedir acceso a la carpeta: por eso no van por defecto.
-2. **docxide-pdf** (incluido en Gota, solo `.docx`) — motor en Rust hecho para imitar a Word, con un parche de Gota
-   para usar Carlito/Caladea (clones libres de Calibri/Cambria, también incluidos) cuando no hay fuentes de Office.
+2. **docxide-pdf** (incluido en Gota, solo `.docx`) — motor en Rust hecho para imitar a Word. Usa Carlito/Caladea
+   (clones libres de Calibri/Cambria, incluidos en Gota) cuando no hay fuentes de Office: lo propuso Gota y ya está en docxide.
    Sin instalar nada, sin ventanas, menos de 1 s y ~35 MB de RAM.
 3. **LibreOffice** (gratis) — modo `--headless`. El resto de formatos de Office y las presentaciones.
 4. **Keynote** / **Pages** (gratis, de Apple) — solo `.key` / `.pages` si falta LibreOffice. Abren su ventana.
