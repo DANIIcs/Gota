@@ -8,6 +8,8 @@ struct SettingsView: View {
     @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
     @AppStorage(WheelMaterial.opacityKey) private var opacity = 0.0
     @AppStorage(WheelColor.key) private var wheelColor = WheelColor.automatic
+    @AppStorage(UpdateChecker.automaticKey) private var autoCheckUpdates = false
+    @AppStorage(UpdateChecker.lastCheckKey) private var lastUpdateCheck = 0.0
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
 
@@ -162,34 +164,66 @@ struct SettingsView: View {
     private var about: some View {
         Form {
             Section {
-                VStack(spacing: 8) {
+                VStack(spacing: 6) {
                     Image(nsImage: NSApp.applicationIconImage)
                         .resizable()
-                        .frame(width: 72, height: 72)
-                    Text("Gota").font(.title2.bold())
-                    Text("Versión \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "–")")
+                        .frame(width: 96, height: 96)
+                    Text("Gota").font(.title.bold())
+                    Text("Versión \(UpdateChecker.currentVersion) (\(UpdateChecker.currentBuild))")
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                    Text("Conversor de archivos para macOS")
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
+                .padding(.vertical, 10)
             }
+
             Section {
-                LabeledContent("Privacidad", value: "Todo pasa en tu Mac")
-                LabeledContent("Licencia", value: "MIT, código abierto")
-                LabeledContent("Incluye", value: "docxide-pdf (Apache-2.0), fuentes Carlito y Caladea (OFL)")
-                Link(destination: URL(string: "https://github.com/DANIIcs/Gota")!) {
-                    Label("Código fuente en GitHub", systemImage: "arrow.up.right.square")
-                }
-            }
-            Section {
-                Button("Buscar actualizaciones…") {
+                Toggle("Buscar actualizaciones automáticamente", isOn: $autoCheckUpdates)
+                LabeledContent("Última comprobación", value: lastCheckDescription)
+                Button("Buscar ahora…") {
                     Task { await UpdateChecker.checkAndReport() }
                 }
+            } header: {
+                Text("Actualizaciones")
             } footer: {
-                Text("Gota solo se conecta a internet cuando pulsas este botón, para preguntar a GitHub por la última versión.")
+                Text("Gota solo se conecta a internet para esto: pregunta a GitHub por la última versión, como mucho una vez al día si lo activas, y te avisa con una notificación.")
+            }
+
+            Section {
+                LabeledContent("Privacidad", value: "Tus archivos nunca salen de tu Mac")
+                LabeledContent("Licencia", value: "MIT, código abierto")
+                LabeledContent("Incluye", value: "docxide-pdf (Apache-2.0), Carlito y Caladea (OFL)")
+            }
+
+            Section {
+                Link(destination: URL(string: "https://github.com/\(UpdateChecker.repository)")!) {
+                    Label("Ver Gota en GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                        .frame(maxWidth: .infinity)
+                }
+                Link(destination: URL(string: "https://github.com/\(UpdateChecker.repository)/issues")!) {
+                    Label("Reportar un problema", systemImage: "exclamationmark.bubble")
+                        .frame(maxWidth: .infinity)
+                }
             }
         }
         .formStyle(.grouped)
+        // In the unified toolbar, as in other apps' About panes.
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Buscar actualizaciones…") {
+                    Task { await UpdateChecker.checkAndReport() }
+                }
+            }
+        }
+    }
+
+    private var lastCheckDescription: String {
+        guard lastUpdateCheck > 0 else { return "Nunca" }
+        let date = Date(timeIntervalSince1970: lastUpdateCheck)
+        return date.formatted(.relative(presentation: .named))
     }
 
     private func setLaunchAtLogin(_ enabled: Bool) {

@@ -26,4 +26,16 @@ final class UpdateCheckerTests: XCTestCase {
             XCTAssertThrowsError(try UpdateChecker.parse(Data(json.utf8)), link)
         }
     }
+
+    func testAutomaticChecksAreOffByDefaultAndDaily() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "gota-tests-\(UUID().uuidString)"))
+        let now = Date(timeIntervalSince1970: 1_000_000)
+        XCTAssertFalse(UpdateChecker.isDue(now: now, defaults: defaults), "never online unless turned on")
+        defaults.set(true, forKey: UpdateChecker.automaticKey)
+        XCTAssertTrue(UpdateChecker.isDue(now: now, defaults: defaults))
+        defaults.set(now.timeIntervalSince1970 - 3_600, forKey: UpdateChecker.lastCheckKey)
+        XCTAssertFalse(UpdateChecker.isDue(now: now, defaults: defaults), "at most once a day")
+        defaults.set(now.timeIntervalSince1970 - UpdateChecker.interval, forKey: UpdateChecker.lastCheckKey)
+        XCTAssertTrue(UpdateChecker.isDue(now: now, defaults: defaults))
+    }
 }

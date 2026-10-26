@@ -63,8 +63,8 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
   saber cuándo termina cada conversión.
 - **Controlar Microsoft Word / PowerPoint:** solo si activas *Usar Microsoft Office* en Ajustes. También pueden
   pedir acceso a la carpeta (una vez por carpeta).
-- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet** (salvo
-  cuando pulsas *Buscar actualizaciones…*).
+- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet**, salvo para
+  buscar actualizaciones: cuando lo pulsas, o una vez al día si lo activas en *Ajustes → Acerca de* (viene apagado).
 
 ### Recomendado: LibreOffice (gratis)
 

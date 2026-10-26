@@ -22,8 +22,33 @@ enum UpdateChecker {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
     }
 
+    static var currentBuild: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+    }
+
+    /// Opt-in (off by default): Gota promises not to go online on its own.
+    static let automaticKey = "autoCheckUpdates"
+    static let lastCheckKey = "lastUpdateCheck"
+    static let interval: TimeInterval = 24 * 60 * 60
+
+    /// Whether an automatic check is due: turned on and none in the last day.
+    static func isDue(now: Date = .now, defaults: UserDefaults = .standard) -> Bool {
+        guard defaults.bool(forKey: automaticKey) else { return false }
+        return now.timeIntervalSince1970 - defaults.double(forKey: lastCheckKey) >= interval
+    }
+
+    /// The automatic check: silent unless there's a new version, then a notification that opens its page.
+    @MainActor
+    static func checkInBackgroundIfDue() async {
+        guard isDue() else { return }
+        UserDefaults.standard.set(Date.now.timeIntervalSince1970, forKey: lastCheckKey)
+        guard case .available(let release)? = try? await check() else { return }
+        Notifier.post(title: "Gota \(release.version) está disponible", body: "Pulsa para descargarla.", opening: release.page)
+    }
+
     @MainActor
     static func checkAndReport() async {
+        UserDefaults.standard.set(Date.now.timeIntervalSince1970, forKey: lastCheckKey)
         let outcome: Result<Outcome, Error>
         do {
             outcome = .success(try await check())
