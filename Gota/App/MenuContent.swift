@@ -33,8 +33,7 @@ struct MenuContent: View {
         Divider()
 
         Button("Ajustes…") {
-            NSApp.activate()
-            openSettings()
+            showSettings()
         }
         .keyboardShortcut(",")
 
@@ -42,5 +41,32 @@ struct MenuContent: View {
             NSApp.terminate(nil)
         }
         .keyboardShortcut("q")
+    }
+
+    /// Gota has no Dock icon, so it isn't the active app and its Settings window opened behind the
+    /// app in front. It's brought forward once it exists (it's created on a later run loop turn);
+    /// after that it's an ordinary window, not one that stays on top.
+    private func showSettings() {
+        openSettings()
+        Task { @MainActor in
+            for _ in 0..<20 {
+                if let window = NSApp.windows.first(where: SettingsWindow.matches) {
+                    NSApp.activate()
+                    window.makeKeyAndOrderFront(nil)
+                    window.orderFrontRegardless()
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(25))
+            }
+        }
+    }
+}
+
+enum SettingsWindow {
+    /// SwiftUI's identifier for the window of the `Settings` scene, or failing that (should SwiftUI
+    /// rename it) Gota's only ordinary window: the wheel panels and the menu bar item aren't key windows.
+    static func matches(_ window: NSWindow) -> Bool {
+        if window.identifier?.rawValue == "com_apple_SwiftUI_Settings_window" { return true }
+        return window.isVisible && window.canBecomeKey && !(window is NSPanel)
     }
 }
