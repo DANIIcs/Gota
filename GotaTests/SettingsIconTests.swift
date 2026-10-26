@@ -8,9 +8,11 @@ final class SettingsIconTests: XCTestCase {
         XCTAssertNotNil(NSImage(named: "AppIcon"))
     }
 
-    /// The panes borrow System Settings' own icons; if one disappears in a future macOS, the drawn
-    /// fallback is used, so this only documents which ones exist today.
-    func testSystemSettingsIconsExistOnThisMac() {
+    /// The panes borrow System Settings' own icons; where a Mac doesn't have them (CI runners, or a
+    /// future macOS) the drawn fallback is used, so this only checks Macs that do have them.
+    func testSystemSettingsIconsExistOnThisMac() throws {
+        try XCTSkipUnless(FileManager.default.fileExists(atPath: "/System/Library/ExtensionKit/Extensions/GeneralSettings.appex"),
+                          "this Mac has no System Settings pane bundles: Gota draws its own icons")
         for name in ["GeneralSettings", "Appearance", "KeyboardSettings", "LoginItems"] {
             XCTAssertTrue(FileManager.default.fileExists(atPath: "/System/Library/ExtensionKit/Extensions/\(name).appex"), name)
         }
