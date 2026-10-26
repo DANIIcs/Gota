@@ -5,8 +5,7 @@ Empieza a arrastrar un archivo en Finder, mantén **⇧** y suéltalo sobre un f
 
 *[Read in English](README.md)*
 
-<!-- Demo (ver docs/media/README.md): graba 10–15 s con ⌘⇧5 (arrastra una foto, mantén ⇧, suelta en PNG), guárdalo como docs/media/demo.gif y
-     cambia este comentario por:  <p align="center"><img src="docs/media/demo.gif" width="720" alt="La rueda de Gota"></p> -->
+<p align="center"><img src="docs/media/demo.gif" width="720" alt="La rueda de Gota convirtiendo archivos en Finder"></p>
 
 | Tecla mientras arrastras | Rueda |
 |---|---|
