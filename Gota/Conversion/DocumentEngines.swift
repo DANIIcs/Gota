@@ -78,7 +78,7 @@ enum DocumentEngines {
         try await Output.withTemporaryDirectory { scratch in
             let pdf = scratch.appendingPathComponent("slides.pdf")
             try await convert(input, to: pdf)
-            return try PDFTools.pagesToImages(pdf, type: type, namedAfter: input, suffix: "diapositivas", itemName: "Diapositiva")
+            return try PDFTools.pagesToImages(pdf, type: type, namedAfter: input, suffix: String(localized: "diapositivas", comment: "Folder suffix: \"talk slides\""), itemName: String(localized: "Diapositiva", comment: "File name: \"Slide 1.png\""))
         }
     }
 
@@ -86,8 +86,8 @@ enum DocumentEngines {
         guard let engine = preferred(for: input) else {
             let isPresentation = FileKind.of(input) == .presentation
             throw ConversionError.noEngine(isPresentation
-                ? "Para convertir presentaciones instala LibreOffice (gratis) o Keynote. Pulsa aquí para descargarlo."
-                : "Para convertir este documento a PDF instala LibreOffice (gratis). Pulsa aquí para descargarlo.")
+                ? String(localized: "Para convertir presentaciones instala LibreOffice (gratis) o Keynote. Pulsa aquí para descargarlo.")
+                : String(localized: "Para convertir este documento a PDF instala LibreOffice (gratis). Pulsa aquí para descargarlo."))
         }
         try await engine.convertToPDF(input, output: output)
     }
@@ -238,9 +238,9 @@ struct DocxideEngine: DocumentEngine {
     }
 
     func convertToPDF(_ input: URL, output: URL) async throws {
-        guard let binary else { throw ConversionError.noEngine("Esta copia de Gota no incluye su motor de Word.") }
+        guard let binary else { throw ConversionError.noEngine(String(localized: "Esta copia de Gota no incluye su motor de Word.")) }
         guard try await FontResolver.unpackedSize(of: input) <= FontResolver.maxPackageBytes else {
-            throw ConversionError.unsupported("documento demasiado grande una vez descomprimido")
+            throw ConversionError.unsupported(String(localized: "documento demasiado grande una vez descomprimido"))
         }
         let fonts = await FontResolver.prepare(for: input, bundled: Bundle.main.resourceURL?.appendingPathComponent("Fonts"))
         let environment = ["DOCXIDE_FONTS": fonts.folders.map(\.path).joined(separator: ":")]
@@ -249,8 +249,8 @@ struct DocxideEngine: DocumentEngine {
         if !fonts.missing.isEmpty {
             // The PDF is made, but in a substitute font: say so instead of leaving a silent difference.
             Notifier.post(
-                title: "Faltan fuentes en «\(input.lastPathComponent)»",
-                body: "\(fonts.missing.joined(separator: ", ")) no está en tu Mac y no es libre: el PDF puede verse distinto. Para el formato exacto, instálala o activa Microsoft Office en Ajustes → Motores."
+                title: String(localized: "Faltan fuentes en «\(input.lastPathComponent)»"),
+                body: String(localized: "\(fonts.missing.joined(separator: ", ")) no está en tu Mac y no es libre: el PDF puede verse distinto. Para el formato exacto, instálala o activa Microsoft Office en Ajustes → Motores.")
             )
         }
     }
@@ -273,7 +273,7 @@ struct LibreOfficeEngine: DocumentEngine {
     var isAvailable: Bool { soffice != nil }
 
     func convertToPDF(_ input: URL, output: URL) async throws {
-        guard let soffice else { throw ConversionError.noEngine("LibreOffice no está instalado.") }
+        guard let soffice else { throw ConversionError.noEngine(String(localized: "LibreOffice no está instalado.")) }
         try await Output.withTemporaryDirectory { scratch in
             // A private profile avoids clashing with a LibreOffice window the user has open.
             let profile = scratch.appendingPathComponent("profile")

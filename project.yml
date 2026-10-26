@@ -12,6 +12,8 @@ options:
   # The Xcode the project is checked against: older values make Xcode show "Update to recommended settings".
   xcodeVersion: "27.1"
   developmentLanguage: es
+  # The app follows the Mac's language (and per-app language in System Settings); strings in
+  # Gota/Resources/Localizable.xcstrings.
 
 configFiles:
   Debug: Config/Base.xcconfig
@@ -112,5 +114,9 @@ schemes:
         Gota: all
         GotaTests: [test]
     test:
+      # Tests check Spanish file names ("informe unido.pdf"): run them in Spanish on any Mac, including
+      # English CI runners. LocalizationTests checks the English strings explicitly.
+      language: es
+      region: ES
       targets:
         - GotaTests

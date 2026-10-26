@@ -15,8 +15,8 @@ enum PDFTools {
         type: UTType,
         scale: CGFloat = 2,
         namedAfter: URL? = nil,
-        suffix: String = "páginas",
-        itemName: String = "Página"
+        suffix: String = String(localized: "páginas", comment: "Folder suffix: \"report pages\""),
+        itemName: String = String(localized: "Página", comment: "File name: \"Page 1.png\"")
     ) throws -> URL {
         let document = try open(input)
         let folder = try Output.folder(for: namedAfter ?? input, suffix: suffix)
@@ -48,7 +48,7 @@ enum PDFTools {
         let text = try inputs.map { try open($0).string ?? "" }.joined(separator: "\n\n")
         // An empty .txt reported as "Listo" looks like a bug: say why instead.
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw ConversionError.unsupported("PDF sin texto (¿escaneado?)")
+            throw ConversionError.unsupported(String(localized: "PDF sin texto (¿escaneado?)"))
         }
         let output = combinedOutput(for: inputs, extension: "txt")
         try text.write(to: output, atomically: true, encoding: .utf8)
@@ -71,7 +71,7 @@ enum PDFTools {
             }
         }
         guard !text.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw ConversionError.unsupported("PDF sin texto (¿escaneado?)")
+            throw ConversionError.unsupported(String(localized: "PDF sin texto (¿escaneado?)"))
         }
         let data = try text.data(
             from: NSRange(location: 0, length: text.length),
@@ -95,7 +95,7 @@ enum PDFTools {
                 }
             }
         }
-        let output = Output.file(for: first, extension: "pdf", suffix: "unido")
+        let output = Output.file(for: first, extension: "pdf", suffix: String(localized: "unido", comment: "File name suffix for files combined into one"))
         guard merged.write(to: output) else { throw ConversionError.unsupported("PDF") }
         return output
     }
@@ -103,14 +103,14 @@ enum PDFTools {
     /// One PDF per page, in a new folder.
     static func split(_ input: URL) throws -> URL {
         let document = try open(input)
-        let folder = try Output.folder(for: input, suffix: "dividido")
+        let folder = try Output.folder(for: input, suffix: String(localized: "dividido", comment: "Folder suffix for a split PDF"))
         let digits = String(document.pageCount).count
         for index in 0..<document.pageCount {
             guard let page = document.page(at: index)?.copy() as? PDFPage else { continue }
             let single = PDFDocument()
             single.insert(page, at: 0)
             let number = String(index + 1).leftPadded(to: digits)
-            guard single.write(to: folder.appendingPathComponent("Página \(number).pdf")) else {
+            guard single.write(to: folder.appendingPathComponent(String(localized: "Página \(number).pdf", comment: "File name of one page of a split PDF"))) else {
                 throw ConversionError.unsupported("PDF")
             }
         }
@@ -125,7 +125,7 @@ enum PDFTools {
                 page.rotation = (page.rotation + 90) % 360
             }
         }
-        let output = Output.file(for: input, extension: "pdf", suffix: "rotado")
+        let output = Output.file(for: input, extension: "pdf", suffix: String(localized: "rotado", comment: "File name suffix for a rotated PDF"))
         guard document.write(to: output) else { throw ConversionError.unsupported("PDF") }
         return output
     }
@@ -147,7 +147,7 @@ enum PDFTools {
 
     /// "foto.pdf" for one file, "foto unido.pdf" when several were combined into it.
     static func combinedOutput(for inputs: [URL], extension ext: String) -> URL {
-        Output.file(for: inputs[0], extension: ext, suffix: inputs.count > 1 ? "unido" : nil)
+        Output.file(for: inputs[0], extension: ext, suffix: inputs.count > 1 ? String(localized: "unido", comment: "File name suffix for files combined into one") : nil)
     }
 }
 
@@ -158,7 +158,7 @@ extension PDFTools {
     /// Password-protected PDFs open fine but have no readable pages: fail instead of producing empty output.
     static func open(_ input: URL) throws -> PDFDocument {
         guard let document = PDFDocument(url: input) else { throw ConversionError.unreadable(input) }
-        guard !document.isLocked else { throw ConversionError.unsupported("PDF con contraseña") }
+        guard !document.isLocked else { throw ConversionError.unsupported(String(localized: "PDF con contraseña")) }
         return document
     }
 

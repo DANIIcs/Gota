@@ -105,6 +105,11 @@ Clic en la 💧 → **Ajustes…** (⌘,):
   para borrarlas) y, en *Avanzado*, Microsoft Office para el formato exacto (abre Word o PowerPoint y pide permisos).
 - **Acerca de:** versión, buscar actualizaciones (también automáticas, una vez al día) y enlaces.
 
+### Idioma
+
+Gota usa el idioma de tu Mac (español o inglés). Para usarla en otro idioma que el del sistema: *Ajustes del Sistema →
+General → Idioma y región → Aplicaciones*, añade Gota y elige el idioma.
+
 ## 7. Actualizar
 
 💧 → **Buscar actualizaciones…** te dice si hay una versión nueva y abre su página. Descárgala y reemplaza `Gota.app` en Aplicaciones (sal antes de Gota desde la 💧 → *Salir de Gota*).

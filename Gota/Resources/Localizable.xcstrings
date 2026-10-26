@@ -1,0 +1,1297 @@
+{
+  "sourceLanguage": "es",
+  "strings": {
+    "%@  %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@  %@"
+          }
+        }
+      }
+    },
+    "%@ falló: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ failed: %@"
+          }
+        }
+      }
+    },
+    "%@ no está en tu Mac y no es libre: el PDF puede verse distinto. Para el formato exacto, instálala o activa Microsoft Office en Ajustes → Motores.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ isn't on your Mac and isn't open source, so the PDF may look different. For the exact layout, install it or turn on Microsoft Office in Settings → Engines."
+          }
+        }
+      }
+    },
+    "%@ unido": {
+      "comment": "Bubble: several files into one, e.g. \"PDF merged\"",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ merged"
+          }
+        }
+      }
+    },
+    "%lld archivos": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivo"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld archivos"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Abrir Gota al iniciar sesión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Gota at login"
+          }
+        }
+      }
+    },
+    "Acciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actions"
+          }
+        }
+      }
+    },
+    "Acerca de": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
+          }
+        }
+      }
+    },
+    "Actualizaciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates"
+          }
+        }
+      }
+    },
+    "Ajustes…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings…"
+          }
+        }
+      }
+    },
+    "Al arrastrar un archivo, mantén": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "While dragging a file, hold"
+          }
+        }
+      }
+    },
+    "Al terminar una conversión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When a conversion finishes"
+          }
+        }
+      }
+    },
+    "Amarillo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yellow"
+          }
+        }
+      }
+    },
+    "Apariencia": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        }
+      }
+    },
+    "Archivo": {
+      "comment": "Name of the ZIP made from several files",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive"
+          }
+        }
+      }
+    },
+    "Automático (color de acento)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic (accent color)"
+          }
+        }
+      }
+    },
+    "Avanzado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced"
+          }
+        }
+      }
+    },
+    "Azul": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blue"
+          }
+        }
+      }
+    },
+    "Borrar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Buscar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
+    "Buscar actualizaciones automáticamente": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for updates automatically"
+          }
+        }
+      }
+    },
+    "Buscar actualizaciones…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for Updates…"
+          }
+        }
+      }
+    },
+    "Buscar ahora…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Now…"
+          }
+        }
+      }
+    },
+    "Color": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        }
+      }
+    },
+    "Comprimir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compress"
+          }
+        }
+      }
+    },
+    "Comprimir 720p": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compress 720p"
+          }
+        }
+      }
+    },
+    "Con qué motor convierte Gota cada tipo de documento.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which engine Gota uses for each kind of document."
+          }
+        }
+      }
+    },
+    "Convertir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convert"
+          }
+        }
+      }
+    },
+    "Copiar ruta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy Path"
+          }
+        }
+      }
+    },
+    "Descargar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download"
+          }
+        }
+      }
+    },
+    "Descargar fuentes libres que falten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download missing open-source fonts"
+          }
+        }
+      }
+    },
+    "Diapositiva": {
+      "comment": "File name: \"Slide 1.png\"",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slide"
+          }
+        }
+      }
+    },
+    "Disponible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        }
+      }
+    },
+    "Dividir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Split"
+          }
+        }
+      }
+    },
+    "Documentos y presentaciones → PDF": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documents and presentations → PDF"
+          }
+        }
+      }
+    },
+    "El material, la opacidad y el color de la rueda.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The wheel's material, opacity and color."
+          }
+        }
+      }
+    },
+    "El sonido es el de alerta que elegiste en Ajustes del Sistema → Sonido.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sound is the alert sound you chose in System Settings → Sound."
+          }
+        }
+      }
+    },
+    "Empieza a arrastrar desde Finder o el Escritorio y luego pulsa la tecla. Suelta en el centro de la rueda para cancelar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start dragging from Finder or the Desktop, then press the key. Drop on the center of the wheel to cancel."
+          }
+        }
+      }
+    },
+    "Esta copia de Gota no incluye su motor de Word.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This copy of Gota doesn't include its Word engine."
+          }
+        }
+      }
+    },
+    "Faltan fuentes en «%@»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missing fonts in “%@”"
+          }
+        }
+      }
+    },
+    "Formato exacto con Word y PowerPoint, pero se abren al convertir y piden acceso a cada carpeta.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exact layout with Word and PowerPoint, but they open while converting and ask for access to each folder."
+          }
+        }
+      }
+    },
+    "Formato no soportado: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported format: %@."
+          }
+        }
+      }
+    },
+    "Fuentes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonts"
+          }
+        }
+      }
+    },
+    "Fuentes descargadas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaded fonts"
+          }
+        }
+      }
+    },
+    "General": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "General"
+          }
+        }
+      }
+    },
+    "Gota %@ está disponible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gota %@ is available"
+          }
+        }
+      }
+    },
+    "Gota (Word .docx)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gota (Word .docx)"
+          }
+        }
+      }
+    },
+    "Gota está al día": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gota is up to date"
+          }
+        }
+      }
+    },
+    "Gota solo se conecta a internet para esto: pregunta a GitHub por la última versión, como mucho una vez al día si lo activas, y te avisa con una notificación.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is the only thing Gota goes online for: it asks GitHub for the latest version, at most once a day if you turn it on, and lets you know with a notification."
+          }
+        }
+      }
+    },
+    "Grafito": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graphite"
+          }
+        }
+      }
+    },
+    "Herramientas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tools"
+          }
+        }
+      }
+    },
+    "Incluido": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Included"
+          }
+        }
+      }
+    },
+    "Incluye": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includes"
+          }
+        }
+      }
+    },
+    "Inicio de sesión y qué pasa al terminar cada conversión.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login, and what happens when each conversion finishes."
+          }
+        }
+      }
+    },
+    "Instalar (gratis)…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install (free)…"
+          }
+        }
+      }
+    },
+    "Keynote (.key, si falta LibreOffice)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keynote (.key, without LibreOffice)"
+          }
+        }
+      }
+    },
+    "LibreOffice": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LibreOffice"
+          }
+        }
+      }
+    },
+    "LibreOffice no está instalado.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LibreOffice isn't installed."
+          }
+        }
+      }
+    },
+    "Licencia": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License"
+          }
+        }
+      }
+    },
+    "Liquid Glass sigue el material del sistema. Con 100 % de opacidad las burbujas son sólidas.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liquid Glass follows the system's material. At 100% opacity the bubbles are solid."
+          }
+        }
+      }
+    },
+    "Listo: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done: %@"
+          }
+        }
+      }
+    },
+    "MIT, código abierto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIT, open source"
+          }
+        }
+      }
+    },
+    "Material": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Material"
+          }
+        }
+      }
+    },
+    "Mientras arrastras un archivo, mantén": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "While dragging a file, hold"
+          }
+        }
+      }
+    },
+    "Morado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purple"
+          }
+        }
+      }
+    },
+    "Mostrar el resultado en Finder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show the result in Finder"
+          }
+        }
+      }
+    },
+    "Mostrar en Finder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show in Finder"
+          }
+        }
+      }
+    },
+    "Motores": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engines"
+          }
+        }
+      }
+    },
+    "Más tarde": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        }
+      }
+    },
+    "Naranja": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orange"
+          }
+        }
+      }
+    },
+    "Negro espacial": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space Black"
+          }
+        }
+      }
+    },
+    "No instalado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not installed"
+          }
+        }
+      }
+    },
+    "No se pudo buscar actualizaciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't check for updates"
+          }
+        }
+      }
+    },
+    "No se pudo leer %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't read %@."
+          }
+        }
+      }
+    },
+    "No se pudo: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed: %@"
+          }
+        }
+      }
+    },
+    "Nunca": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never"
+          }
+        }
+      }
+    },
+    "Opacidad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opacity"
+          }
+        }
+      }
+    },
+    "PDF con contraseña": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "password-protected PDF"
+          }
+        }
+      }
+    },
+    "PDF sin texto (¿escaneado?)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF without text (scanned?)"
+          }
+        }
+      }
+    },
+    "Pages (.pages, si falta LibreOffice)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages (.pages, without LibreOffice)"
+          }
+        }
+      }
+    },
+    "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For each format Gota uses the most faithful engine it measured, without opening any window: its own for .docx, LibreOffice for other Office formats and PowerPoint, macOS for plain text."
+          }
+        }
+      }
+    },
+    "Para convertir este documento a PDF instala LibreOffice (gratis). Pulsa aquí para descargarlo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To convert this document to PDF, install LibreOffice (free). Click here to download it."
+          }
+        }
+      }
+    },
+    "Para convertir presentaciones instala LibreOffice (gratis) o Keynote. Pulsa aquí para descargarlo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To convert presentations, install LibreOffice (free) or Keynote. Click here to download it."
+          }
+        }
+      }
+    },
+    "Privacidad": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy"
+          }
+        }
+      }
+    },
+    "Procesando %lld…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing %lld…"
+          }
+        }
+      }
+    },
+    "Pulsa para descargarla.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click to download it."
+          }
+        }
+      }
+    },
+    "Página": {
+      "comment": "File name: \"Page 1.png\"",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page"
+          }
+        }
+      }
+    },
+    "Página %@.pdf": {
+      "comment": "File name of one page of a split PDF",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page %@.pdf"
+          }
+        }
+      }
+    },
+    "Qué rueda abre cada tecla mientras arrastras archivos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which wheel each key opens while you drag files."
+          }
+        }
+      }
+    },
+    "Recientes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent"
+          }
+        }
+      }
+    },
+    "Reducir 50%": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shrink 50%"
+          }
+        }
+      }
+    },
+    "Reportar un problema": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report a Problem"
+          }
+        }
+      }
+    },
+    "Reproducir sonido": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play sound"
+          }
+        }
+      }
+    },
+    "Revisa tu conexión a internet e inténtalo de nuevo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your internet connection and try again."
+          }
+        }
+      }
+    },
+    "Rojo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Red"
+          }
+        }
+      }
+    },
+    "Rosa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pink"
+          }
+        }
+      }
+    },
+    "Rotar 90°": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotate 90°"
+          }
+        }
+      }
+    },
+    "Salir de Gota": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Gota"
+          }
+        }
+      }
+    },
+    "Si un Word usa una fuente libre que no tienes (como Poppins), Gota la descarga una vez de Google Fonts para que el PDF salga igual. Solo se envía el nombre de la fuente, nunca tu documento.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If a Word document uses an open-source font you don't have (like Poppins), Gota downloads it once from Google Fonts so the PDF matches. Only the font's name is sent, never your document."
+          }
+        }
+      }
+    },
+    "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without LibreOffice, older Word formats use macOS's engine (less faithful) and PowerPoint needs Keynote. LibreOffice is free and Gota runs it in the background, without opening any window."
+          }
+        }
+      }
+    },
+    "Sin opciones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No options"
+          }
+        }
+      }
+    },
+    "Solo audio": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio only"
+          }
+        }
+      }
+    },
+    "Teclas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keys"
+          }
+        }
+      }
+    },
+    "Texto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        }
+      }
+    },
+    "Tienes la %@. Descarga la nueva, sal de Gota y reemplázala en Aplicaciones.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have %@. Download the new one, quit Gota and replace it in Applications."
+          }
+        }
+      }
+    },
+    "Tienes la última versión (%@).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have the latest version (%@)."
+          }
+        }
+      }
+    },
+    "Transparente": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        }
+      }
+    },
+    "Tus archivos nunca salen de tu Mac": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your files never leave your Mac"
+          }
+        }
+      }
+    },
+    "Unir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge"
+          }
+        }
+      }
+    },
+    "Usar Microsoft Office": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Microsoft Office"
+          }
+        }
+      }
+    },
+    "Ver Gota en GitHub": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Gota on GitHub"
+          }
+        }
+      }
+    },
+    "Verde": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Green"
+          }
+        }
+      }
+    },
+    "Versión %@ (%@) · Conversor de archivos para macOS": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@ (%@) · File converter for macOS"
+          }
+        }
+      }
+    },
+    "ZIP c/u": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP each"
+          }
+        }
+      }
+    },
+    "comprimido": {
+      "comment": "File name suffix for a compressed image",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "compressed"
+          }
+        }
+      }
+    },
+    "diapositivas": {
+      "comment": "Folder suffix: \"talk slides\"",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slides"
+          }
+        }
+      }
+    },
+    "dividido": {
+      "comment": "Folder suffix for a split PDF",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "split"
+          }
+        }
+      }
+    },
+    "documento demasiado grande una vez descomprimido": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "document too large once unpacked"
+          }
+        }
+      }
+    },
+    "docxide-pdf (Apache-2.0), Carlito y Caladea (OFL)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "docxide-pdf (Apache-2.0), Carlito and Caladea (OFL)"
+          }
+        }
+      }
+    },
+    "macOS (integrado)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS (built-in)"
+          }
+        }
+      }
+    },
+    "páginas": {
+      "comment": "Folder suffix: \"report pages\"",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pages"
+          }
+        }
+      }
+    },
+    "rotado": {
+      "comment": "File name suffix for a rotated PDF",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rotated"
+          }
+        }
+      }
+    },
+    "se detuvo (tardó demasiado o fue cancelado).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stopped (took too long or was cancelled)."
+          }
+        }
+      }
+    },
+    "unido": {
+      "comment": "File name suffix for files combined into one",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "merged"
+          }
+        }
+      }
+    },
+    "Última comprobación": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last checked"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

@@ -52,11 +52,11 @@ enum ConversionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unreadable(let url):
-            "No se pudo leer \(url.lastPathComponent)."
+            String(localized: "No se pudo leer \(url.lastPathComponent).")
         case .unsupported(let what):
-            "Formato no soportado: \(what)."
+            String(localized: "Formato no soportado: \(what).")
         case .toolFailed(let tool, let output):
-            "\(tool) falló: \(output.trimmingCharacters(in: .whitespacesAndNewlines).prefix(300))"
+            String(localized: "\(tool) falló: \(String(output.trimmingCharacters(in: .whitespacesAndNewlines).prefix(300)))")
         case .noEngine(let message):
             message
         }

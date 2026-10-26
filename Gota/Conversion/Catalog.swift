@@ -45,9 +45,9 @@ enum Catalog {
                         .producing(.png),
                     .eachFile(id: "pdf-jpeg", title: "JPEG", symbol: "photo.stack") { try PDFTools.pagesToImages($0, type: .jpeg) }
                         .producing(.jpeg),
-                    .eachFile(id: "pdf-text", title: "Texto", symbol: "text.alignleft") { try PDFTools.text([$0]) }.producing(.plainText),
+                    .eachFile(id: "pdf-text", title: String(localized: "Texto"), symbol: "text.alignleft") { try PDFTools.text([$0]) }.producing(.plainText),
                 ]
-                + combined(files, id: "pdf-text", title: "Texto", output: .plainText) { [try PDFTools.text($0)] }
+                + combined(files, id: "pdf-text", title: String(localized: "Texto"), output: .plainText) { [try PDFTools.text($0)] }
 
         case .video:
             var actions: [WheelAction] = []
@@ -61,7 +61,7 @@ enum Catalog {
                     try await MediaConverter.export($0, preset: AVAssetExportPresetHighestQuality, as: .mov, extension: "mov")
                 }.producing(.quickTimeMovie))
             }
-            actions.append(.eachFile(id: "video-m4a", title: "Solo audio", symbol: "waveform") {
+            actions.append(.eachFile(id: "video-m4a", title: String(localized: "Solo audio"), symbol: "waveform") {
                 try await MediaConverter.export($0, preset: AVAssetExportPresetAppleM4A, as: .m4a, extension: "m4a")
             }.producing(UTType(filenameExtension: "m4a") ?? .mpeg4Audio))
             return actions
@@ -124,7 +124,7 @@ enum Catalog {
         _ perform: @escaping @Sendable ([URL]) async throws -> [URL]
     ) -> [WheelAction] {
         guard files.count > 1 else { return [] }
-        let action = WheelAction(id: "\(id)-combined", title: "\(title) unido", symbol: "square.stack", perform: perform)
+        let action = WheelAction(id: "\(id)-combined", title: String(localized: "\(title) unido", comment: "Bubble: several files into one, e.g. \"PDF merged\""), symbol: "square.stack", perform: perform)
         return [action.producing(output, combined: true)]
     }
 
@@ -142,10 +142,10 @@ enum Catalog {
         switch kind {
         case .image:
             return [
-                .eachFile(id: "image-compress", title: "Comprimir", symbol: "arrow.down.right.and.arrow.up.left") {
-                    try ImageConverter.convert($0, to: .jpeg, quality: 0.7, suffix: "comprimido")
+                .eachFile(id: "image-compress", title: String(localized: "Comprimir"), symbol: "arrow.down.right.and.arrow.up.left") {
+                    try ImageConverter.convert($0, to: .jpeg, quality: 0.7, suffix: String(localized: "comprimido", comment: "File name suffix for a compressed image"))
                 },
-                .eachFile(id: "image-half", title: "Reducir 50%", symbol: "minus.magnifyingglass") { file in
+                .eachFile(id: "image-half", title: String(localized: "Reducir 50%"), symbol: "minus.magnifyingglass") { file in
                     // Keep the format when macOS can write it (RAW files can't be written: use JPEG).
                     let original = UTType(filenameExtension: file.pathExtension.lowercased())
                     let type = original.flatMap { ImageConverter.canWrite($0) ? $0 : nil } ?? .jpeg
@@ -155,11 +155,11 @@ enum Catalog {
 
         case .pdf:
             var actions: [WheelAction] = [
-                .eachFile(id: "pdf-split", title: "Dividir", symbol: "rectangle.split.3x1") { try PDFTools.split($0) },
-                .eachFile(id: "pdf-rotate", title: "Rotar 90°", symbol: "rotate.right") { try PDFTools.rotate($0) },
+                .eachFile(id: "pdf-split", title: String(localized: "Dividir"), symbol: "rectangle.split.3x1") { try PDFTools.split($0) },
+                .eachFile(id: "pdf-rotate", title: String(localized: "Rotar 90°"), symbol: "rotate.right") { try PDFTools.rotate($0) },
             ]
             if files.count > 1 {
-                actions.insert(WheelAction(id: "pdf-merge", title: "Unir", symbol: "doc.on.doc") { files in
+                actions.insert(WheelAction(id: "pdf-merge", title: String(localized: "Unir"), symbol: "doc.on.doc") { files in
                     [try PDFTools.merge(files)]
                 }, at: 0)
             }
@@ -167,7 +167,7 @@ enum Catalog {
 
         case .video:
             return [
-                .eachFile(id: "video-720", title: "Comprimir 720p", symbol: "arrow.down.right.and.arrow.up.left") {
+                .eachFile(id: "video-720", title: String(localized: "Comprimir 720p"), symbol: "arrow.down.right.and.arrow.up.left") {
                     try await MediaConverter.export($0, preset: AVAssetExportPreset1280x720, as: .mp4, extension: "mp4", suffix: "720p")
                 },
             ]
@@ -191,14 +191,14 @@ enum Catalog {
         ]
         // "ZIP" already makes one archive with everything; with several files also offer one each.
         if files.count > 1 {
-            actions.append(.eachFile(id: "action-zip-each", title: "ZIP c/u", symbol: "doc.zipper") { try await FileActions.zip([$0]) }.producing(.zip))
+            actions.append(.eachFile(id: "action-zip-each", title: String(localized: "ZIP c/u"), symbol: "doc.zipper") { try await FileActions.zip([$0]) }.producing(.zip))
         }
         actions += [
-            WheelAction(id: "action-copy-path", title: "Copiar ruta", symbol: "link") { files in
+            WheelAction(id: "action-copy-path", title: String(localized: "Copiar ruta"), symbol: "link") { files in
                 await FileActions.copyPaths(files)
                 return []
             },
-            WheelAction(id: "action-reveal", title: "Mostrar en Finder", symbol: "folder") { files in
+            WheelAction(id: "action-reveal", title: String(localized: "Mostrar en Finder"), symbol: "folder") { files in
                 await FileActions.revealInFinder(files)
                 return []
             },

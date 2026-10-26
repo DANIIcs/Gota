@@ -58,7 +58,7 @@ enum Shell {
 
         let name = URL(fileURLWithPath: executable).lastPathComponent
         if process.terminationReason == .uncaughtSignal {
-            throw ConversionError.toolFailed(tool: name, output: "se detuvo (tardó demasiado o fue cancelado).")
+            throw ConversionError.toolFailed(tool: name, output: String(localized: "se detuvo (tardó demasiado o fue cancelado)."))
         }
         let output = (try? String(contentsOf: log, encoding: .utf8)) ?? ""
         guard status == 0 else {

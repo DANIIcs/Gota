@@ -14,7 +14,7 @@ enum WheelMaterial: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .glass: "Liquid Glass"
-        case .clear: "Transparente"
+        case .clear: String(localized: "Transparente")
         }
     }
 
@@ -45,16 +45,16 @@ enum WheelColor: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .automatic: "Automático (color de acento)"
-        case .blue: "Azul"
-        case .purple: "Morado"
-        case .pink: "Rosa"
-        case .red: "Rojo"
-        case .orange: "Naranja"
-        case .yellow: "Amarillo"
-        case .green: "Verde"
-        case .graphite: "Grafito"
-        case .spaceBlack: "Negro espacial"
+        case .automatic: String(localized: "Automático (color de acento)")
+        case .blue: String(localized: "Azul")
+        case .purple: String(localized: "Morado")
+        case .pink: String(localized: "Rosa")
+        case .red: String(localized: "Rojo")
+        case .orange: String(localized: "Naranja")
+        case .yellow: String(localized: "Amarillo")
+        case .green: String(localized: "Verde")
+        case .graphite: String(localized: "Grafito")
+        case .spaceBlack: String(localized: "Negro espacial")
         case .rgb: "RGB"
         }
     }

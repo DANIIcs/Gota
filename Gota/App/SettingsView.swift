@@ -152,8 +152,8 @@ struct SettingsView: View {
                 Text("Documentos y presentaciones → PDF")
             } footer: {
                 Text(LibreOfficeEngine().isAvailable
-                     ? "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano."
-                     : "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.")
+                     ? String(localized: "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano.")
+                     : String(localized: "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas."))
             }
             Section {
                 Toggle("Descargar fuentes libres que falten", isOn: $downloadOpenFonts)
@@ -203,9 +203,9 @@ struct SettingsView: View {
             }
 
             Section {
-                LabeledContent("Privacidad", value: "Tus archivos nunca salen de tu Mac")
-                LabeledContent("Licencia", value: "MIT, código abierto")
-                LabeledContent("Incluye", value: "docxide-pdf (Apache-2.0), Carlito y Caladea (OFL)")
+                LabeledContent("Privacidad", value: String(localized: "Tus archivos nunca salen de tu Mac"))
+                LabeledContent("Licencia", value: String(localized: "MIT, código abierto"))
+                LabeledContent("Incluye", value: String(localized: "docxide-pdf (Apache-2.0), Carlito y Caladea (OFL)"))
             }
 
             Section {
@@ -223,7 +223,7 @@ struct SettingsView: View {
     }
 
     private var lastCheckDescription: String {
-        guard lastUpdateCheck > 0 else { return "Nunca" }
+        guard lastUpdateCheck > 0 else { return String(localized: "Nunca") }
         let date = Date(timeIntervalSince1970: lastUpdateCheck)
         return date.formatted(.relative(presentation: .named))
     }
@@ -253,11 +253,11 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .general: "General"
-        case .appearance: "Apariencia"
-        case .keys: "Teclas"
-        case .engines: "Motores"
-        case .about: "Acerca de"
+        case .general: String(localized: "General")
+        case .appearance: String(localized: "Apariencia")
+        case .keys: String(localized: "Teclas")
+        case .engines: String(localized: "Motores")
+        case .about: String(localized: "Acerca de")
         }
     }
 
@@ -303,22 +303,23 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
     var summary: String {
         switch self {
-        case .general: "Inicio de sesión y qué pasa al terminar cada conversión."
-        case .appearance: "El material, la opacidad y el color de la rueda."
-        case .keys: "Qué rueda abre cada tecla mientras arrastras archivos."
-        case .engines: "Con qué motor convierte Gota cada tipo de documento."
-        case .about: "Versión \(UpdateChecker.currentVersion) (\(UpdateChecker.currentBuild)) · Conversor de archivos para macOS"
+        case .general: String(localized: "Inicio de sesión y qué pasa al terminar cada conversión.")
+        case .appearance: String(localized: "El material, la opacidad y el color de la rueda.")
+        case .keys: String(localized: "Qué rueda abre cada tecla mientras arrastras archivos.")
+        case .engines: String(localized: "Con qué motor convierte Gota cada tipo de documento.")
+        case .about: String(localized: "Versión \(UpdateChecker.currentVersion) (\(UpdateChecker.currentBuild)) · Conversor de archivos para macOS")
         }
     }
 
     /// Words a search should find this pane by, besides its title.
     private var keywords: [String] {
         switch self {
-        case .general: ["iniciar", "sesión", "sonido", "finder", "terminar"]
-        case .appearance: ["color", "opacidad", "liquid", "glass", "transparente", "negro", "rgb", "rueda"]
-        case .keys: ["shift", "option", "control", "convertir", "herramientas", "acciones", "atajo"]
-        case .engines: ["pdf", "word", "powerpoint", "office", "libreoffice", "keynote", "documento"]
-        case .about: ["versión", "licencia", "github", "privacidad"]
+        case .general: ["iniciar", "sesión", "login", "sonido", "sound", "finder", "terminar"]
+        // Spanish and English, so search works whatever language the Mac uses.
+        case .appearance: ["color", "opacidad", "opacity", "liquid", "glass", "transparente", "clear", "negro", "black", "rgb", "rueda", "wheel"]
+        case .keys: ["shift", "option", "control", "convertir", "convert", "herramientas", "tools", "acciones", "actions", "atajo", "shortcut"]
+        case .engines: ["pdf", "word", "powerpoint", "office", "libreoffice", "keynote", "documento", "document", "fuente", "font"]
+        case .about: ["versión", "version", "licencia", "license", "github", "privacidad", "privacy", "actualizar", "update"]
         }
     }
 
@@ -422,7 +423,7 @@ private struct EngineStatus: View {
     let installed: Bool
 
     var body: some View {
-        Label(installed ? "Disponible" : "No instalado", systemImage: installed ? "checkmark.circle.fill" : "minus.circle")
+        Label(installed ? String(localized: "Disponible") : String(localized: "No instalado"), systemImage: installed ? "checkmark.circle.fill" : "minus.circle")
             .foregroundStyle(installed ? Color.green : Color.secondary)
     }
 }

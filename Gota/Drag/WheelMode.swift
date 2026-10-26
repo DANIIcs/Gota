@@ -8,9 +8,9 @@ enum WheelMode: String, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .convert: "Convertir"
-        case .tools: "Herramientas"
-        case .actions: "Acciones"
+        case .convert: String(localized: "Convertir")
+        case .tools: String(localized: "Herramientas")
+        case .actions: String(localized: "Acciones")
         }
     }
 

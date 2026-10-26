@@ -102,8 +102,8 @@ struct WheelView: View {
     }
 
     private var subtitle: String {
-        if model.items.isEmpty { return "Sin opciones" }
-        return model.files.count == 1 ? "1 archivo" : "\(model.files.count) archivos"
+        if model.items.isEmpty { return String(localized: "Sin opciones") }
+        return String(localized: "\(model.files.count) archivos")
     }
 }
 

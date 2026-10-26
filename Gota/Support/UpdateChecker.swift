@@ -43,7 +43,7 @@ enum UpdateChecker {
         guard isDue() else { return }
         UserDefaults.standard.set(Date.now.timeIntervalSince1970, forKey: lastCheckKey)
         guard case .available(let release)? = try? await check() else { return }
-        Notifier.post(title: "Gota \(release.version) está disponible", body: "Pulsa para descargarla.", opening: release.page)
+        Notifier.post(title: String(localized: "Gota \(release.version) está disponible"), body: String(localized: "Pulsa para descargarla."), opening: release.page)
     }
 
     @MainActor
@@ -103,20 +103,20 @@ enum UpdateChecker {
         let alert = NSAlert()
         switch outcome {
         case .success(.available(let release)):
-            alert.messageText = "Gota \(release.version) está disponible"
-            alert.informativeText = "Tienes la \(currentVersion). Descarga la nueva, sal de Gota y reemplázala en Aplicaciones."
-            alert.addButton(withTitle: "Descargar")
-            alert.addButton(withTitle: "Más tarde")
+            alert.messageText = String(localized: "Gota \(release.version) está disponible")
+            alert.informativeText = String(localized: "Tienes la \(currentVersion). Descarga la nueva, sal de Gota y reemplázala en Aplicaciones.")
+            alert.addButton(withTitle: String(localized: "Descargar"))
+            alert.addButton(withTitle: String(localized: "Más tarde"))
             if alert.runModal() == .alertFirstButtonReturn {
                 NSWorkspace.shared.open(release.page)
             }
         case .success(.upToDate(let version)):
-            alert.messageText = "Gota está al día"
-            alert.informativeText = "Tienes la última versión (\(version))."
+            alert.messageText = String(localized: "Gota está al día")
+            alert.informativeText = String(localized: "Tienes la última versión (\(version)).")
             alert.runModal()
         case .failure:
-            alert.messageText = "No se pudo buscar actualizaciones"
-            alert.informativeText = "Revisa tu conexión a internet e inténtalo de nuevo."
+            alert.messageText = String(localized: "No se pudo buscar actualizaciones")
+            alert.informativeText = String(localized: "Revisa tu conexión a internet e inténtalo de nuevo.")
             alert.alertStyle = .warning
             alert.runModal()
         }

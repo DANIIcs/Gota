@@ -72,5 +72,10 @@ Xcode) and describe what they see.
 - A new Rust dependency or a docxide update goes through `cargo audit` (build.sh fails on any advisory); fonts in
   `Engines/Fonts` are the original metric-compatible builds (see `Engines/Fonts/SOURCE.md`): never swap them without
   measuring against Word.
-- Max 8 bubbles per mode. UI text is Spanish for now; keep strings short.
+- Max 8 bubbles per mode. Keep strings short.
+- UI text follows the Mac's language (Spanish source, English translation) via `Gota/Resources/Localizable.xcstrings`.
+  SwiftUI literals (`Text("…")`) are picked up automatically; any other user-facing `String` (titles in enums,
+  notifications, errors, alerts, file-name parts) must be `String(localized: "…")`. After adding strings, build and run
+  `xcrun xcstringstool sync Gota/Resources/Localizable.xcstrings --stringsdata <the build's *.stringsdata>` (or open
+  the catalog in Xcode), then add the English translation: an untranslated string shows in Spanish to English users.
 - Add unit tests for logic changes (catalog, geometry, naming). Keep functions small and comment the *why*.

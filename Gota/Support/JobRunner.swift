@@ -19,7 +19,7 @@ final class JobRunner: ObservableObject {
 
     func run(_ action: WheelAction, on files: [URL]) {
         running += 1
-        let label = files.count == 1 ? files[0].lastPathComponent : "\(files.count) archivos"
+        let label = files.count == 1 ? files[0].lastPathComponent : String(localized: "\(files.count) archivos")
 
         Task {
             defer { running -= 1 }
@@ -29,7 +29,7 @@ final class JobRunner: ObservableObject {
                 remember(JobResult(title: "\(action.title) · \(label)", outputs: outputs, failed: false))
                 Self.playSound(failed: false)
                 if !outputs.isEmpty {
-                    Notifier.post(title: "Listo: \(action.title)", body: outputs.map(\.lastPathComponent).joined(separator: ", "))
+                    Notifier.post(title: String(localized: "Listo: \(action.title)"), body: outputs.map(\.lastPathComponent).joined(separator: ", "))
                     if Preferences.revealInFinder {
                         NSWorkspace.shared.activateFileViewerSelecting(outputs)
                     }
@@ -37,7 +37,7 @@ final class JobRunner: ObservableObject {
             } catch {
                 remember(JobResult(title: "\(action.title) · \(label)", outputs: [], failed: true))
                 Self.playSound(failed: true)
-                Notifier.post(title: "No se pudo: \(action.title)", body: error.localizedDescription,
+                Notifier.post(title: String(localized: "No se pudo: \(action.title)"), body: error.localizedDescription,
                               opening: (error as? ConversionError)?.helpURL)
             }
         }

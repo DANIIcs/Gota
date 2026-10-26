@@ -35,7 +35,7 @@ enum FileActions {
             for file in files {
                 try FileManager.default.copyItem(at: file, to: staging.appendingPathComponent(file.lastPathComponent))
             }
-            let output = Output.unique(first.deletingLastPathComponent(), base: "Archivo", extension: "zip")
+            let output = Output.unique(first.deletingLastPathComponent(), base: String(localized: "Archivo", comment: "Name of the ZIP made from several files"), extension: "zip")
             try await Shell.run("/usr/bin/ditto", ["-c", "-k", "--sequesterRsrc", "--keepParent", staging.path, output.path])
             return output
         }
