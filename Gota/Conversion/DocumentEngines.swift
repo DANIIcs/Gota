@@ -26,8 +26,9 @@ enum DocumentEngines {
     static let keynote = KeynoteEngine()
     static let pages = PagesEngine()
     static let native = NativeDocumentEngine()
+    static let markdown = MarkdownEngine()
 
-    static let all: [any DocumentEngine] = [word, powerPoint, docxide, libreOffice, keynote, pages, native]
+    static let all: [any DocumentEngine] = [word, powerPoint, docxide, libreOffice, keynote, pages, native, markdown]
 
     /// The engines for a format, best first, from measurements against Word's and PowerPoint's own PDFs
     /// (docs/MOTORES.md). Three tiers:
@@ -42,6 +43,7 @@ enum DocumentEngines {
         case "doc", "odt", "rtf", "html", "htm": [word, libreOffice, native]
         case "txt": [word, native, libreOffice]
         case "rtfd": [native]
+        case "md", "markdown", "mdown", "mkd": [markdown]
         case "pages": [libreOffice, pages]
         case "pptx", "ppt", "ppsx", "pps", "odp": [powerPoint, libreOffice, keynote]
         case "key": [libreOffice, keynote]
@@ -375,6 +377,22 @@ struct PagesEngine: DocumentEngine {
         end run
         """
         try await AppleScriptExport.run(script, input: input, output: output, by: name)
+    }
+}
+
+/// Markdown through macOS's own parser and text system (see `MarkdownConverter`): no other engine reads it.
+struct MarkdownEngine: DocumentEngine {
+    let name = "Markdown (macOS)"
+    let isAvailable = true
+
+    func canConvert(_ input: URL) -> Bool {
+        MarkdownConverter.extensions.contains(input.pathExtension.lowercased())
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        try await MainActor.run {
+            try MarkdownConverter.toPDF(input, output: output)
+        }
     }
 }
 

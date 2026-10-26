@@ -50,6 +50,7 @@ contra el PDF de Word o PowerPoint (SSIM, 1,0 = idéntico):
 | `.docx` | Word | **docxide** (0,948) | LibreOffice → macOS |
 | `.doc` `.odt` `.rtf` `.html` | Word | **LibreOffice** | macOS |
 | `.txt` | Word | **macOS** | LibreOffice |
+| `.md` (Markdown) | — | **macOS** (lector de Markdown de Foundation → HTML con estilo → TextKit) | — |
 | `.pptx` `.ppt` `.odp` | PowerPoint | **LibreOffice** | Keynote |
 | `.key` / `.pages` | — | **LibreOffice** | Keynote / Pages |
 

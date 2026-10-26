@@ -10,7 +10,7 @@ Start dragging a file in Finder, hold **⇧**, and drop it on a format. Your fil
 
 | Key while dragging | Wheel |
 |---|---|
-| **⇧ Shift** | **Convert** — images (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word / images / text, Word and text documents → PDF / Word / text / HTML, PowerPoint and Keynote → PDF / PNG / JPEG per slide, video (MP4, MOV, audio only), audio (M4A, WAV, AIFF) |
+| **⇧ Shift** | **Convert** — images (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word / images / text, Word and text documents → PDF / Word / text / HTML, Markdown → PDF / Word / HTML, PowerPoint and Keynote → PDF / PNG / JPEG per slide, video (MP4, MOV, audio only), audio (M4A, WAV, AIFF) |
 | **⌥ Option** | **Tools** — compress / resize images, merge / split / rotate PDFs, compress video to 720p |
 | **⌃ Control** | **Actions** — AirDrop, ZIP, copy path, reveal in Finder |
 

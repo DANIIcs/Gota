@@ -12,7 +12,8 @@ enum FileKind: Hashable, Sendable {
     case folder
     case other
 
-    static let documentExtensions: Set<String> = ["docx", "doc", "odt", "rtf", "rtfd", "pages", "txt", "html", "htm"]
+    static let documentExtensions = Set(["docx", "doc", "odt", "rtf", "rtfd", "pages", "txt", "html", "htm"])
+        .union(MarkdownConverter.extensions)
     static let presentationExtensions: Set<String> = ["pptx", "ppt", "ppsx", "pps", "key", "odp"]
 
     static func of(_ url: URL) -> FileKind {

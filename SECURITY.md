@@ -27,6 +27,9 @@ Please **don't open a public issue**. Use GitHub's private reporting instead:
   (`file:///…`, `../`). Gota keeps only images from the document's own folder (built-in engine) and
   runs LibreOffice with `BlockUntrustedRefererLinks`, so a crafted file can't smuggle your files
   into a PDF you send back.
+- **Markdown**: text is escaped (no HTML or scripts from the file), links only keep `https`/`mailto`, and only images
+  from the document's own folder are included: a remote image would be fetched on conversion and tell the sender when
+  the file was opened.
 - **Size limits**: PDF pages exported as images are capped at 10 000 px, and `.docx` files that unpack to more
   than 1 GB ("zip bombs") are refused before the engine opens them, so a crafted file can't exhaust memory.
 - **Bundled engine**: docxide-pdf runs as a separate process with a timeout, never follows links to other files, has

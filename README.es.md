@@ -10,7 +10,7 @@ Empieza a arrastrar un archivo en Finder, mantén **⇧** y suéltalo sobre un f
 
 | Tecla mientras arrastras | Rueda |
 |---|---|
-| **⇧ Shift** | **Convertir** — imágenes (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word / imágenes / texto, documentos de Word y de texto → PDF / Word / texto / HTML, PowerPoint y Keynote → PDF / PNG / JPEG por diapositiva, vídeo (MP4, MOV, solo audio), audio (M4A, WAV, AIFF) |
+| **⇧ Shift** | **Convertir** — imágenes (PNG, JPEG, HEIC, TIFF, PDF), PDF → Word / imágenes / texto, documentos de Word y de texto → PDF / Word / texto / HTML, Markdown → PDF / Word / HTML, PowerPoint y Keynote → PDF / PNG / JPEG por diapositiva, vídeo (MP4, MOV, solo audio), audio (M4A, WAV, AIFF) |
 | **⌥ Option** | **Herramientas** — comprimir / reducir imágenes, unir / dividir / rotar PDF, comprimir vídeo a 720p |
 | **⌃ Control** | **Acciones** — AirDrop, ZIP, copiar ruta, mostrar en Finder |
 

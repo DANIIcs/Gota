@@ -83,11 +83,24 @@ enum Catalog {
                 .eachFile(id: "doc-pdf", title: "PDF", symbol: "doc.richtext") { try await DocumentEngines.toPDF($0) }.producing(.pdf),
             ]
             actions += combined(files, id: "doc-pdf", title: "PDF", output: .pdf) { [try await DocumentEngines.toSinglePDF($0)] }
+            // Markdown has its own converter; mixed with other documents, only PDF works for all of them.
+            let markdown = files.filter { MarkdownConverter.extensions.contains($0.pathExtension.lowercased()) }
+            if !markdown.isEmpty {
+                guard markdown.count == files.count else { return actions }
+                return actions + [
+                    .eachFile(id: "md-docx", title: "Word", symbol: "doc.text") { file in
+                        try await MainActor.run { try MarkdownConverter.toWord(file) }
+                    }.producing(docx),
+                    .eachFile(id: "md-html", title: "HTML", symbol: "chevron.left.forwardslash.chevron.right") {
+                        try MarkdownConverter.toHTML($0)
+                    }.producing(.html),
+                ]
+            }
             // textutil can't read Pages documents: only the PDF engines (LibreOffice) can.
             guard !files.contains(where: { $0.pathExtension.lowercased() == "pages" }) else { return actions }
             let targets: [(id: String, title: String, symbol: String, format: String, extensions: Set<String>)] = [
                 ("doc-docx", "Word", "doc.text", "docx", ["docx"]),
-                ("doc-txt", "Texto", "text.alignleft", "txt", ["txt"]),
+                ("doc-txt", String(localized: "Texto"), "text.alignleft", "txt", ["txt"]),
                 ("doc-html", "HTML", "chevron.left.forwardslash.chevron.right", "html", ["html", "htm"]),
             ]
             for target in targets where !all(files, haveExtension: target.extensions) {
