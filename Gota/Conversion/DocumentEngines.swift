@@ -4,9 +4,9 @@ import UniformTypeIdentifiers
 
 /// Something that can turn a Word-like document (DOCX, DOC, ODT, RTF…) into a PDF.
 ///
-/// Gota tries engines in order and uses the first one installed. Adding a new engine
-/// (ONLYOFFICE, a Rust engine like Oxi once it exports PDF…) means adding one type here
-/// and putting it in `DocumentEngines.all`. See docs/MOTORES.md.
+/// Each input format has its own ranking of engines (`DocumentEngines.ranking`), from measured
+/// fidelity. Adding an engine (a Rust engine like docxide-pdf, Oxi once it exports PDF…) means adding
+/// one type here and placing it in the rankings where its measurements put it. See docs/MOTORES.md.
 protocol DocumentEngine: Sendable {
     var name: String { get }
     var isAvailable: Bool { get }
@@ -19,20 +19,35 @@ extension DocumentEngine {
 }
 
 enum DocumentEngines {
-    /// Best fidelity first. The built-in engine is last and always there, so text documents never need
-    /// an install; presentations need LibreOffice or Keynote.
-    /// Measured against Word and PowerPoint's own PDFs (docs/MOTORES.md): LibreOffice beats Keynote
-    /// and Pages, so it comes first among the engines that need no permission.
-    static let all: [any DocumentEngine] = [
-        MicrosoftWordEngine(),
-        MicrosoftPowerPointEngine(),
-        LibreOfficeEngine(),
-        KeynoteEngine(),
-        NativeDocumentEngine(),
-    ]
+    static let word = MicrosoftWordEngine()
+    static let powerPoint = MicrosoftPowerPointEngine()
+    static let libreOffice = LibreOfficeEngine()
+    static let keynote = KeynoteEngine()
+    static let pages = PagesEngine()
+    static let native = NativeDocumentEngine()
+
+    static let all: [any DocumentEngine] = [word, powerPoint, libreOffice, keynote, pages, native]
+
+    /// The engines for a format, best first, from measurements against Word's and PowerPoint's own PDFs
+    /// (docs/MOTORES.md). Three tiers:
+    /// 1. Microsoft Office: exact, but opens its apps and asks for folders, so only when turned on.
+    /// 2. Engines that convert silently, by measured fidelity (LibreOffice wins everywhere but plain
+    ///    text, where macOS's own engine scored higher and needs no LibreOffice launch).
+    /// 3. Keynote and Pages, which open their app: only when nothing silent can read the file.
+    static func ranking(forExtension ext: String) -> [any DocumentEngine] {
+        switch ext.lowercased() {
+        case "docx", "doc", "odt", "rtf", "html", "htm": [word, libreOffice, native]
+        case "txt": [word, native, libreOffice]
+        case "rtfd": [native]
+        case "pages": [libreOffice, pages]
+        case "pptx", "ppt", "ppsx", "pps", "odp": [powerPoint, libreOffice, keynote]
+        case "key": [libreOffice, keynote]
+        default: []
+        }
+    }
 
     static func preferred(for input: URL) -> (any DocumentEngine)? {
-        all.first { $0.isAvailable && $0.canConvert(input) }
+        ranking(forExtension: input.pathExtension).first { $0.isAvailable && $0.canConvert(input) }
     }
 
     static func toPDF(_ input: URL) async throws -> URL {
@@ -110,9 +125,14 @@ struct MicrosoftWordEngine: DocumentEngine {
                         if (full name of document i) is (inFile as text) then set wasOpen to true
                     end repeat
                     open inFile
+                    -- Older formats take a while to open: wait for the document instead of giving up.
                     set theDoc to missing value
-                    repeat with i from 1 to (count of documents)
-                        if (full name of document i) is (inFile as text) then set theDoc to document i
+                    repeat 120 times
+                        repeat with i from 1 to (count of documents)
+                            if (full name of document i) is (inFile as text) then set theDoc to document i
+                        end repeat
+                        if theDoc is not missing value then exit repeat
+                        delay 0.5
                     end repeat
                     if theDoc is missing value then error "Word no pudo abrir el archivo."
                     save as theDoc file name outPath file format format PDF
@@ -157,9 +177,14 @@ struct MicrosoftPowerPointEngine: DocumentEngine {
                         if (full name of presentation i) is (item 1 of argv) then set wasOpen to true
                     end repeat
                     open inFile
+                    -- .ppt and .odp take a while to open: wait for the presentation instead of giving up.
                     set thePres to missing value
-                    repeat with i from 1 to (count of presentations)
-                        if (full name of presentation i) is (item 1 of argv) then set thePres to presentation i
+                    repeat 120 times
+                        repeat with i from 1 to (count of presentations)
+                            if (full name of presentation i) is (item 1 of argv) then set thePres to presentation i
+                        end repeat
+                        if thePres is not missing value then exit repeat
+                        delay 0.5
                     end repeat
                     if thePres is missing value then error "PowerPoint no pudo abrir el archivo."
                     save thePres in outPath as save as PDF
@@ -267,6 +292,39 @@ struct KeynoteEngine: DocumentEngine {
             with timeout of 600 seconds
                 tell application "Keynote"
                     -- If the user already has this presentation open, leave it open.
+                    set openNames to name of every document
+                    set theDoc to open inFile
+                    export theDoc to outFile as PDF
+                    if openNames does not contain (name of theDoc) then close theDoc saving no
+                end tell
+            end timeout
+        end run
+        """
+        try await AppleScriptExport.run(script, input: input, output: output, by: name)
+    }
+}
+
+/// Apple's Pages, driven by AppleScript: the original app for .pages documents. It opens its window
+/// and asks once to be controlled, so it's only used for .pages files when LibreOffice is missing.
+struct PagesEngine: DocumentEngine {
+    let name = "Pages"
+
+    var isAvailable: Bool {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.iWork.Pages") != nil
+    }
+
+    func canConvert(_ input: URL) -> Bool {
+        input.pathExtension.lowercased() == "pages"
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        let script = """
+        on run argv
+            set inFile to POSIX file (item 1 of argv)
+            set outFile to POSIX file (item 2 of argv)
+            with timeout of 600 seconds
+                tell application "Pages"
+                    -- If the user already has this document open, leave it open.
                     set openNames to name of every document
                     set theDoc to open inFile
                     export theDoc to outFile as PDF

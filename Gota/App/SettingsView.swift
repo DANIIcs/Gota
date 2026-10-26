@@ -124,8 +124,11 @@ struct SettingsView: View {
                         Link("Instalar (gratis)…", destination: LibreOfficeEngine.downloadPage)
                     }
                 }
-                LabeledContent("Keynote (presentaciones)") {
+                LabeledContent("Keynote (.key, si falta LibreOffice)") {
                     EngineStatus(installed: KeynoteEngine().isAvailable)
+                }
+                LabeledContent("Pages (.pages, si falta LibreOffice)") {
+                    EngineStatus(installed: PagesEngine().isAvailable)
                 }
                 LabeledContent("macOS (integrado)") {
                     EngineStatus(installed: true)
@@ -134,7 +137,7 @@ struct SettingsView: View {
                 Text("Documentos y presentaciones → PDF")
             } footer: {
                 Text(LibreOfficeEngine().isAvailable
-                     ? "Gota usa el primero disponible, sin abrir ventanas. LibreOffice es el más fiel a Word y PowerPoint."
+                     ? "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: LibreOffice para Word y PowerPoint, macOS para texto plano."
                      : "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.")
             }
             Section {

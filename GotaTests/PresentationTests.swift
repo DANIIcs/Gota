@@ -90,3 +90,41 @@ final class PresentationTests: XCTestCase {
         return pptx
     }
 }
+
+/// The per-format rankings follow the measurements in docs/MOTORES.md.
+final class EngineRankingTests: XCTestCase {
+    private func names(_ ext: String) -> [String] {
+        DocumentEngines.ranking(forExtension: ext).map(\.name)
+    }
+
+    func testEveryDocumentAndPresentationFormatHasAnEngine() {
+        let formats = FileKind.documentExtensions.union(FileKind.presentationExtensions)
+        for ext in formats {
+            XCTAssertFalse(names(ext).isEmpty, ext)
+        }
+    }
+
+    func testLibreOfficeBeatsTheBuiltInEngineForWordFiles() {
+        for ext in ["docx", "doc", "odt", "rtf", "html"] {
+            let order = names(ext)
+            XCTAssertLessThan(order.firstIndex(of: "LibreOffice")!, order.firstIndex(of: "macOS (integrado)")!, ext)
+        }
+    }
+
+    func testPlainTextUsesTheBuiltInEngineBeforeLibreOffice() {
+        let order = names("txt")
+        XCTAssertLessThan(order.firstIndex(of: "macOS (integrado)")!, order.firstIndex(of: "LibreOffice")!)
+    }
+
+    func testAppsThatOpenWindowsComeAfterSilentEngines() {
+        XCTAssertEqual(names("key"), ["LibreOffice", "Keynote"])
+        XCTAssertEqual(names("pages"), ["LibreOffice", "Pages"])
+        XCTAssertEqual(names("pptx").last, "Keynote")
+    }
+
+    func testOfficeIsOnlyUsedWhenTurnedOn() {
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftOfficeKey)
+        let docx = FileManager.default.temporaryDirectory.appendingPathComponent("a.docx")
+        XCTAssertNotEqual(DocumentEngines.preferred(for: docx)?.name, "Microsoft Word")
+    }
+}
