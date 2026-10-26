@@ -5,6 +5,8 @@ struct SettingsView: View {
     @AppStorage(Preferences.revealInFinderKey) private var revealInFinder = false
     @AppStorage(Preferences.useMicrosoftOfficeKey) private var useMicrosoftOffice = false
     @AppStorage(Preferences.playSoundKey) private var playSound = true
+    @AppStorage(Preferences.downloadOpenFontsKey) private var downloadOpenFonts = true
+    @State private var downloadedFontsSize = GoogleFonts.downloadedSize(in: FontResolver.downloadedFonts)
     @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
     @AppStorage(WheelMaterial.opacityKey) private var opacity = 0.0
     @AppStorage(WheelColor.key) private var wheelColor = WheelColor.automatic
@@ -152,6 +154,24 @@ struct SettingsView: View {
                 Text(LibreOfficeEngine().isAvailable
                      ? "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano."
                      : "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.")
+            }
+            Section {
+                Toggle("Descargar fuentes libres que falten", isOn: $downloadOpenFonts)
+                LabeledContent("Fuentes descargadas") {
+                    HStack {
+                        Text(ByteCountFormatter.string(fromByteCount: downloadedFontsSize, countStyle: .file))
+                            .foregroundStyle(.secondary)
+                        Button("Borrar") {
+                            try? FileManager.default.removeItem(at: FontResolver.downloadedFonts)
+                            downloadedFontsSize = 0
+                        }
+                        .disabled(downloadedFontsSize == 0)
+                    }
+                }
+            } header: {
+                Text("Fuentes")
+            } footer: {
+                Text("Si un Word usa una fuente libre que no tienes (como Poppins), Gota la descarga una vez de Google Fonts para que el PDF salga igual. Solo se envía el nombre de la fuente, nunca tu documento.")
             }
             Section {
                 Toggle("Usar Microsoft Office", isOn: $useMicrosoftOffice)
@@ -496,6 +516,13 @@ private struct ColorSwatches: View {
 }
 
 enum Preferences {
+    static let downloadOpenFontsKey = "downloadOpenFonts"
+
+    /// On unless turned off: a fresh install has no value stored yet.
+    static var downloadOpenFonts: Bool {
+        UserDefaults.standard.object(forKey: downloadOpenFontsKey) as? Bool ?? true
+    }
+
     static let revealInFinderKey = "revealInFinder"
     static let playSoundKey = "playSound"
 

@@ -239,12 +239,17 @@ struct DocxideEngine: DocumentEngine {
 
     func convertToPDF(_ input: URL, output: URL) async throws {
         guard let binary else { throw ConversionError.noEngine("Esta copia de Gota no incluye su motor de Word.") }
-        var environment: [String: String] = [:]
-        if let fonts = Bundle.main.resourceURL?.appendingPathComponent("Fonts") {
-            environment["DOCXIDE_FONTS"] = fonts.path
-        }
+        let fonts = await FontResolver.prepare(for: input, bundled: Bundle.main.resourceURL?.appendingPathComponent("Fonts"))
+        let environment = ["DOCXIDE_FONTS": fonts.folders.map(\.path).joined(separator: ":")]
         try await Shell.run(binary.path, [input.path, output.path], environment: environment, timeout: .seconds(120))
         try Output.requireCreated(output, by: name, from: input)
+        if !fonts.missing.isEmpty {
+            // The PDF is made, but in a substitute font: say so instead of leaving a silent difference.
+            Notifier.post(
+                title: "Faltan fuentes en «\(input.lastPathComponent)»",
+                body: "\(fonts.missing.joined(separator: ", ")) no está en tu Mac y no es libre: el PDF puede verse distinto. Para el formato exacto, instálala o activa Microsoft Office en Ajustes → Motores."
+            )
+        }
     }
 }
 
