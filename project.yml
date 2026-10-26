@@ -9,6 +9,8 @@ options:
   deploymentTarget:
     macOS: "26.0"                   # Liquid Glass (SwiftUI glassEffect) needs macOS 26+
   createIntermediateGroups: true
+  # The Xcode the project is checked against: older values make Xcode show "Update to recommended settings".
+  xcodeVersion: "27.1"
   developmentLanguage: es
 
 configFiles:
@@ -21,6 +23,12 @@ settings:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     DEAD_CODE_STRIPPING: YES
+    # Xcode's recommended settings for current projects.
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
+    ENABLE_STRICT_OBJC_MSGSEND: YES
   configs:
     # Hardened runtime only for Release: with ad-hoc signing in Debug it would stop the tests from loading.
     Release:
