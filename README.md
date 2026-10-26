@@ -47,7 +47,7 @@ xcodegen
 open Gota.xcodeproj   # then ⌘R
 ```
 
-Full setup guide (Spanish): [docs/GUIA.md](docs/GUIA.md). To publish a release: `scripts/release.sh --publish`.
+Full setup guide (Spanish): [docs/GUIA.md](docs/GUIA.md). How the conversion engines work (Spanish): [docs/COMO-FUNCIONA.md](docs/COMO-FUNCIONA.md). To publish a release: `scripts/release.sh --publish`.
 
 ## Security
 

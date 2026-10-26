@@ -45,7 +45,7 @@ xcodegen
 open Gota.xcodeproj   # luego ⌘R
 ```
 
-Guía completa paso a paso: [docs/GUIA.md](docs/GUIA.md). Para publicar una versión: `scripts/release.sh --publish`.
+Guía completa paso a paso: [docs/GUIA.md](docs/GUIA.md). Cómo funcionan los motores por dentro: [docs/COMO-FUNCIONA.md](docs/COMO-FUNCIONA.md). Para publicar una versión: `scripts/release.sh --publish`.
 
 ## Seguridad
 

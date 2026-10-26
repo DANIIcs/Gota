@@ -40,7 +40,7 @@ Xcode) and describe what they see.
   `metric-clones.patch`; the binary goes to `build/engines/` and is copied into `Contents/MacOS` by a build phase,
   optional so Gota builds without Rust), `Fonts/` (Carlito, Caladea) and `Licenses/` (shipped in the app).
 - `GotaTests` — XCTest unit tests for pure logic.
-- `docs/` — Spanish docs: `INSTALAR.md` (end users), `GUIA.md` (development + releases), `MOTORES.md` (document
+- `docs/` — Spanish docs: `COMO-FUNCIONA.md` (how engines are picked, run and bundled), `INSTALAR.md` (end users), `GUIA.md` (development + releases), `MOTORES.md` (document
   engines research), `AGREGAR-CONVERSION.md`, `RELEASE-NOTES.md` (body of the next GitHub release).
 - `scripts/release.sh` — Release build → `dist/Gota-<version>.zip` + SHA-256; `--publish` tags and uploads it.
 
