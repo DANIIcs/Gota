@@ -1,0 +1,7 @@
+# Las acciones de GitHub van fijadas por SHA: Dependabot propone el SHA nuevo con su versión.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

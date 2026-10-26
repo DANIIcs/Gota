@@ -1,0 +1,110 @@
+name: Seguridad
+
+# Gota abre archivos que llegan de otras personas y lleva un motor de terceros (docxide-pdf) dentro:
+# cada cambio se revisa antes de llegar a main, y las dependencias se vuelven a auditar cada semana
+# porque las vulnerabilidades nuevas aparecen sin que nadie toque el código.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 11 * * 1' # lunes 06:00 en Lima
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Secretos, análisis estático y workflows en un solo job: cada paso dura segundos y GitHub cobra
+  # cada job redondeado al minuto. Cada paso corre aunque falle el anterior (`!cancelled()`), para
+  # que un hallazgo no esconda los demás.
+  analisis:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        with:
+          python-version: '3.12'
+      - name: Secretos en todo el historial
+        env:
+          # Binario del release oficial, verificado con el hash de gitleaks_8.30.1_checksums.txt.
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --no-banner --redact=100 .
+      - name: Análisis estático (Swift, secretos, workflows)
+        if: ${{ !cancelled() }}
+        env:
+          SEMGREP_SEND_METRICS: "off"
+        run: |
+          python -m pip install --quiet semgrep==1.176.0
+          semgrep scan --metrics=off --error \
+            --config p/swift --config p/secrets --config p/github-actions \
+            Gota GotaTests scripts Engines .github
+      - name: Workflows (actionlint)
+        if: ${{ !cancelled() }}
+        env:
+          ACTIONLINT_VERSION: 1.7.12
+          ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+        run: |
+          set -euo pipefail
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/actionlint.tar.gz" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -color
+
+  # Las dependencias de Rust que viajan dentro de Gota.app: docxide en la versión fijada, con el
+  # parche de Gota aplicado, tal como lo compila Engines/docxide/build.sh.
+  dependencias:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: docxide en la versión fijada, con el parche de Gota
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/docxide"
+          git init --quiet "$src"
+          git -C "$src" remote add origin https://github.com/sverrejb/docxide-pdf
+          git -C "$src" fetch --quiet --depth 1 origin "$(cat Engines/docxide/REVISION)"
+          git -C "$src" checkout --quiet FETCH_HEAD
+          git -C "$src" apply "$GITHUB_WORKSPACE/Engines/docxide/gota.patch"
+      - name: Vulnerabilidades conocidas (RustSec)
+        # RUSTSEC-2026-0192: ttf-parser sin mantenimiento, sin fallo conocido ni reemplazo (SECURITY.md).
+        run: |
+          set -euo pipefail
+          cargo install --quiet --locked cargo-audit@0.22.2
+          cargo audit --file "$RUNNER_TEMP/docxide/Cargo.lock" --deny warnings --ignore RUSTSEC-2026-0192
+
+  pruebas:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Compilar y probar
+        # Sin el motor de Word (necesita Rust): sus pruebas se saltan y las demás corren igual.
+        run: |
+          set -euo pipefail
+          brew install --quiet xcodegen
+          xcodegen
+          xcodebuild -scheme Gota -destination 'platform=macOS' -derivedDataPath build/ci test \
+            CODE_SIGNING_ALLOWED=YES | tail -40
