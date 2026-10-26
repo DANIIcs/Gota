@@ -1,0 +1,44 @@
+name: Bug
+description: Something doesn't work or converts badly / Algo falla o convierte mal
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / ¿Qué pasó?
+      description: What you did, what you expected and what you got. / Qué hiciste, qué esperabas y qué obtuviste.
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: File type and action / Tipo de archivo y acción
+      placeholder: ".docx → PDF, ⇧ wheel"
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Gota and macOS versions / Versiones de Gota y macOS
+      description: Gota → Ajustes → Acerca de; Apple menu → About This Mac.
+      placeholder: "Gota 0.2.3, macOS 26.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Document engine (documents only) / Motor (solo documentos)
+      description: Ajustes → Motores
+      options:
+        - Not a document / No es un documento
+        - Built-in .docx engine (docxide)
+        - LibreOffice
+        - Microsoft Office
+        - Keynote / Pages
+        - macOS
+        - Don't know / No sé
+  - type: textarea
+    id: extra
+    attributes:
+      label: Sample file, screenshots / Archivo de ejemplo, capturas
+      description: Only files without personal data. / Solo archivos sin datos personales.

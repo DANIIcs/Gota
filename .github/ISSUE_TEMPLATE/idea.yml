@@ -1,0 +1,15 @@
+name: Idea
+description: A new format, action or improvement / Un formato, acción o mejora nueva
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Gota to do? / ¿Qué te gustaría que hiciera Gota?
+      placeholder: "Convert .webp to PNG with ⇧ / Convertir .webp a PNG con ⇧"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why? How would you use it? / ¿Para qué lo usarías?
