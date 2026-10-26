@@ -169,7 +169,7 @@ struct SettingsView: View {
         Form {
             Section {
                 VStack(spacing: 6) {
-                    Image(nsImage: NSApp.applicationIconImage)
+                    Image(nsImage: AppIcon.image)
                         .resizable()
                         .frame(width: 96, height: 96)
                     Text("Gota").font(.title.bold())
@@ -285,6 +285,24 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The System Settings pane whose icon this one borrows.
+    private var systemPaneBundle: String? {
+        switch self {
+        case .general: "GeneralSettings"
+        case .appearance: "Appearance"
+        case .keys: "KeyboardSettings"
+        case .engines: "LoginItems" // "Login Items & Extensions": the add-ons that do the work
+        case .about: nil
+        }
+    }
+
+    var systemIcon: NSImage? {
+        guard let name = systemPaneBundle else { return nil }
+        let path = "/System/Library/ExtensionKit/Extensions/\(name).appex"
+        guard FileManager.default.fileExists(atPath: path) else { return nil }
+        return NSWorkspace.shared.icon(forFile: path)
+    }
+
     var summary: String {
         switch self {
         case .general: "Inicio de sesión y qué pasa al terminar cada conversión."
@@ -316,11 +334,38 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 }
 
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
-/// A colored symbol on a neutral rounded tile, the way System Settings draws its icons since macOS 26:
-/// a dark tile in Dark Mode and a light one in Light Mode, following the system's appearance.
+enum AppIcon {
+    /// Gota's icon from its own asset catalog. `NSApp.applicationIconImage` answered the generic
+    /// placeholder for this menu bar app, so the About pane showed an empty grid.
+    static var image: NSImage {
+        NSImage(named: "AppIcon")
+            ?? Bundle.main.url(forResource: "AppIcon", withExtension: "icns").flatMap(NSImage.init(contentsOf:))
+            ?? NSApp.applicationIconImage
+    }
+}
+
+/// The pane's icon. Where System Settings has a matching pane, it's that pane's real icon, read from
+/// macOS at run time (never copied into Gota), so it is identical and follows every macOS redesign.
+/// About shows Gota's own icon, as Apple's apps do.
 private struct SettingsIcon: View {
     let pane: SettingsPane
     var size: CGFloat = 22
+
+    var body: some View {
+        if pane == .about {
+            Image(nsImage: AppIcon.image).resizable().frame(width: size, height: size)
+        } else if let icon = pane.systemIcon {
+            Image(nsImage: icon).resizable().frame(width: size, height: size)
+        } else {
+            DrawnSettingsIcon(pane: pane, size: size)
+        }
+    }
+}
+
+/// Fallback when a macOS version doesn't have the matching System Settings pane.
+private struct DrawnSettingsIcon: View {
+    let pane: SettingsPane
+    let size: CGFloat
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
