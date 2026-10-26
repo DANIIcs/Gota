@@ -169,7 +169,7 @@ struct SettingsView: View {
         Form {
             Section {
                 VStack(spacing: 6) {
-                    Image(nsImage: AppIcon.image)
+                    Image(nsImage: AppIcon.image(points: 96))
                         .resizable()
                         .frame(width: 96, height: 96)
                     Text("Gota").font(.title.bold())
@@ -336,10 +336,25 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
 enum AppIcon {
     /// Gota's icon as macOS draws it for the app bundle, so it follows the user's icon style (default,
-    /// dark, clear or tinted). `NSApp.applicationIconImage` answered the generic placeholder for this
-    /// menu bar app, so the About pane showed an empty grid.
-    static var image: NSImage {
-        NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
+    /// dark, clear or tinted), already drawn at `points` (2× for Retina).
+    ///
+    /// macOS renders large icon sizes lazily: handed straight to SwiftUI, the big About icon showed
+    /// the generic placeholder grid while the small sidebar one was fine. Drawing it into a bitmap
+    /// here forces the real rendition.
+    static func image(points: CGFloat) -> NSImage {
+        let icon = NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
+        let pixels = Int(points * 2)
+        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
+                                         bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                         colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return icon }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        icon.draw(in: NSRect(x: 0, y: 0, width: pixels, height: pixels))
+        NSGraphicsContext.restoreGraphicsState()
+        rep.size = NSSize(width: points, height: points)
+        let image = NSImage(size: rep.size)
+        image.addRepresentation(rep)
+        return image
     }
 }
 
@@ -352,7 +367,7 @@ private struct SettingsIcon: View {
 
     var body: some View {
         if pane == .about {
-            Image(nsImage: AppIcon.image).resizable().frame(width: size, height: size)
+            Image(nsImage: AppIcon.image(points: size)).resizable().frame(width: size, height: size)
         } else if let icon = pane.systemIcon {
             Image(nsImage: icon).resizable().frame(width: size, height: size)
         } else {
