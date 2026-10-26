@@ -17,13 +17,19 @@ if [[ "${1:-}" == "--publish" && -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
+echo "→ Building the bundled .docx engine (docxide-pdf)"
+# Release builds must include it: without it .docx falls back to LibreOffice, which users may not have.
+Engines/docxide/build.sh
+
 echo "→ Building Gota $version (Release)"
 xcodegen --quiet
-rm -rf build dist
+# Only the release build's own folder: build/engines holds the docxide binary built just above.
+rm -rf build/release dist
 xcodebuild -scheme Gota -configuration Release -destination 'platform=macOS' \
-  -derivedDataPath build ONLY_ACTIVE_ARCH=NO build -quiet
+  -derivedDataPath build/release ONLY_ACTIVE_ARCH=NO build -quiet
 
-app=build/Build/Products/Release/Gota.app
+app=build/release/Build/Products/Release/Gota.app
+[[ -x "$app/Contents/MacOS/docxide-pdf" ]] || { echo "The .docx engine is missing from $app" >&2; exit 1; }
 codesign --verify --strict "$app"
 
 mkdir -p dist

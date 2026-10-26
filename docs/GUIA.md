@@ -114,7 +114,8 @@ El código vive en https://github.com/DANIIcs/Gota. Para que la gente lo descarg
 
 1. Sube el número de versión en `project.yml` (`MARKETING_VERSION`, por ejemplo `0.2.0`) y escribe las novedades en
    `docs/RELEASE-NOTES.md`. Haz commit y push.
-2. Prueba el paquete sin publicarlo:
+2. Ten Rust instalado (`rustup`, con los destinos `aarch64-apple-darwin` y `x86_64-apple-darwin`): el script compila
+   el motor de `.docx` incluido (`Engines/docxide/build.sh`). Prueba el paquete sin publicarlo:
    ```bash
    scripts/release.sh
    ```
