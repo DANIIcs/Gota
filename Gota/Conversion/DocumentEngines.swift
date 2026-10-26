@@ -239,6 +239,9 @@ struct DocxideEngine: DocumentEngine {
 
     func convertToPDF(_ input: URL, output: URL) async throws {
         guard let binary else { throw ConversionError.noEngine("Esta copia de Gota no incluye su motor de Word.") }
+        guard try await FontResolver.unpackedSize(of: input) <= FontResolver.maxPackageBytes else {
+            throw ConversionError.unsupported("documento demasiado grande una vez descomprimido")
+        }
         let fonts = await FontResolver.prepare(for: input, bundled: Bundle.main.resourceURL?.appendingPathComponent("Fonts"))
         let environment = ["DOCXIDE_FONTS": fonts.folders.map(\.path).joined(separator: ":")]
         try await Shell.run(binary.path, [input.path, output.path], environment: environment, timeout: .seconds(120))

@@ -73,6 +73,20 @@ enum FontResolver {
 
     static let maxXMLBytes = 60 * 1024 * 1024
 
+    /// Biggest .docx accepted once unpacked. Real documents with photos stay in the tens of MB; a
+    /// "zip bomb" of a few KB that unpacks to gigabytes would make the engine eat all the memory.
+    static let maxPackageBytes: Int64 = 1024 * 1024 * 1024
+
+    /// Unpacked size of the whole package, from its zip directory (nothing is unpacked).
+    static func unpackedSize(of docx: URL) async throws -> Int64 {
+        let listing = try await Shell.run("/usr/bin/unzip", ["-l", docx.path], timeout: .seconds(10))
+        // The last line is the total: "  123456   7 files".
+        guard let total = listing.split(separator: "\n").last?.split(separator: " ").first.flatMap({ Int64($0) }) else {
+            throw ConversionError.unreadable(docx)
+        }
+        return total
+    }
+
     private static func matches(of pattern: String, in text: String) -> [String] {
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         return regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap { match in

@@ -101,4 +101,21 @@ final class SecurityTests: XCTestCase {
         let rep = try XCTUnwrap(NSBitmapImageRep(data: Data(contentsOf: image)))
         XCTAssertLessThanOrEqual(rep.pixelsWide, Int(PDFTools.maxPagePixels))
     }
+
+    /// A "zip bomb" .docx: tiny on disk, huge unpacked. Its size is read from the zip directory
+    /// without unpacking, so the engine never gets it.
+    func testZipBombIsMeasuredWithoutUnpacking() async throws {
+        let bomb = dir.appendingPathComponent("bomba.docx")
+        // 64 MB of zeros compress to ~64 KB.
+        let zeros = dir.appendingPathComponent("ceros.xml")
+        FileManager.default.createFile(atPath: zeros.path, contents: Data(count: 64 * 1024 * 1024))
+        try await Shell.run("/usr/bin/zip", ["-q", "-j", bomb.path, zeros.path])
+        try FileManager.default.removeItem(at: zeros)
+
+        let onDisk = try XCTUnwrap(try bomb.resourceValues(forKeys: [.fileSizeKey]).fileSize)
+        XCTAssertLessThan(onDisk, 1024 * 1024)
+        let unpacked = try await FontResolver.unpackedSize(of: bomb)
+        XCTAssertEqual(unpacked, 64 * 1024 * 1024)
+        XCTAssertLessThan(FontResolver.maxPackageBytes, Int64(64) * 1024 * 1024 * 1024, "a limit well below a real bomb")
+    }
 }
