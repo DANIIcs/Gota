@@ -68,7 +68,7 @@ Para detenerla: botón ■ en Xcode (o **⌘.**).
 ### Permisos de macOS que te van a pedir
 
 - **Notificaciones**: la primera vez. Acéptalas para ver "Listo: PNG".
-- **Controlar Microsoft Word** (solo si activaste *Usar Microsoft Word* en Ajustes): acepta. Word puede pedir además permiso para la carpeta.
+- **Controlar Microsoft Word / PowerPoint** (solo si activaste *Usar Microsoft Office* en Ajustes): acepta. Pueden pedir además permiso para la carpeta.
 - Si al presionar ⇧ mientras arrastras **no aparece la rueda**, ve a *Configuración del Sistema → Privacidad y seguridad → Monitoreo de entrada* y activa Gota. (Normalmente no hace falta; ver `docs/MOTORES.md` → notas técnicas.)
 
 > Como por defecto la app se firma "para correr localmente" (sin cuenta de Apple), cada vez que compilas

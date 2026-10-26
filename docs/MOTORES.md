@@ -31,20 +31,38 @@ Conclusiones:
 ## Estrategia de Gota
 
 `Gota/Conversion/DocumentEngines.swift` define un protocolo `DocumentEngine` y una lista ordenada por fidelidad.
-Gota usa **el primero que esté instalado**:
+Gota usa **el primero que esté disponible y sepa leer el archivo**:
 
-1. **Microsoft Word** (si está instalado **y** activado en Ajustes) — vía AppleScript. Formato exacto, pero macOS pide
-   permiso para controlar Word y Word (que vive en un sandbox) pide acceso a la carpeta: por eso no va por defecto.
-2. **LibreOffice** (gratis) — modo `--headless`. También convierte presentaciones (PowerPoint, Keynote, ODP).
-3. **Keynote** (gratis, de Apple) — solo presentaciones, vía AppleScript. Pide permiso una vez, por eso va después
-   de LibreOffice.
+1. **Microsoft Word** y **Microsoft PowerPoint** (si están instalados **y** activas *Usar Microsoft Office* en
+   Ajustes) — vía AppleScript. Formato exacto, porque son el original. macOS pide permiso para controlarlos y, como
+   viven en un *sandbox*, pueden pedir acceso a la carpeta: por eso no van por defecto.
+2. **LibreOffice** (gratis) — modo `--headless`. Documentos y presentaciones. El más fiel de los que no piden permisos.
+3. **Keynote** (gratis, de Apple) — solo presentaciones, vía AppleScript. Pide permiso una vez.
 4. **macOS (integrado)** — `DocumentRenderer`: lee el documento con `NSAttributedString` y lo pagina con TextKit, el
-   mismo motor de TextEdit. Siempre disponible y sin permisos; respeta fuentes, estilos, listas y tablas, pero
-   columnas e imágenes flotantes pueden moverse. No lee `.pages`.
-3. *(futuro)* ONLYOFFICE, Oxi u opendoc cuando exporten PDF.
+   mismo motor de TextEdit. Siempre disponible y sin permisos, pero el menos fiel. No lee `.pages` ni presentaciones.
+5. *(futuro)* ONLYOFFICE, Oxi u opendoc cuando exporten PDF.
 
 Agregar un motor nuevo = crear un tipo que cumpla `DocumentEngine` y ponerlo en `DocumentEngines.all`.
 Así, cuando los motores en Rust maduren, Gota los adopta sin tocar la rueda ni el catálogo.
+
+## Medición propia (octubre 2026)
+
+Para decidir el orden se midió en un Mac con macOS 26: 3 documentos `.docx` (informe con encabezados, listas,
+encabezado/pie y salto de página; tablas con celdas combinadas y sombreadas más imagen; página horizontal a dos
+columnas con varias fuentes) y 2 `.pptx` (plantilla básica; formas, imagen, cuadro de texto y tabla), generados con
+`python-docx` / `python-pptx`. Cada motor exportó a PDF y cada página se comparó con la de **Word** o **PowerPoint**
+con SSIM (1,0 = idéntico; una página que falta cuenta 0).
+
+| Motor | vs Word (3 `.docx`) | vs PowerPoint (2 `.pptx`) | Notas |
+|---|---|---|---|
+| **LibreOffice** | **0,908** | **0,970** | Respeta columnas, tablas y páginas. El mejor sin Office. |
+| Keynote | — | 0,945 | Muy cerca; desplaza un poco algunos textos dentro de formas. |
+| Pages | 0,705 | — | **Ignora las dos columnas** y cambia tablas: no se usa. |
+| macOS (integrado) | 0,599 | — | Ignora columnas, pierde estilos de título y **le faltó una página** al informe. |
+
+Conclusiones: Office es el único exacto; sin Office, **LibreOffice primero**, luego Keynote para presentaciones y el
+motor de macOS solo como último recurso. Son documentos sintéticos con funciones estándar: con archivos reales más
+complejos (SmartArt, gráficos, fuentes incrustadas) LibreOffice baja (ver el benchmark de arriba: 0,858 contra Word).
 
 ### Idea a futuro: un "benchmark" propio
 

@@ -61,8 +61,8 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
 
 - **Notificaciones:** la primera vez Gota pregunta si puede mostrar notificaciones ("Listo: PNG"). Acepta para
   saber cuándo termina cada conversión.
-- **Controlar Microsoft Word:** solo si activas *Usar Microsoft Word* en Ajustes. Word también puede pedir acceso a
-  la carpeta.
+- **Controlar Microsoft Word / PowerPoint:** solo si activas *Usar Microsoft Office* en Ajustes. También pueden
+  pedir acceso a la carpeta (una vez por carpeta).
 - Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet**.
 
 ## 5. Usarla
@@ -87,7 +87,7 @@ Clic en la 💧 → **Ajustes…** (⌘,):
 - **Abrir Gota al iniciar sesión**, para tenerla siempre disponible.
 - **Mostrar el resultado en Finder** y **Sonido al terminar**.
 - **Apariencia de la rueda:** Liquid Glass o Transparente, opacidad y color (incluye Negro espacial y RGB).
-- **Documentos → PDF:** qué motor usar (macOS integrado, LibreOffice si lo tienes, o Microsoft Word).
+- **Motores:** qué usar para documentos y presentaciones: Microsoft Office (formato exacto), LibreOffice (el más fiel sin Office), Keynote o el integrado de macOS.
 
 ## 7. Actualizar
 
