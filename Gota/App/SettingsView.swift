@@ -117,6 +117,13 @@ struct SettingsView: View {
     private var engines: some View {
         Form {
             Section {
+                LabeledContent("Gota (Word .docx)") {
+                    if DocxideEngine().isAvailable {
+                        Label("Incluido", systemImage: "checkmark.circle.fill").foregroundStyle(Color.green)
+                    } else {
+                        EngineStatus(installed: false)
+                    }
+                }
                 LabeledContent("LibreOffice") {
                     if LibreOfficeEngine().isAvailable {
                         EngineStatus(installed: true)
@@ -137,7 +144,7 @@ struct SettingsView: View {
                 Text("Documentos y presentaciones → PDF")
             } footer: {
                 Text(LibreOfficeEngine().isAvailable
-                     ? "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: LibreOffice para Word y PowerPoint, macOS para texto plano."
+                     ? "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano."
                      : "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.")
             }
             Section {
@@ -169,6 +176,7 @@ struct SettingsView: View {
             Section {
                 LabeledContent("Privacidad", value: "Todo pasa en tu Mac, sin internet")
                 LabeledContent("Licencia", value: "MIT, código abierto")
+                LabeledContent("Incluye", value: "docxide-pdf (Apache-2.0), fuentes Carlito y Caladea (OFL)")
                 Link(destination: URL(string: "https://github.com/DANIIcs/Gota")!) {
                     Label("Código fuente en GitHub", systemImage: "arrow.up.right.square")
                 }

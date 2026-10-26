@@ -10,6 +10,7 @@ enum Shell {
         _ executable: String,
         _ arguments: [String],
         currentDirectory: URL? = nil,
+        environment: [String: String] = [:],
         timeout: Duration = .seconds(300)
     ) async throws -> String {
         // Output goes to a temp file instead of a pipe: a full pipe buffer could block the tool forever.
@@ -28,6 +29,9 @@ enum Shell {
         process.standardError = handle
         if let currentDirectory {
             process.currentDirectoryURL = currentDirectory
+        }
+        if !environment.isEmpty {
+            process.environment = ProcessInfo.processInfo.environment.merging(environment) { _, new in new }
         }
 
         let watchdog = Task {

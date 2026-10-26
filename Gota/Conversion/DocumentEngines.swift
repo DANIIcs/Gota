@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 /// Something that can turn a Word-like document (DOCX, DOC, ODT, RTF…) into a PDF.
 ///
 /// Each input format has its own ranking of engines (`DocumentEngines.ranking`), from measured
-/// fidelity. Adding an engine (a Rust engine like docxide-pdf, Oxi once it exports PDF…) means adding
+/// fidelity. Adding an engine (Oxi or BetterOffice once they export PDF…) means adding
 /// one type here and placing it in the rankings where its measurements put it. See docs/MOTORES.md.
 protocol DocumentEngine: Sendable {
     var name: String { get }
@@ -21,22 +21,25 @@ extension DocumentEngine {
 enum DocumentEngines {
     static let word = MicrosoftWordEngine()
     static let powerPoint = MicrosoftPowerPointEngine()
+    static let docxide = DocxideEngine()
     static let libreOffice = LibreOfficeEngine()
     static let keynote = KeynoteEngine()
     static let pages = PagesEngine()
     static let native = NativeDocumentEngine()
 
-    static let all: [any DocumentEngine] = [word, powerPoint, libreOffice, keynote, pages, native]
+    static let all: [any DocumentEngine] = [word, powerPoint, docxide, libreOffice, keynote, pages, native]
 
     /// The engines for a format, best first, from measurements against Word's and PowerPoint's own PDFs
     /// (docs/MOTORES.md). Three tiers:
     /// 1. Microsoft Office: exact, but opens its apps and asks for folders, so only when turned on.
-    /// 2. Engines that convert silently, by measured fidelity (LibreOffice wins everywhere but plain
-    ///    text, where macOS's own engine scored higher and needs no LibreOffice launch).
+    /// 2. Engines that convert silently, by measured fidelity: docxide for .docx (bundled with Gota),
+    ///    LibreOffice for the other Office formats, macOS's own engine for plain text (it scored
+    ///    higher and needs no LibreOffice launch).
     /// 3. Keynote and Pages, which open their app: only when nothing silent can read the file.
     static func ranking(forExtension ext: String) -> [any DocumentEngine] {
         switch ext.lowercased() {
-        case "docx", "doc", "odt", "rtf", "html", "htm": [word, libreOffice, native]
+        case "docx": [word, docxide, libreOffice, native]
+        case "doc", "odt", "rtf", "html", "htm": [word, libreOffice, native]
         case "txt": [word, native, libreOffice]
         case "rtfd": [native]
         case "pages": [libreOffice, pages]
@@ -212,6 +215,36 @@ enum AppleScriptExport {
         try await Shell.run("/usr/bin/osascript", ["-e", script, input.path, beside.path], timeout: .seconds(660))
         try Output.requireCreated(beside, by: app, from: input)
         try FileManager.default.moveItem(at: beside, to: output)
+    }
+}
+
+/// docxide-pdf, a Rust DOCX → PDF converter built to match Word's layout (Apache-2.0), bundled inside
+/// Gota by Engines/docxide/build.sh: no install, no window, under a second and ~35 MB of memory.
+/// Measured the most faithful engine for .docx without Office (docs/MOTORES.md). It gets the bundled
+/// Carlito and Caladea fonts, metric clones of Word's Calibri and Cambria, which Macs without Office
+/// don't have. It never follows links to other files (checked in SecurityTests) and has no network code.
+struct DocxideEngine: DocumentEngine {
+    let name = "Gota (docxide)"
+
+    private var binary: URL? {
+        Bundle.main.url(forAuxiliaryExecutable: "docxide-pdf")
+    }
+
+    /// Builds made without Rust don't bundle it; then .docx falls back to LibreOffice.
+    var isAvailable: Bool { binary != nil }
+
+    func canConvert(_ input: URL) -> Bool {
+        input.pathExtension.lowercased() == "docx"
+    }
+
+    func convertToPDF(_ input: URL, output: URL) async throws {
+        guard let binary else { throw ConversionError.noEngine("Esta copia de Gota no incluye su motor de Word.") }
+        var environment: [String: String] = [:]
+        if let fonts = Bundle.main.resourceURL?.appendingPathComponent("Fonts") {
+            environment["DOCXIDE_FONTS"] = fonts.path
+        }
+        try await Shell.run(binary.path, [input.path, output.path], environment: environment, timeout: .seconds(120))
+        try Output.requireCreated(output, by: name, from: input)
     }
 }
 
