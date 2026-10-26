@@ -334,14 +334,15 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
 enum AppIcon {
-    /// Gota's icon as macOS draws it for the app bundle, so it follows the user's icon style (default,
-    /// dark, clear or tinted), already drawn at `points` (2× for Retina).
+    /// Gota's icon from its own bundle, already drawn at `points` (2× for Retina).
     ///
-    /// macOS renders large icon sizes lazily: handed straight to SwiftUI, the big About icon showed
-    /// the generic placeholder grid while the small sidebar one was fine. Drawing it into a bitmap
-    /// here forces the real rendition.
+    /// Not from NSWorkspace: Launch Services caches app icons per size and path, and after an update it
+    /// kept answering the old large icon while the small one was new. Drawing into a bitmap also avoids
+    /// SwiftUI showing the lazily rendered placeholder grid.
     static func image(points: CGFloat) -> NSImage {
-        let icon = NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
+        let icon = NSImage(named: "AppIcon")
+            ?? Bundle.main.url(forResource: "AppIcon", withExtension: "icns").flatMap(NSImage.init(contentsOf:))
+            ?? NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
         let pixels = Int(points * 2)
         guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
                                          bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
