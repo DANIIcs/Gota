@@ -32,6 +32,28 @@ targets:
     platform: macOS
     sources:
       - path: Gota
+      # Carlito and Caladea (OFL), for the docxide engine: kept as a folder, Contents/Resources/Fonts.
+      - path: Engines/Fonts
+        type: folder
+        buildPhase: resources
+      # Their licenses travel with the app, as Apache-2.0 and the OFL require.
+      - path: Engines/Licenses
+        type: folder
+        buildPhase: resources
+    postBuildScripts:
+      # The bundled .docx engine (Engines/docxide/build.sh). Optional: without Rust there is no binary
+      # and Gota falls back to LibreOffice. Signed here, before Xcode seals the app.
+      - name: Bundle docxide engine
+        basedOnDependencyAnalysis: false
+        script: |
+          engine="$SRCROOT/build/engines/docxide-pdf"
+          if [ -f "$engine" ]; then
+            dest="$TARGET_BUILD_DIR/$EXECUTABLE_FOLDER_PATH/docxide-pdf"
+            cp "$engine" "$dest"
+            /usr/bin/codesign --force --sign "${EXPANDED_CODE_SIGN_IDENTITY:--}" --options runtime --timestamp=none "$dest"
+          else
+            echo "note: build/engines/docxide-pdf not found (run Engines/docxide/build.sh); .docx will use LibreOffice"
+          fi
     info:
       path: Gota/Support/Info.plist
       properties:
@@ -50,6 +72,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(GOTA_BUNDLE_ID)
         PRODUCT_NAME: Gota
+        # The docxide script reads build/engines, outside what script sandboxing allows by default.
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
         # Target-level settings beat the xcconfig, so signing goes through variables Local.xcconfig can override.
         CODE_SIGN_IDENTITY: $(GOTA_SIGN_IDENTITY)
         CODE_SIGN_STYLE: $(GOTA_SIGN_STYLE)
