@@ -36,11 +36,14 @@ Gota usa **el primero que esté disponible y sepa leer el archivo**:
 1. **Microsoft Word** y **Microsoft PowerPoint** (si están instalados **y** activas *Usar Microsoft Office* en
    Ajustes) — vía AppleScript. Formato exacto, porque son el original. macOS pide permiso para controlarlos y, como
    viven en un *sandbox*, pueden pedir acceso a la carpeta: por eso no van por defecto.
-2. **LibreOffice** (gratis) — modo `--headless`. Documentos y presentaciones. El más fiel de los que no piden permisos.
-3. **Keynote** (gratis, de Apple) — solo presentaciones, vía AppleScript. Pide permiso una vez.
-4. **macOS (integrado)** — `DocumentRenderer`: lee el documento con `NSAttributedString` y lo pagina con TextKit, el
+2. **docxide-pdf** (incluido en Gota, solo `.docx`) — motor en Rust hecho para imitar a Word, con un parche de Gota
+   para usar Carlito/Caladea (clones libres de Calibri/Cambria, también incluidos) cuando no hay fuentes de Office.
+   Sin instalar nada, sin ventanas, menos de 1 s y ~35 MB de RAM.
+3. **LibreOffice** (gratis) — modo `--headless`. El resto de formatos de Office y las presentaciones.
+4. **Keynote** / **Pages** (gratis, de Apple) — solo `.key` / `.pages` si falta LibreOffice. Abren su ventana.
+5. **macOS (integrado)** — `DocumentRenderer`: lee el documento con `NSAttributedString` y lo pagina con TextKit, el
    mismo motor de TextEdit. Siempre disponible y sin permisos, pero el menos fiel. No lee `.pages` ni presentaciones.
-5. *(futuro)* ONLYOFFICE, Oxi u opendoc cuando exporten PDF.
+6. *(futuro)* Oxi o BetterOffice cuando exporten PDF; ONLYOFFICE si su conversor gratuito deja de poner marca de agua.
 
 Agregar un motor nuevo = crear un tipo que cumpla `DocumentEngine` y ponerlo en `DocumentEngines.all`.
 Así, cuando los motores en Rust maduren, Gota los adopta sin tocar la rueda ni el catálogo.
@@ -66,7 +69,7 @@ Mismos documentos convertidos a cada formato (RTF/HTML/TXT con `textutil`, DOC/O
 
 | Formato | LibreOffice | macOS | Motor elegido |
 |---|---|---|---|
-| `.docx` | **0,908** | 0,599 | LibreOffice |
+| `.docx` | 0,908 | 0,599 | **docxide: 0,948** (ver abajo) |
 | `.doc` | **0,747** | 0,616 | LibreOffice |
 | `.odt` | **0,888** | 0,597 | LibreOffice |
 | `.rtf` | **0,820** | 0,759 | LibreOffice |
@@ -75,6 +78,21 @@ Mismos documentos convertidos a cada formato (RTF/HTML/TXT con `textutil`, DOC/O
 | `.pptx` | **0,970** | — | LibreOffice (Keynote: 0,945) |
 | `.ppt` | **0,960** | — | LibreOffice |
 | `.odp` | **0,905** | — | LibreOffice |
+
+### docxide-pdf (`.docx`)
+
+Mismos 3 documentos contra Word (el de columnas, con un único `w:cols` como lo guarda Word):
+
+| Variante | Informe | Tablas | Columnas | Media |
+|---|---|---|---|---|
+| docxide sin fuentes de Office (cae en Arial) | 0,825 | 0,745 | 0,786 | 0,785 |
+| docxide con las fuentes de Office | 0,977 | 0,973 | 0,761 | 0,904 |
+| **docxide + Carlito/Caladea (lo que usa Gota)** | 0,923 | 0,961 | 0,961 | **0,948** |
+| LibreOffice | 0,941 | 0,944 | 0,841 | 0,909 |
+
+Coincide con el benchmark publicado por su autor (174 documentos reales, contra Word): SSIM 84,8 frente a 68,0 de
+LibreOffice, mejor en 141 de 174. Seguridad: no sigue enlaces a archivos externos (`DocxideTests`), no tiene código de
+red (ninguna de sus 132 dependencias) y corre en un proceso aparte con tiempo límite.
 
 `.key` y `.pages` no tienen referencia de Microsoft: su original es Keynote / Pages, que abren su ventana, así que van
 después de LibreOffice y solo se usan si falta. La tabla vive en `DocumentEngines.ranking(forExtension:)`.
