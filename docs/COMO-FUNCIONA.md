@@ -71,10 +71,10 @@ recibe el motor ya compilado y no necesita Rust ni nada más.
 Engines/
 ├── docxide/
 │   ├── REVISION              versión exacta de docxide que usa Gota (fijada)
-│   ├── metric-clones.patch   parche de 2 líneas: si falta Calibri/Cambria, usar Carlito/Caladea
+│   ├── gota.patch            Calibri/Cambria → Carlito/Caladea si faltan, y actualizaciones de seguridad
 │   ├── build.sh              descarga esa versión, aplica el parche y compila para Apple Silicon + Intel
 │   └── LICENSE
-├── Fonts/                    Carlito y Caladea: clones libres de Calibri y Cambria (OFL)
+├── Fonts/                    Carlito (OFL) y Caladea (Apache-2.0), versiones originales; ver SOURCE.md
 └── Licenses/                 licencias de todo lo anterior, que viajan dentro de la app
 ```
 
