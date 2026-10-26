@@ -34,7 +34,8 @@ There are several radial converters for the Mac. Gota's goal is to **feel like p
   ([docxide-pdf](https://github.com/sverrejb/docxide-pdf), nothing to install), LibreOffice for other Office files when
   installed, macOS for plain text, and Microsoft Office (exact layout) if you turn it on (see [docs/MOTORES.md](docs/MOTORES.md)).
 - **Several files at once**: each on its own (*PDF*) or all in one file (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
-- **Private**: no network, no telemetry, never overwrites your files.
+- **Private**: conversions never go online, no telemetry, never overwrites your files. *Check for updates* asks GitHub
+  only when you click it.
 
 ## Build from source
 

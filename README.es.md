@@ -32,7 +32,8 @@ Hay varios conversores con rueda para Mac. El objetivo de Gota es **sentirse par
   ([docxide-pdf](https://github.com/sverrejb/docxide-pdf), sin instalar nada), LibreOffice para el resto de Office si
   está instalado, macOS para texto plano y Microsoft Office (formato exacto) si lo activas (ver [docs/MOTORES.md](docs/MOTORES.md)).
 - **Varios archivos a la vez**: cada uno por separado (*PDF*) o todos en uno (*PDF unido*, *Word unido*, *Texto unido*, *ZIP*).
-- **Privado**: sin red, sin telemetría, nunca sobrescribe tus archivos.
+- **Privado**: las conversiones nunca usan internet, sin telemetría, nunca sobrescribe tus archivos. *Buscar
+  actualizaciones* pregunta a GitHub solo cuando lo pulsas.
 
 ## Compilar desde el código
 

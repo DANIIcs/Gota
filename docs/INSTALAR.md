@@ -63,7 +63,8 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
   saber cuándo termina cada conversión.
 - **Controlar Microsoft Word / PowerPoint:** solo si activas *Usar Microsoft Office* en Ajustes. También pueden
   pedir acceso a la carpeta (una vez por carpeta).
-- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet**.
+- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet** (salvo
+  cuando pulsas *Buscar actualizaciones…*).
 
 ### Recomendado: LibreOffice (gratis)
 
@@ -99,7 +100,7 @@ Clic en la 💧 → **Ajustes…** (⌘,):
 
 ## 7. Actualizar
 
-Descarga la nueva versión y reemplaza `Gota.app` en Aplicaciones (sal antes de Gota desde la 💧 → *Salir de Gota*).
+💧 → **Buscar actualizaciones…** te dice si hay una versión nueva y abre su página. Descárgala y reemplaza `Gota.app` en Aplicaciones (sal antes de Gota desde la 💧 → *Salir de Gota*).
 Puede que macOS vuelva a pedir el paso 3.
 
 ## 8. Desinstalar
