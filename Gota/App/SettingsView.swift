@@ -174,12 +174,19 @@ struct SettingsView: View {
                 .padding(.vertical, 8)
             }
             Section {
-                LabeledContent("Privacidad", value: "Todo pasa en tu Mac, sin internet")
+                LabeledContent("Privacidad", value: "Todo pasa en tu Mac")
                 LabeledContent("Licencia", value: "MIT, código abierto")
                 LabeledContent("Incluye", value: "docxide-pdf (Apache-2.0), fuentes Carlito y Caladea (OFL)")
                 Link(destination: URL(string: "https://github.com/DANIIcs/Gota")!) {
                     Label("Código fuente en GitHub", systemImage: "arrow.up.right.square")
                 }
+            }
+            Section {
+                Button("Buscar actualizaciones…") {
+                    Task { await UpdateChecker.checkAndReport() }
+                }
+            } footer: {
+                Text("Gota solo se conecta a internet cuando pulsas este botón, para preguntar a GitHub por la última versión.")
             }
         }
         .formStyle(.grouped)

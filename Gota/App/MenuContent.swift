@@ -32,6 +32,10 @@ struct MenuContent: View {
 
         Divider()
 
+        Button("Buscar actualizaciones…") {
+            Task { await UpdateChecker.checkAndReport() }
+        }
+
         Button("Ajustes…") {
             showSettings()
         }
