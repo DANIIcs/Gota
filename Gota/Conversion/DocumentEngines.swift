@@ -68,8 +68,8 @@ enum DocumentEngines {
         guard let engine = preferred(for: input) else {
             let isPresentation = FileKind.of(input) == .presentation
             throw ConversionError.noEngine(isPresentation
-                ? "Para convertir presentaciones instala LibreOffice o Keynote."
-                : "Para convertir este documento a PDF instala LibreOffice.")
+                ? "Para convertir presentaciones instala LibreOffice (gratis) o Keynote. Pulsa aquí para descargarlo."
+                : "Para convertir este documento a PDF instala LibreOffice (gratis). Pulsa aquí para descargarlo.")
         }
         try await engine.convertToPDF(input, output: output)
     }
@@ -193,6 +193,9 @@ enum AppleScriptExport {
 /// LibreOffice in headless mode: free and good, but layouts can shift versus Word.
 struct LibreOfficeEngine: DocumentEngine {
     let name = "LibreOffice"
+
+    /// The official download page, opened in the browser when the user asks (Gota itself never goes online).
+    static let downloadPage = URL(string: "https://www.libreoffice.org/download/download-libreoffice/")!
 
     private var soffice: URL? {
         let app = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "org.libreoffice.script")

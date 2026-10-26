@@ -37,7 +37,8 @@ final class JobRunner: ObservableObject {
             } catch {
                 remember(JobResult(title: "\(action.title) · \(label)", outputs: [], failed: true))
                 Self.playSound(failed: true)
-                Notifier.post(title: "No se pudo: \(action.title)", body: error.localizedDescription)
+                Notifier.post(title: "No se pudo: \(action.title)", body: error.localizedDescription,
+                              opening: (error as? ConversionError)?.helpURL)
             }
         }
     }

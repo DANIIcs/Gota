@@ -118,7 +118,11 @@ struct SettingsView: View {
         Form {
             Section {
                 LabeledContent("LibreOffice") {
-                    EngineStatus(installed: LibreOfficeEngine().isAvailable)
+                    if LibreOfficeEngine().isAvailable {
+                        EngineStatus(installed: true)
+                    } else {
+                        Link("Instalar (gratis)…", destination: LibreOfficeEngine.downloadPage)
+                    }
                 }
                 LabeledContent("Keynote (presentaciones)") {
                     EngineStatus(installed: KeynoteEngine().isAvailable)
@@ -129,7 +133,9 @@ struct SettingsView: View {
             } header: {
                 Text("Documentos y presentaciones → PDF")
             } footer: {
-                Text("Gota usa el primero disponible, sin abrir ventanas. LibreOffice es el más fiel a Word y PowerPoint.")
+                Text(LibreOfficeEngine().isAvailable
+                     ? "Gota usa el primero disponible, sin abrir ventanas. LibreOffice es el más fiel a Word y PowerPoint."
+                     : "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.")
             }
             Section {
                 Toggle("Usar Microsoft Office", isOn: $useMicrosoftOffice)

@@ -37,4 +37,11 @@ final class ToolOutputTests: XCTestCase {
         let output = try await FileActions.textutil(input, to: "html")
         XCTAssertTrue(FileManager.default.fileExists(atPath: output.path))
     }
+
+    /// A missing engine points the user to LibreOffice's official page; other errors carry no link.
+    func testMissingEngineLinksToLibreOffice() {
+        XCTAssertEqual(ConversionError.noEngine("x").helpURL?.host(), "www.libreoffice.org")
+        XCTAssertEqual(ConversionError.noEngine("x").helpURL?.scheme, "https")
+        XCTAssertNil(ConversionError.unsupported("x").helpURL)
+    }
 }

@@ -43,6 +43,12 @@ enum ConversionError: LocalizedError {
     case toolFailed(tool: String, output: String)
     case noEngine(String)
 
+    /// Where the user can fix it: a missing engine links to its download page.
+    var helpURL: URL? {
+        if case .noEngine = self { return LibreOfficeEngine.downloadPage }
+        return nil
+    }
+
     var errorDescription: String? {
         switch self {
         case .unreadable(let url):
