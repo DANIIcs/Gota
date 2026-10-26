@@ -80,6 +80,9 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(GOTA_BUNDLE_ID)
         PRODUCT_NAME: Gota
+        # Gota/Resources/AppIcon.icon, an Icon Composer icon: Liquid Glass and the system's
+        # default, dark, clear and tinted icon styles.
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # The docxide script reads build/engines, outside what script sandboxing allows by default.
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         # Target-level settings beat the xcconfig, so signing goes through variables Local.xcconfig can override.

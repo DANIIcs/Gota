@@ -39,6 +39,8 @@ Xcode) and describe what they see.
 - `Engines/` — bundled third-party pieces: `docxide/` (pinned build of the .docx engine: `build.sh`, `REVISION`,
   `metric-clones.patch`; the binary goes to `build/engines/` and is copied into `Contents/MacOS` by a build phase,
   optional so Gota builds without Rust), `Fonts/` (Carlito, Caladea) and `Licenses/` (shipped in the app).
+- `Gota/Resources/AppIcon.icon` — the app icon, an Icon Composer document (layers in `Assets/`, Liquid Glass, all
+  system icon styles). Edit it in Icon Composer (Xcode → Open Developer Tool), not by hand.
 - `GotaTests` — XCTest unit tests for pure logic.
 - `docs/` — Spanish docs: `COMO-FUNCIONA.md` (how engines are picked, run and bundled), `INSTALAR.md` (end users), `GUIA.md` (development + releases), `MOTORES.md` (document
   engines research), `AGREGAR-CONVERSION.md`, `RELEASE-NOTES.md` (body of the next GitHub release).

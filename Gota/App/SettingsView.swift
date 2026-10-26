@@ -335,12 +335,11 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
 enum AppIcon {
-    /// Gota's icon from its own asset catalog. `NSApp.applicationIconImage` answered the generic
-    /// placeholder for this menu bar app, so the About pane showed an empty grid.
+    /// Gota's icon as macOS draws it for the app bundle, so it follows the user's icon style (default,
+    /// dark, clear or tinted). `NSApp.applicationIconImage` answered the generic placeholder for this
+    /// menu bar app, so the About pane showed an empty grid.
     static var image: NSImage {
-        NSImage(named: "AppIcon")
-            ?? Bundle.main.url(forResource: "AppIcon", withExtension: "icns").flatMap(NSImage.init(contentsOf:))
-            ?? NSApp.applicationIconImage
+        NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
     }
 }
 
