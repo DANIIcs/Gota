@@ -187,22 +187,8 @@ struct SettingsView: View {
 
     private var about: some View {
         Form {
-            Section {
-                VStack(spacing: 6) {
-                    Image(nsImage: AppIcon.image(points: 96))
-                        .resizable()
-                        .frame(width: 96, height: 96)
-                    Text("Gota").font(.title.bold())
-                    Text("Versión \(UpdateChecker.currentVersion) (\(UpdateChecker.currentBuild))")
-                        .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
-                    Text("Conversor de archivos para macOS")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-            }
+            // Same header card as every other pane, so switching panes doesn't move anything.
+            Section { PaneHeader(pane: .about) }
 
             Section {
                 Toggle("Buscar actualizaciones automáticamente", isOn: $autoCheckUpdates)
@@ -234,14 +220,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        // In the unified toolbar, as in other apps' About panes.
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Buscar actualizaciones…") {
-                    Task { await UpdateChecker.checkAndReport() }
-                }
-            }
-        }
     }
 
     private var lastCheckDescription: String {
@@ -329,7 +307,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: "El material, la opacidad y el color de la rueda."
         case .keys: "Qué rueda abre cada tecla mientras arrastras archivos."
         case .engines: "Con qué motor convierte Gota cada tipo de documento."
-        case .about: "Versión, actualizaciones y licencias."
+        case .about: "Versión \(UpdateChecker.currentVersion) (\(UpdateChecker.currentBuild)) · Conversor de archivos para macOS"
         }
     }
 
@@ -429,7 +407,7 @@ private struct PaneHeader: View {
     var body: some View {
         VStack(spacing: 8) {
             SettingsIcon(pane: pane, size: 60)
-            Text(pane.title).font(.title.bold())
+            Text(pane == .about ? "Gota" : pane.title).font(.title.bold())
             Text(pane.summary)
                 .font(.callout)
                 .foregroundStyle(.secondary)
