@@ -21,8 +21,9 @@ Con varios archivos, cada conversión viene en dos versiones: un resultado por a
 **[⬇︎ Descargar la última versión](https://github.com/DANIIcs/Gota/releases/latest)** — macOS 26 o posterior, Apple Silicon o Intel.
 
 1. Descarga `Gota-X.Y.Z.zip` en *Assets*, descomprímelo y mueve **Gota.app** a **Aplicaciones**.
-2. La primera vez macOS la bloquea porque aún no está notarizada por Apple: ve a **Ajustes del Sistema → Privacidad y
-   seguridad → Abrir igualmente**. Solo se hace una vez.
+2. La primera vez macOS dice *No se abrió "Gota"* porque aún no está notarizada por Apple. Pulsa **Listo** (no *Mover a
+   la papelera*), ve a **Ajustes del Sistema → Privacidad y seguridad**, baja hasta *Seguridad* y pulsa **Abrir
+   igualmente**. Solo se hace una vez.
 3. Busca la 💧 en la barra de menú. Para actualizar: 💧 → *Buscar actualizaciones…*.
 
 Guía completa (comprobar la descarga, permisos, actualizar, desinstalar): **[docs/INSTALAR.md](docs/INSTALAR.md)**.
