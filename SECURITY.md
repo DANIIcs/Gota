@@ -9,7 +9,8 @@ Please **don't open a public issue**. Use GitHub's private reporting instead:
 
 ## What Gota does to stay safe
 
-- **Fully local**: no network code, no telemetry.
+- **Fully local**: no network code, no telemetry. The only links (LibreOffice's download page, the source code)
+  open in your browser when you click them.
 - **No shell**: external tools (`afconvert`, `textutil`, `ditto`, `soffice`, `osascript`) run directly with
   file paths as separate arguments, so a file name can never become a command.
 - **Never overwrites**: every result gets a new name next to the original.

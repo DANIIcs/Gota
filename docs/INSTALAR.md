@@ -65,6 +65,14 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
   pedir acceso a la carpeta (una vez por carpeta).
 - Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet**.
 
+### Recomendado: LibreOffice (gratis)
+
+Gota convierte imágenes, PDF, audio y vídeo con lo que ya trae macOS. Para **Word** y **PowerPoint** conviene
+instalar [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/): es el motor más fiel sin
+Microsoft Office y Gota lo usa en segundo plano, sin abrir ventanas (unos segundos y ~300 MB de RAM mientras convierte;
+luego se cierra). En *Ajustes de Gota → Motores* hay un botón **Instalar (gratis)…** si no lo tienes.
+Con Homebrew: `brew install --cask libreoffice`.
+
 ## 5. Usarla
 
 1. En Finder, empieza a **arrastrar** uno o varios archivos y, **sin soltar el clic**, mantén una tecla:
