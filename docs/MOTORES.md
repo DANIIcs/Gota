@@ -60,6 +60,25 @@ con SSIM (1,0 = idéntico; una página que falta cuenta 0).
 | Pages | 0,705 | — | **Ignora las dos columnas** y cambia tablas: no se usa. |
 | macOS (integrado) | 0,599 | — | Ignora columnas, pierde estilos de título y **le faltó una página** al informe. |
 
+### Por formato (motores sin ventanas, contra Word o PowerPoint)
+
+Mismos documentos convertidos a cada formato (RTF/HTML/TXT con `textutil`, DOC/ODT/PPT/ODP con LibreOffice):
+
+| Formato | LibreOffice | macOS | Motor elegido |
+|---|---|---|---|
+| `.docx` | **0,908** | 0,599 | LibreOffice |
+| `.doc` | **0,747** | 0,616 | LibreOffice |
+| `.odt` | **0,888** | 0,597 | LibreOffice |
+| `.rtf` | **0,820** | 0,759 | LibreOffice |
+| `.html` | **0,743** | 0,600 | LibreOffice |
+| `.txt` | 0,727 | **0,743** | macOS (empate técnico, y no arranca LibreOffice) |
+| `.pptx` | **0,970** | — | LibreOffice (Keynote: 0,945) |
+| `.ppt` | **0,960** | — | LibreOffice |
+| `.odp` | **0,905** | — | LibreOffice |
+
+`.key` y `.pages` no tienen referencia de Microsoft: su original es Keynote / Pages, que abren su ventana, así que van
+después de LibreOffice y solo se usan si falta. La tabla vive en `DocumentEngines.ranking(forExtension:)`.
+
 Conclusiones: Office es el único exacto; sin Office, **LibreOffice primero**, luego Keynote para presentaciones y el
 motor de macOS solo como último recurso. Son documentos sintéticos con funciones estándar: con archivos reales más
 complejos (SmartArt, gráficos, fuentes incrustadas) LibreOffice baja (ver el benchmark de arriba: 0,858 contra Word).
