@@ -27,8 +27,28 @@ Please **don't open a public issue**. Use GitHub's private reporting instead:
   (`file:///…`, `../`). Gota keeps only images from the document's own folder (built-in engine) and
   runs LibreOffice with `BlockUntrustedRefererLinks`, so a crafted file can't smuggle your files
   into a PDF you send back.
-- **Size limits**: PDF pages exported as images are capped at 10 000 px, so a crafted page can't
-  exhaust memory.
+- **Size limits**: PDF pages exported as images are capped at 10 000 px, and `.docx` files that unpack to more
+  than 1 GB ("zip bombs") are refused before the engine opens them, so a crafted file can't exhaust memory.
+- **Bundled engine**: docxide-pdf runs as a separate process with a timeout, never follows links to other files, has
+  no network code, and its shipped dependencies are audited against RustSec on every build and every week in CI.
+
+## Checks on every change
+
+`.github/workflows/security.yml` runs on every pull request, on every push to `main` and weekly. All three jobs are
+required to merge into `main`:
+
+| Job | What it checks |
+|---|---|
+| `analisis` | gitleaks over the whole history, semgrep (Swift, secrets, workflows), actionlint; tools pinned and verified by SHA-256 |
+| `dependencias` | `cargo audit` of docxide exactly as Gota builds it (pinned revision + `Engines/docxide/gota.patch`) |
+| `pruebas` | the whole test suite on macOS, including the security tests |
+
+## Accepted risks
+
+| Risk | Why it's accepted |
+|---|---|
+| `ttf-parser` is unmaintained (RUSTSEC-2026-0192) | No known flaw and no maintained replacement; it runs in docxide's separate, time-limited process, and downloaded fonts are first validated by macOS's own parser |
+| Gota isn't sandboxed | It has to write results next to the files you drop; file decoding is done by macOS frameworks that Apple patches |
 
 ## Known limits
 
