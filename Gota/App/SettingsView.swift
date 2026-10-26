@@ -334,15 +334,26 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
 enum AppIcon {
-    /// Gota's icon from its own bundle, already drawn at `points` (2× for Retina).
-    ///
-    /// Not from NSWorkspace: Launch Services caches app icons per size and path, and after an update it
-    /// kept answering the old large icon while the small one was new. Drawing into a bitmap also avoids
-    /// SwiftUI showing the lazily rendered placeholder grid.
+    static let registeredBuildKey = "registeredBuild"
+
+    /// After an update in place, Launch Services kept answering the previous version's large icon. Once
+    /// per new build, Gota re-registers itself so macOS refreshes its icon (and everything else it caches
+    /// about the app). Returns whether it registered.
+    @discardableResult
+    static func refreshRegistrationIfUpdated(defaults: UserDefaults = .standard,
+                                             register: (URL) -> Void = { _ = LSRegisterURL($0 as CFURL, true) }) -> Bool {
+        let build = UpdateChecker.currentBuild
+        guard defaults.string(forKey: registeredBuildKey) != build else { return false }
+        register(Bundle.main.bundleURL)
+        defaults.set(build, forKey: registeredBuildKey)
+        return true
+    }
+
+    /// Gota's icon as macOS draws it, in the user's icon style (default, dark, clear or tinted), already
+    /// drawn at `points` (2× for Retina): SwiftUI otherwise shows the lazily rendered placeholder grid.
+    /// Kept fresh after updates by `refreshRegistrationIfUpdated()`.
     static func image(points: CGFloat) -> NSImage {
-        let icon = NSImage(named: "AppIcon")
-            ?? Bundle.main.url(forResource: "AppIcon", withExtension: "icns").flatMap(NSImage.init(contentsOf:))
-            ?? NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
+        let icon = NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
         let pixels = Int(points * 2)
         guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
                                          bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,

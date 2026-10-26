@@ -30,4 +30,15 @@ final class SettingsIconTests: XCTestCase {
         let center = try XCTUnwrap(rep.colorAt(x: 96, y: 96))
         XCTAssertGreaterThan(center.alphaComponent, 0.5)
     }
+
+    /// Re-registering with Launch Services refreshes the icon after an update: once per build, not at every launch.
+    func testRefreshesRegistrationOncePerBuild() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "gota-tests-\(UUID().uuidString)"))
+        var registered: [URL] = []
+        XCTAssertTrue(AppIcon.refreshRegistrationIfUpdated(defaults: defaults) { registered.append($0) })
+        XCTAssertFalse(AppIcon.refreshRegistrationIfUpdated(defaults: defaults) { registered.append($0) })
+        XCTAssertEqual(registered, [Bundle.main.bundleURL])
+        defaults.set("an older build", forKey: AppIcon.registeredBuildKey)
+        XCTAssertTrue(AppIcon.refreshRegistrationIfUpdated(defaults: defaults) { registered.append($0) })
+    }
 }

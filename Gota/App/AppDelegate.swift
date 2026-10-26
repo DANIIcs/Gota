@@ -27,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         self.wheel = wheel
         self.dragMonitor = monitor
+        AppIcon.refreshRegistrationIfUpdated()
         Notifier.requestAuthorization()
         scheduleUpdateChecks()
     }
