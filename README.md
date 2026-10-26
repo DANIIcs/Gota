@@ -5,7 +5,7 @@ Start dragging a file in Finder, hold **⇧**, and drop it on a format. Your fil
 
 *[Leer en español](README.es.md)*
 
-<!-- Demo: record 10–15 s with ⌘⇧5 (drag a photo, hold ⇧, drop on PNG), save it as docs/media/demo.gif and
+<!-- Demo (see docs/media/README.md): record 10–15 s with ⌘⇧5 (drag a photo, hold ⇧, drop on PNG), save it as docs/media/demo.gif and
      replace this comment with:  <p align="center"><img src="docs/media/demo.gif" width="720" alt="Gota's wheel"></p> -->
 
 | Key while dragging | Wheel |
