@@ -2,6 +2,7 @@
   "sourceLanguage": "es",
   "strings": {
     "%@  %@": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -12,6 +13,7 @@
       }
     },
     "%@ falló: %@": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -22,6 +24,7 @@
       }
     },
     "%@ no está en tu Mac y no es libre: el PDF puede verse distinto. Para el formato exacto, instálala o activa Microsoft Office en Ajustes → Motores.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -33,6 +36,7 @@
     },
     "%@ unido": {
       "comment": "Bubble: several files into one, e.g. \"PDF merged\"",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -43,6 +47,7 @@
       }
     },
     "%lld archivos": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "variations": {
@@ -83,6 +88,7 @@
       }
     },
     "Abrir Gota al iniciar sesión": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -93,6 +99,7 @@
       }
     },
     "Acciones": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -103,6 +110,7 @@
       }
     },
     "Acerca de": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -113,6 +121,7 @@
       }
     },
     "Actualizaciones": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -123,6 +132,7 @@
       }
     },
     "Ajustes…": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -133,6 +143,7 @@
       }
     },
     "Al arrastrar un archivo, mantén": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -143,6 +154,7 @@
       }
     },
     "Al terminar una conversión": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -153,6 +165,7 @@
       }
     },
     "Amarillo": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -163,6 +176,7 @@
       }
     },
     "Apariencia": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -174,6 +188,7 @@
     },
     "Archivo": {
       "comment": "Name of the ZIP made from several files",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -184,6 +199,7 @@
       }
     },
     "Automático (color de acento)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -194,6 +210,7 @@
       }
     },
     "Avanzado": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -204,6 +221,7 @@
       }
     },
     "Azul": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -214,6 +232,7 @@
       }
     },
     "Borrar": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -224,6 +243,7 @@
       }
     },
     "Buscar": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -234,6 +254,7 @@
       }
     },
     "Buscar actualizaciones automáticamente": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -244,6 +265,7 @@
       }
     },
     "Buscar actualizaciones…": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -254,6 +276,7 @@
       }
     },
     "Buscar ahora…": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -264,6 +287,7 @@
       }
     },
     "Color": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -274,6 +298,7 @@
       }
     },
     "Comprimir": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -284,6 +309,7 @@
       }
     },
     "Comprimir 720p": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -294,6 +320,7 @@
       }
     },
     "Con qué motor convierte Gota cada tipo de documento.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -304,6 +331,7 @@
       }
     },
     "Convertir": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -314,6 +342,7 @@
       }
     },
     "Copiar ruta": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -324,6 +353,7 @@
       }
     },
     "Descargar": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -334,6 +364,7 @@
       }
     },
     "Descargar fuentes libres que falten": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -345,6 +376,7 @@
     },
     "Diapositiva": {
       "comment": "File name: \"Slide 1.png\"",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -355,6 +387,7 @@
       }
     },
     "Disponible": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -365,6 +398,7 @@
       }
     },
     "Dividir": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -375,6 +409,7 @@
       }
     },
     "Documentos y presentaciones → PDF": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -385,6 +420,7 @@
       }
     },
     "El material, la opacidad y el color de la rueda.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -395,6 +431,7 @@
       }
     },
     "El sonido es el de alerta que elegiste en Ajustes del Sistema → Sonido.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -405,6 +442,7 @@
       }
     },
     "Empieza a arrastrar desde Finder o el Escritorio y luego pulsa la tecla. Suelta en el centro de la rueda para cancelar.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -415,6 +453,7 @@
       }
     },
     "Esta copia de Gota no incluye su motor de Word.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -425,6 +464,7 @@
       }
     },
     "Faltan fuentes en «%@»": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -435,6 +475,7 @@
       }
     },
     "Formato exacto con Word y PowerPoint, pero se abren al convertir y piden acceso a cada carpeta.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -445,6 +486,7 @@
       }
     },
     "Formato no soportado: %@.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -455,6 +497,7 @@
       }
     },
     "Fuentes": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -465,6 +508,7 @@
       }
     },
     "Fuentes descargadas": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -475,6 +519,7 @@
       }
     },
     "General": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -485,6 +530,7 @@
       }
     },
     "Gota %@ está disponible": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -495,6 +541,7 @@
       }
     },
     "Gota (Word .docx)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -505,6 +552,7 @@
       }
     },
     "Gota está al día": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -515,6 +563,7 @@
       }
     },
     "Gota solo se conecta a internet para esto: pregunta a GitHub por la última versión, como mucho una vez al día si lo activas, y te avisa con una notificación.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -525,6 +574,7 @@
       }
     },
     "Grafito": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -535,6 +585,7 @@
       }
     },
     "Herramientas": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -545,6 +596,7 @@
       }
     },
     "Incluido": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -555,6 +607,7 @@
       }
     },
     "Incluye": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -565,6 +618,7 @@
       }
     },
     "Inicio de sesión y qué pasa al terminar cada conversión.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -575,6 +629,7 @@
       }
     },
     "Instalar (gratis)…": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -585,6 +640,7 @@
       }
     },
     "Keynote (.key, si falta LibreOffice)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -595,6 +651,7 @@
       }
     },
     "LibreOffice": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -605,6 +662,7 @@
       }
     },
     "LibreOffice no está instalado.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -615,6 +673,7 @@
       }
     },
     "Licencia": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -625,6 +684,7 @@
       }
     },
     "Liquid Glass sigue el material del sistema. Con 100 % de opacidad las burbujas son sólidas.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -635,6 +695,7 @@
       }
     },
     "Listo: %@": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -645,6 +706,7 @@
       }
     },
     "MIT, código abierto": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -655,6 +717,7 @@
       }
     },
     "Material": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -665,6 +728,7 @@
       }
     },
     "Mientras arrastras un archivo, mantén": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -675,6 +739,7 @@
       }
     },
     "Morado": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -685,6 +750,7 @@
       }
     },
     "Mostrar el resultado en Finder": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -695,6 +761,7 @@
       }
     },
     "Mostrar en Finder": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -705,6 +772,7 @@
       }
     },
     "Motores": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -715,6 +783,7 @@
       }
     },
     "Más tarde": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -725,6 +794,7 @@
       }
     },
     "Naranja": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -735,6 +805,7 @@
       }
     },
     "Negro espacial": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -745,6 +816,7 @@
       }
     },
     "No instalado": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -755,6 +827,7 @@
       }
     },
     "No se pudo buscar actualizaciones": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -765,6 +838,7 @@
       }
     },
     "No se pudo leer %@.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -775,6 +849,7 @@
       }
     },
     "No se pudo: %@": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -785,6 +860,7 @@
       }
     },
     "Nunca": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -795,6 +871,7 @@
       }
     },
     "Opacidad": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -805,6 +882,7 @@
       }
     },
     "PDF con contraseña": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -815,6 +893,7 @@
       }
     },
     "PDF sin texto (¿escaneado?)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -825,6 +904,7 @@
       }
     },
     "Pages (.pages, si falta LibreOffice)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -835,6 +915,7 @@
       }
     },
     "Para cada formato Gota usa el motor más fiel según mediciones, sin abrir ventanas: el suyo propio para .docx, LibreOffice para los demás formatos de Office y PowerPoint, macOS para texto plano.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -845,6 +926,7 @@
       }
     },
     "Para convertir este documento a PDF instala LibreOffice (gratis). Pulsa aquí para descargarlo.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -855,6 +937,7 @@
       }
     },
     "Para convertir presentaciones instala LibreOffice (gratis) o Keynote. Pulsa aquí para descargarlo.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -865,6 +948,7 @@
       }
     },
     "Privacidad": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -874,7 +958,19 @@
         }
       }
     },
+    "Procesando %@…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing %@…"
+          }
+        }
+      }
+    },
     "Procesando %lld…": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -885,6 +981,7 @@
       }
     },
     "Pulsa para descargarla.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -896,6 +993,7 @@
     },
     "Página": {
       "comment": "File name: \"Page 1.png\"",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -907,6 +1005,7 @@
     },
     "Página %@.pdf": {
       "comment": "File name of one page of a split PDF",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -917,6 +1016,7 @@
       }
     },
     "Qué rueda abre cada tecla mientras arrastras archivos.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -927,6 +1027,7 @@
       }
     },
     "Recientes": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -937,6 +1038,7 @@
       }
     },
     "Reducir 50%": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -947,6 +1049,7 @@
       }
     },
     "Reportar un problema": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -957,6 +1060,7 @@
       }
     },
     "Reproducir sonido": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -967,6 +1071,7 @@
       }
     },
     "Revisa tu conexión a internet e inténtalo de nuevo.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -977,6 +1082,7 @@
       }
     },
     "Rojo": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -987,6 +1093,7 @@
       }
     },
     "Rosa": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -997,6 +1104,7 @@
       }
     },
     "Rotar 90°": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1007,6 +1115,7 @@
       }
     },
     "Salir de Gota": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1017,6 +1126,7 @@
       }
     },
     "Si un Word usa una fuente libre que no tienes (como Poppins), Gota la descarga una vez de Google Fonts para que el PDF salga igual. Solo se envía el nombre de la fuente, nunca tu documento.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1027,6 +1137,7 @@
       }
     },
     "Sin LibreOffice, Word se convierte con el motor de macOS (menos fiel) y PowerPoint necesita Keynote. LibreOffice es gratis y Gota lo usa en segundo plano, sin abrir ventanas.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1037,6 +1148,7 @@
       }
     },
     "Sin opciones": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1047,6 +1159,7 @@
       }
     },
     "Solo audio": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1057,6 +1170,7 @@
       }
     },
     "Teclas": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1067,6 +1181,7 @@
       }
     },
     "Texto": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1077,6 +1192,7 @@
       }
     },
     "Tienes la %@. Descarga la nueva, sal de Gota y reemplázala en Aplicaciones.": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1087,6 +1203,7 @@
       }
     },
     "Tienes la última versión (%@).": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1097,6 +1214,7 @@
       }
     },
     "Transparente": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1107,6 +1225,7 @@
       }
     },
     "Tus archivos nunca salen de tu Mac": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1117,6 +1236,7 @@
       }
     },
     "Unir": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1127,6 +1247,7 @@
       }
     },
     "Usar Microsoft Office": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1137,6 +1258,7 @@
       }
     },
     "Ver Gota en GitHub": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1147,6 +1269,7 @@
       }
     },
     "Verde": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1157,6 +1280,7 @@
       }
     },
     "Versión %@ (%@) · Conversor de archivos para macOS": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1167,6 +1291,7 @@
       }
     },
     "ZIP c/u": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1178,6 +1303,7 @@
     },
     "comprimido": {
       "comment": "File name suffix for a compressed image",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1189,6 +1315,7 @@
     },
     "diapositivas": {
       "comment": "Folder suffix: \"talk slides\"",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1200,6 +1327,7 @@
     },
     "dividido": {
       "comment": "Folder suffix for a split PDF",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1210,6 +1338,7 @@
       }
     },
     "documento demasiado grande una vez descomprimido": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1220,6 +1349,7 @@
       }
     },
     "docxide-pdf (Apache-2.0), Carlito y Caladea (OFL)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1230,6 +1360,7 @@
       }
     },
     "macOS (integrado)": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1241,6 +1372,7 @@
     },
     "páginas": {
       "comment": "Folder suffix: \"report pages\"",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1252,6 +1384,7 @@
     },
     "rotado": {
       "comment": "File name suffix for a rotated PDF",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1262,6 +1395,7 @@
       }
     },
     "se detuvo (tardó demasiado o fue cancelado).": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1273,6 +1407,7 @@
     },
     "unido": {
       "comment": "File name suffix for files combined into one",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1283,6 +1418,7 @@
       }
     },
     "Última comprobación": {
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {

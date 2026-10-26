@@ -78,4 +78,6 @@ Xcode) and describe what they see.
   notifications, errors, alerts, file-name parts) must be `String(localized: "…")`. After adding strings, build and run
   `xcrun xcstringstool sync Gota/Resources/Localizable.xcstrings --stringsdata <the build's *.stringsdata>` (or open
   the catalog in Xcode), then add the English translation: an untranslated string shows in Spanish to English users.
+  Keep every entry's `extractionState` as `manual`: Xcode's incremental builds otherwise mark strings from files it
+  didn't recompile as stale and rewrite the whole catalog.
 - Add unit tests for logic changes (catalog, geometry, naming). Keep functions small and comment the *why*.

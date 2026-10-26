@@ -29,7 +29,7 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
-    STRING_CATALOG_GENERATE_SYMBOLS: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: NO # strings are used as literals; manual keys like "%@  %@" have no symbol name
     ENABLE_STRICT_OBJC_MSGSEND: YES
   configs:
     # Hardened runtime only for Release: with ad-hoc signing in Debug it would stop the tests from loading.
