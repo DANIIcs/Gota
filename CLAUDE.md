@@ -67,7 +67,8 @@ Xcode) and describe what they see.
   Run them locally before pushing: `gitleaks git --no-banner --redact .`, `semgrep scan --metrics=off --error
   --config p/swift --config p/secrets --config p/github-actions Gota GotaTests scripts Engines .github`, `actionlint`, and
   the tests. Never disable a gate or mark it `continue-on-error`; if a job is renamed, update the branch protection's
-  required checks in the same change. Pin new actions by SHA.
+  required checks in the same change. Pin new actions by SHA. Docs-only changes (`*.md`, `docs/`, `LICENSE`) make `dependencias` and
+  `pruebas` finish green without running; secret scanning always runs.
 - A new Rust dependency or a docxide update goes through `cargo audit` (build.sh fails on any advisory); fonts in
   `Engines/Fonts` are the original metric-compatible builds (see `Engines/Fonts/SOURCE.md`): never swap them without
   measuring against Word.
