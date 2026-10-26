@@ -46,6 +46,7 @@ struct SettingsView: View {
 
     private var general: some View {
         Form {
+            Section { PaneHeader(pane: .general) }
             Section {
                 Toggle("Abrir Gota al iniciar sesión", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, enabled in
@@ -70,6 +71,7 @@ struct SettingsView: View {
 
     private var appearance: some View {
         Form {
+            Section { PaneHeader(pane: .appearance) }
             Section {
                 WheelPreview(material: material, opacity: opacity, color: wheelColor)
             }
@@ -99,6 +101,7 @@ struct SettingsView: View {
 
     private var keys: some View {
         Form {
+            Section { PaneHeader(pane: .keys) }
             Section {
                 ForEach(WheelMode.allCases, id: \.self) { mode in
                     LabeledContent {
@@ -118,6 +121,7 @@ struct SettingsView: View {
 
     private var engines: some View {
         Form {
+            Section { PaneHeader(pane: .engines) }
             Section {
                 LabeledContent("Gota (Word .docx)") {
                     if DocxideEngine().isAvailable {
@@ -261,22 +265,33 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 
     var symbol: String {
         switch self {
-        case .general: "gearshape.fill"
-        case .appearance: "paintpalette.fill"
-        case .keys: "keyboard.fill"
-        case .engines: "doc.richtext.fill"
-        case .about: "info.circle.fill"
+        // Line symbols, as System Settings uses since macOS 26.
+        case .general: "gearshape"
+        case .appearance: "paintpalette"
+        case .keys: "keyboard"
+        case .engines: "doc.richtext"
+        case .about: "info.circle"
         }
     }
 
-    /// Icon tile colors, the way System Settings colors its panes.
+    /// Glyph colors: neutral ones adapt to Light and Dark Mode, as General's gear does in System Settings.
     var color: Color {
         switch self {
-        case .general: .gray
-        case .appearance: .blue
-        case .keys: .indigo
+        case .general: .primary
+        case .appearance: .primary
+        case .keys: .primary
         case .engines: .orange
-        case .about: .teal
+        case .about: .blue
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .general: "Inicio de sesión y qué pasa al terminar cada conversión."
+        case .appearance: "El material, la opacidad y el color de la rueda."
+        case .keys: "Qué rueda abre cada tecla mientras arrastras archivos."
+        case .engines: "Con qué motor convierte Gota cada tipo de documento."
+        case .about: "Versión, actualizaciones y licencias."
         }
     }
 
@@ -301,15 +316,48 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 }
 
 /// A white symbol on a colored rounded square, like the icons in System Settings' sidebar.
+/// A colored symbol on a neutral rounded tile, the way System Settings draws its icons since macOS 26:
+/// a dark tile in Dark Mode and a light one in Light Mode, following the system's appearance.
 private struct SettingsIcon: View {
+    let pane: SettingsPane
+    var size: CGFloat = 22
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: size * 0.27, style: .continuous)
+        Image(systemName: pane.symbol)
+            .font(.system(size: size * 0.55, weight: .medium))
+            .symbolRenderingMode(pane == .appearance ? .multicolor : .monochrome)
+            .foregroundStyle(pane.color)
+            .frame(width: size, height: size)
+            .background(tile, in: shape)
+            .overlay(shape.strokeBorder(.separator, lineWidth: 0.5))
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.4 : 0.12), radius: size * 0.04, y: size * 0.02)
+    }
+
+    private var tile: LinearGradient {
+        let colors: [Color] = colorScheme == .dark
+            ? [Color(white: 0.22), Color(white: 0.13)]
+            : [.white, Color(white: 0.93)]
+        return LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+    }
+}
+
+/// The card at the top of each pane: big icon, title and what the pane is for, as in System Settings.
+private struct PaneHeader: View {
     let pane: SettingsPane
 
     var body: some View {
-        Image(systemName: pane.symbol)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(.white)
-            .frame(width: 20, height: 20)
-            .background(pane.color.gradient, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+        VStack(spacing: 8) {
+            SettingsIcon(pane: pane, size: 60)
+            Text(pane.title).font(.title.bold())
+            Text(pane.summary)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
     }
 }
 
