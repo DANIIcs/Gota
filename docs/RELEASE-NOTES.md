@@ -1,30 +1,22 @@
-Segunda versión de **Gota**: el motor más fiel para cada formato, Word sin instalar nada, PowerPoint, icono y
-actualizaciones.
+**Gota 0.2.1**: tus Word salen igual que en Word aunque usen fuentes que no tienes, nuevo icono y Ajustes como los de macOS.
 
-**Instalar o actualizar:** descarga `Gota-0.2.0.zip`, descomprímelo y mueve `Gota.app` a Aplicaciones (sal antes de la
-versión anterior desde la 💧). La primera vez, abre *Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente*
-(la app aún no está notarizada). Guía: [docs/INSTALAR.md](https://github.com/DANIIcs/Gota/blob/main/docs/INSTALAR.md).
-
-**Requisitos:** macOS 26 o posterior (probado en macOS 27 Golden Gate), Apple Silicon o Intel.
+**Actualizar:** 💧 → *Buscar actualizaciones…*, o descarga `Gota-0.2.1.zip`, sal de Gota y reemplaza `Gota.app` en Aplicaciones.
+Guía: [docs/INSTALAR.md](https://github.com/DANIIcs/Gota/blob/main/docs/INSTALAR.md). Requiere macOS 26 o posterior.
 
 ### Novedades
-- **El motor más fiel para cada formato**, medido contra Word y PowerPoint
-  ([docs/MOTORES.md](https://github.com/DANIIcs/Gota/blob/main/docs/MOTORES.md)).
-- **Word `.docx` → PDF sin instalar nada**: Gota incluye su propio motor
-  ([docxide-pdf](https://github.com/sverrejb/docxide-pdf)) con fuentes compatibles con Calibri y Cambria. Más fiel que
-  LibreOffice (0,948 frente a 0,909), en menos de un segundo.
-- **PowerPoint, Keynote y ODP** → PDF o imágenes por diapositiva.
-- **PDF → Word**, y **varios archivos a la vez**: cada uno por separado o todo en uno (*PDF unido*, *Word unido*…).
-- **Apariencia de la rueda**: Liquid Glass o Transparente, opacidad, colores, Negro espacial metálico y RGB.
-- **Ajustes al estilo de macOS**, con buscador, y **botón para instalar LibreOffice** si hace falta.
-- **Icono** propio y **Buscar actualizaciones** (a mano, o una vez al día si lo activas).
-- Sonido de alerta de tu Mac al terminar.
+- **Fuentes que faltan:** si un Word usa una fuente libre que tu Mac no tiene (Poppins, Montserrat…), Gota la descarga
+  una vez de Google Fonts (solo viaja el nombre de la fuente, nunca tu documento). Un documento real en Poppins pasó de
+  7 a 9 páginas, como en Word. Si falta una fuente de pago, te avisa. Se puede apagar en *Ajustes → Motores*.
+- **Nuevo icono** con Liquid Glass, que sigue tu estilo de iconos (normal, oscuro, teñido, transparente).
+- **Ajustes al estilo de macOS:** los iconos reales de Ajustes del Sistema, una cabecera en cada sección y un
+  *Acerca de* con versión, actualizaciones (también automáticas, si las activas) y enlaces.
 
 ### Arreglos
-- Seguridad: un documento malicioso ya no puede colar imágenes de tu Mac dentro del PDF; páginas de PDF gigantes ya
-  no cierran la app.
-- Microsoft Word ya no puede cerrar otro documento tuyo sin guardar, y espera a los formatos que tardan en abrir.
-- Se ignoran los archivos de bloqueo de Office (`~$…`); los errores dicen qué archivo falló.
-- La rueda recibe bien el arrastre, se mantiene centrada y el texto del centro ya no lo tapa Finder.
+- Las fuentes compatibles con Calibri y Cambria que incluye Gota eran versiones retocadas que ya no medían igual:
+  ahora son las originales (en un documento con tablas, de 0,77 a 0,96 de fidelidad contra Word).
+- Seguridad: dependencias del motor de Word actualizadas (0 vulnerabilidades conocidas), los `.docx` "bomba" se
+  rechazan antes de abrirlos, y cada cambio pasa ahora por controles automáticos (ver SECURITY.md).
+- El icono de *Acerca de* ya no sale vacío, la sección ya no se desplaza al abrirla, y Ajustes se abre delante de las
+  demás ventanas.
 
 Comprueba la descarga con el archivo `.sha256` (ver la guía).
