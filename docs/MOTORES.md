@@ -50,7 +50,7 @@ Así, cuando los motores en Rust maduren, Gota los adopta sin tocar la rueda ni 
 
 ## Medición propia (octubre 2026)
 
-Para decidir el orden se midió en un Mac con macOS 26: 3 documentos `.docx` (informe con encabezados, listas,
+Para decidir el orden se midió en un Mac con macOS 27: 3 documentos `.docx` (informe con encabezados, listas,
 encabezado/pie y salto de página; tablas con celdas combinadas y sombreadas más imagen; página horizontal a dos
 columnas con varias fuentes) y 2 `.pptx` (plantilla básica; formas, imagen, cuadro de texto y tabla), generados con
 `python-docx` / `python-pptx`. Cada motor exportó a PDF y cada página se comparó con la de **Word** o **PowerPoint**

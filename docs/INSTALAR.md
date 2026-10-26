@@ -63,15 +63,20 @@ Hazlo solo con apps en las que confíes: así te saltas la comprobación de macO
   saber cuándo termina cada conversión.
 - **Controlar Microsoft Word / PowerPoint:** solo si activas *Usar Microsoft Office* en Ajustes. También pueden
   pedir acceso a la carpeta (una vez por carpeta).
-- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla, y **no se conecta a internet**, salvo para
-  buscar actualizaciones: cuando lo pulsas, o una vez al día si lo activas en *Ajustes → Acerca de* (viene apagado).
+- Gota **no** necesita permiso de Accesibilidad ni de Grabación de pantalla.
+- **Tus archivos nunca salen de tu Mac.** Gota solo se conecta a internet para dos cosas:
+  - **Buscar actualizaciones:** cuando lo pulsas, o una vez al día si lo activas en *Ajustes → Acerca de* (viene apagado).
+  - **Fuentes libres que faltan:** si un Word usa una fuente libre que no tienes (Poppins, Montserrat…), la descarga una
+    vez de Google Fonts para que el PDF salga igual. Solo se envía el nombre de la fuente. Se apaga en
+    *Ajustes → Motores → Fuentes*.
 
 ### Recomendado: LibreOffice (gratis)
 
-Gota convierte imágenes, PDF, audio y vídeo con lo que ya trae macOS. Para **Word** y **PowerPoint** conviene
-instalar [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/): es el motor más fiel sin
-Microsoft Office y Gota lo usa en segundo plano, sin abrir ventanas (unos segundos y ~300 MB de RAM mientras convierte;
-luego se cierra). En *Ajustes de Gota → Motores* hay un botón **Instalar (gratis)…** si no lo tienes.
+Gota convierte imágenes, PDF, audio, vídeo y **Word `.docx`** sin instalar nada: el motor de Word va incluido. Para
+**PowerPoint** y para los formatos antiguos de Office (`.doc`, `.odt`, `.rtf`…) conviene instalar
+[LibreOffice](https://www.libreoffice.org/download/download-libreoffice/): es el motor más fiel sin Microsoft Office y Gota
+lo usa en segundo plano, sin abrir ventanas (unos segundos y ~300 MB de RAM mientras convierte; luego se cierra). En
+*Ajustes de Gota → Motores* hay un botón **Instalar (gratis)…** si no lo tienes.
 Con Homebrew: `brew install --cask libreoffice`.
 
 ## 5. Usarla
@@ -93,10 +98,12 @@ Soltar en el **centro** de la rueda cancela: el archivo se queda donde estaba.
 
 Clic en la 💧 → **Ajustes…** (⌘,):
 
-- **Abrir Gota al iniciar sesión**, para tenerla siempre disponible.
-- **Mostrar el resultado en Finder** y **Sonido al terminar**.
-- **Apariencia de la rueda:** Liquid Glass o Transparente, opacidad y color (incluye Negro espacial y RGB).
-- **Motores:** qué usar para documentos y presentaciones: Microsoft Office (formato exacto), LibreOffice (el más fiel sin Office), Keynote o el integrado de macOS.
+- **General:** abrir Gota al iniciar sesión, mostrar el resultado en Finder y sonido al terminar.
+- **Apariencia:** Liquid Glass o Transparente, opacidad y color (incluye Negro espacial y RGB), con vista previa.
+- **Teclas:** qué rueda abre cada tecla.
+- **Motores:** con qué convierte cada tipo de documento, la descarga de fuentes libres (y cuánto ocupan, con botón
+  para borrarlas) y, en *Avanzado*, Microsoft Office para el formato exacto (abre Word o PowerPoint y pide permisos).
+- **Acerca de:** versión, buscar actualizaciones (también automáticas, una vez al día) y enlaces.
 
 ## 7. Actualizar
 
@@ -109,9 +116,10 @@ Puede que macOS vuelva a pedir el paso 3.
 2. Si activaste *Abrir al iniciar sesión*, desactívalo antes en Ajustes de Gota (o en *Ajustes del Sistema →
    General → Ítems de inicio*).
 3. Arrastra **Gota.app** de Aplicaciones a la Papelera.
-4. (Opcional) Borra sus preferencias:
+4. (Opcional) Borra sus preferencias y las fuentes que descargó:
    ```bash
    defaults delete pe.danielc.gota
+   rm -rf ~/Library/Application\ Support/Gota
    ```
 
 ## Problemas frecuentes
@@ -121,6 +129,7 @@ Puede que macOS vuelva a pedir el paso 3.
 | No veo la 💧 en la barra de menú | Puede estar oculta detrás del notch: cierra otras apps de la barra de menú. |
 | *"Gota está dañada y no se puede abrir"* | El zip se descargó a medias o lo descomprimió otra app. Vuelve a descargarlo y ábrelo con doble clic. |
 | La rueda no aparece | **Empieza a arrastrar primero** y luego pulsa la tecla. Arrastra desde Finder o el Escritorio. |
+| El PDF de un Word se ve distinto al de Word | Suele ser una fuente que no tienes. Si es libre, Gota la descarga sola (revisa que *Ajustes → Motores → Descargar fuentes libres* esté activado); si es de pago (como Aptos), te avisa: instálala o activa Microsoft Office en *Ajustes → Motores*. |
 | Un `.pages` no pasa a PDF | Instala [LibreOffice](https://www.libreoffice.org): el motor de macOS no lee Pages. |
 | Un PowerPoint (`.pptx`) no se convierte | Hace falta [LibreOffice](https://www.libreoffice.org) (sin permisos) o Keynote (gratis en la App Store; pide permiso una vez). |
 | Otra cosa | Abre un *Issue* en GitHub con lo que hiciste y una captura. Si es un fallo de seguridad, usa *Security → Report a vulnerability* (ver [SECURITY.md](../SECURITY.md)). |
