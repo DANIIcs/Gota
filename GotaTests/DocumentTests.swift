@@ -69,7 +69,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testWordIsOffByDefault() {
-        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftWordKey)
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftOfficeKey)
         XCTAssertFalse(MicrosoftWordEngine().isAvailable)
     }
 }

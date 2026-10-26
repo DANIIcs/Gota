@@ -129,7 +129,7 @@ final class MultipleFilesTests: XCTestCase {
         let a = dir.appendingPathComponent("a.txt"), b = dir.appendingPathComponent("b.txt")
         try "Uno".write(to: a, atomically: true, encoding: .utf8)
         try "Dos".write(to: b, atomically: true, encoding: .utf8)
-        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftWordKey)
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftOfficeKey)
         let output = try await DocumentEngines.toSinglePDF([a, b])
         XCTAssertEqual(output.lastPathComponent, "a unido.pdf")
         XCTAssertEqual(output.deletingLastPathComponent().standardizedFileURL, dir.standardizedFileURL)

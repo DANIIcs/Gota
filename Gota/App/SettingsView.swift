@@ -3,7 +3,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(Preferences.revealInFinderKey) private var revealInFinder = false
-    @AppStorage(Preferences.useMicrosoftWordKey) private var useMicrosoftWord = false
+    @AppStorage(Preferences.useMicrosoftOfficeKey) private var useMicrosoftOffice = false
     @AppStorage(Preferences.playSoundKey) private var playSound = true
     @AppStorage(WheelMaterial.key) private var material = WheelMaterial.glass
     @AppStorage(WheelMaterial.opacityKey) private var opacity = 0.0
@@ -75,8 +75,8 @@ struct SettingsView: View {
     private var engines: some View {
         Form {
             Section("Documentos y presentaciones → PDF") {
-                Toggle("Usar Microsoft Word", isOn: $useMicrosoftWord)
-                    .disabled(!MicrosoftWordEngine.isInstalled)
+                Toggle("Usar Microsoft Office (Word y PowerPoint)", isOn: $useMicrosoftOffice)
+                    .disabled(!MicrosoftWordEngine.isInstalled && !MicrosoftPowerPointEngine.isInstalled)
                 LabeledContent("LibreOffice") {
                     let installed = LibreOfficeEngine().isAvailable
                     Text(installed ? "Instalado" : "No encontrado")
@@ -92,7 +92,7 @@ struct SettingsView: View {
                 }
             }
             Section {
-                Text("Gota usa el primero disponible. Word da el formato exacto y Keynote abre PowerPoint, pero ambos piden permiso la primera vez. Las presentaciones necesitan LibreOffice o Keynote.")
+                Text("Gota usa el primero disponible. Office da el formato exacto; si no, LibreOffice es el más fiel (medido contra Word y PowerPoint). Office y Keynote piden permiso la primera vez.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -191,10 +191,11 @@ enum Preferences {
     static var playSound: Bool {
         UserDefaults.standard.object(forKey: playSoundKey) as? Bool ?? true
     }
-    static let useMicrosoftWordKey = "useMicrosoftWord"
+    /// Stored under its first name, when it only covered Word, so the user's choice carries over.
+    static let useMicrosoftOfficeKey = "useMicrosoftWord"
 
-    static var useMicrosoftWord: Bool {
-        UserDefaults.standard.bool(forKey: useMicrosoftWordKey)
+    static var useMicrosoftOffice: Bool {
+        UserDefaults.standard.bool(forKey: useMicrosoftOfficeKey)
     }
 
     static var revealInFinder: Bool {

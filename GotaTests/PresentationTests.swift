@@ -30,10 +30,23 @@ final class PresentationTests: XCTestCase {
 
     func testOnlyPresentationEnginesTakeSlides() {
         let slides = dir.appendingPathComponent("a.pptx")
+        XCTAssertTrue(MicrosoftPowerPointEngine().canConvert(slides))
+        XCTAssertFalse(MicrosoftPowerPointEngine().canConvert(dir.appendingPathComponent("a.key")))
+        XCTAssertFalse(MicrosoftPowerPointEngine().canConvert(dir.appendingPathComponent("a.docx")))
         XCTAssertFalse(MicrosoftWordEngine().canConvert(slides))
         XCTAssertFalse(NativeDocumentEngine().canConvert(slides))
         XCTAssertTrue(KeynoteEngine().canConvert(slides))
         XCTAssertFalse(KeynoteEngine().canConvert(dir.appendingPathComponent("a.docx")))
+    }
+
+    /// Without Office, the measured order is LibreOffice before Keynote, and Office stays off by default.
+    func testEngineOrderFollowsTheFidelityMeasurements() {
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftOfficeKey)
+        XCTAssertFalse(MicrosoftPowerPointEngine().isAvailable)
+        let names = DocumentEngines.all.map(\.name)
+        let libreOffice = try? XCTUnwrap(names.firstIndex(of: "LibreOffice"))
+        let keynote = try? XCTUnwrap(names.firstIndex(of: "Keynote"))
+        XCTAssertLessThan(libreOffice ?? .max, keynote ?? .min)
     }
 
     /// A real 2-slide .pptx, made by LibreOffice from a PDF, converted back by Gota.
@@ -43,7 +56,7 @@ final class PresentationTests: XCTestCase {
                           "LibreOffice not installed")
         let pptx = try await makePresentation(with: soffice)
 
-        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftWordKey)
+        UserDefaults.standard.removeObject(forKey: Preferences.useMicrosoftOfficeKey)
         let pdf = try await DocumentEngines.toPDF(pptx)
         XCTAssertEqual(PDFDocument(url: pdf)?.pageCount, 2)
 
