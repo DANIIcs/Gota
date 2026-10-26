@@ -106,5 +106,10 @@ jobs:
           set -euo pipefail
           brew install --quiet xcodegen
           xcodegen
+          # El log completo es enorme: se guarda y se muestran los fallos y el resumen, siempre.
+          status=0
           xcodebuild -scheme Gota -destination 'platform=macOS' -derivedDataPath build/ci test \
-            CODE_SIGNING_ALLOWED=YES | tail -40
+            > "$RUNNER_TEMP/xcodebuild.log" 2>&1 || status=$?
+          grep -E "error: -\[|error:.*\.swift|Test Case .* failed|Executed [0-9]+ tests|\*\* (TEST|BUILD) " \
+            "$RUNNER_TEMP/xcodebuild.log" | tail -60 || true
+          exit "$status"
