@@ -77,7 +77,29 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
+      - name: ¿Cambia algo más que documentación?
+        id: cambios
+        env:
+          EVENTO: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        # Un cambio solo de documentación no necesita esta comprobación, pero el job tiene que terminar en
+        # verde igual: es obligatorio en main, y si no corriera los PR quedarían esperando para siempre.
+        # La búsqueda de secretos (job `analisis`) corre siempre, también sobre la documentación.
+        run: |
+          set -euo pipefail
+          if [ "$EVENTO" != "pull_request" ] && [ "$EVENTO" != "push" ] || [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            echo "codigo=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git fetch --no-tags --depth=1 origin "$BASE"
+          CAMBIOS=$(git diff --name-only "$BASE" HEAD)
+          if grep -qvxE '([^/]*\.md|docs/.*|LICENSE)' <<< "$CAMBIOS"; then
+            echo "codigo=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "codigo=false" >> "$GITHUB_OUTPUT"
+            echo "Solo cambia documentación: se omite esta comprobación." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: docxide en la versión fijada, con el parche de Gota
+        if: steps.cambios.outputs.codigo == 'true'
         run: |
           set -euo pipefail
           src="$RUNNER_TEMP/docxide"
@@ -87,6 +109,8 @@ jobs:
           git -C "$src" checkout --quiet FETCH_HEAD
           git -C "$src" apply "$GITHUB_WORKSPACE/Engines/docxide/gota.patch"
       - name: Vulnerabilidades conocidas (RustSec)
+        # Corre también en el escaneo semanal (codigo=true): las vulnerabilidades nuevas no esperan a un cambio.
+        if: steps.cambios.outputs.codigo == 'true'
         # RUSTSEC-2026-0192: ttf-parser sin mantenimiento, sin fallo conocido ni reemplazo (SECURITY.md).
         run: |
           set -euo pipefail
@@ -100,7 +124,29 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
+      - name: ¿Cambia algo más que documentación?
+        id: cambios
+        env:
+          EVENTO: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        # Un cambio solo de documentación no necesita esta comprobación, pero el job tiene que terminar en
+        # verde igual: es obligatorio en main, y si no corriera los PR quedarían esperando para siempre.
+        # La búsqueda de secretos (job `analisis`) corre siempre, también sobre la documentación.
+        run: |
+          set -euo pipefail
+          if [ "$EVENTO" != "pull_request" ] && [ "$EVENTO" != "push" ] || [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            echo "codigo=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git fetch --no-tags --depth=1 origin "$BASE"
+          CAMBIOS=$(git diff --name-only "$BASE" HEAD)
+          if grep -qvxE '([^/]*\.md|docs/.*|LICENSE)' <<< "$CAMBIOS"; then
+            echo "codigo=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "codigo=false" >> "$GITHUB_OUTPUT"
+            echo "Solo cambia documentación: se omite esta comprobación." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Compilar y probar
+        if: steps.cambios.outputs.codigo == 'true'
         # Sin el motor de Word (necesita Rust): sus pruebas se saltan y las demás corren igual.
         run: |
           set -euo pipefail
