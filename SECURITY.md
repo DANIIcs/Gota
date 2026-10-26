@@ -9,8 +9,14 @@ Please **don't open a public issue**. Use GitHub's private reporting instead:
 
 ## What Gota does to stay safe
 
-- **Fully local**: conversions never touch the network, and there is no telemetry. The one network request is the
-  update check: when you click *Buscar actualizaciones…*, or at most once a day if you turn on *Buscar actualizaciones
+- **Your files never leave the Mac**, and there is no telemetry. Gota makes only two kinds of requests:
+  - **Missing open fonts**: when a Word document uses an open-source font the Mac doesn't have (e.g. Poppins), Gota
+    downloads its regular/bold/italic files once from Google Fonts' repository (`api.github.com/repos/google/fonts`,
+    `raw.githubusercontent.com/google/fonts`) into `~/Library/Application Support/Gota/Fonts`. Only the font's name is
+    sent. Names are restricted to letters, digits and spaces; only `.ttf`/`.otf` files from that repository are taken,
+    at most 10 MB each and 12 MB per family, and each must parse as a font with macOS's own font parser. Turn it off in
+    *Ajustes → Motores → Fuentes*.
+  - The update check: when you click *Buscar actualizaciones…*, or at most once a day if you turn on *Buscar actualizaciones
   automáticamente* (off by default). It's an anonymous request to GitHub's public API for the latest release: nothing
   else is sent and no cookies are kept. Links (LibreOffice's download page, the source code) open in your
   browser when you click them.

@@ -54,8 +54,9 @@ Xcode) and describe what they see.
 - External tools only through `Shell.run(executable, [args])` — never build a shell string, never `sh -c`.
 - Prefer built-in frameworks (ImageIO, PDFKit, AVFoundation, Vision, afconvert, textutil). Optional external engines
   (ffmpeg, pandoc, LibreOffice) must be detected, never required.
-- Everything runs locally: no network calls, no telemetry. The only exception is `UpdateChecker`: when the user clicks
-  *Buscar actualizaciones…*, or daily if they opted in (off by default). Never add other requests.
+- Everything runs locally: no network calls, no telemetry. The only exceptions: `UpdateChecker` (on click, or daily if opted
+  in) and `GoogleFonts` (downloads an open font a document needs and the Mac lacks; never sends the document; can be
+  turned off). Never add other requests, and never send file contents anywhere.
 - The wheel panel must stay a drop target over its whole disc (see the 1%-opacity circle in `WheelDropTarget`, which lives in its own panel below the drag image while the visual `WheelView` panel floats above it and ignores the mouse): if it ever lets
   a drop fall through, Finder would move the user's file.
 - Untrusted input: files often come from other people. Never let a conversion embed files a document links to
