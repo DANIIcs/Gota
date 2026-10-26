@@ -336,17 +336,24 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
 enum AppIcon {
     static let registeredBuildKey = "registeredBuild"
 
-    /// After an update in place, Launch Services kept answering the previous version's large icon. Once
-    /// per new build, Gota re-registers itself so macOS refreshes its icon (and everything else it caches
-    /// about the app). Returns whether it registered.
+    /// macOS caches app icons by the bundle folder's modification date, and replacing the files inside
+    /// (an update in place, or every Xcode build) doesn't change it: About kept showing the previous
+    /// version's icon. Once per new build, Gota bumps its folder's date and re-registers with Launch
+    /// Services, so macOS draws the current icon. Returns whether it refreshed.
     @discardableResult
     static func refreshRegistrationIfUpdated(defaults: UserDefaults = .standard,
-                                             register: (URL) -> Void = { _ = LSRegisterURL($0 as CFURL, true) }) -> Bool {
+                                             register: (URL) -> Void = refreshIconCache) -> Bool {
         let build = UpdateChecker.currentBuild
         guard defaults.string(forKey: registeredBuildKey) != build else { return false }
         register(Bundle.main.bundleURL)
         defaults.set(build, forKey: registeredBuildKey)
         return true
+    }
+
+    private static func refreshIconCache(for bundle: URL) {
+        // Best effort: an app in a read-only location simply keeps its date.
+        try? FileManager.default.setAttributes([.modificationDate: Date()], ofItemAtPath: bundle.path)
+        _ = LSRegisterURL(bundle as CFURL, true)
     }
 
     /// Gota's icon as macOS draws it, in the user's icon style (default, dark, clear or tinted), already

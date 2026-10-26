@@ -64,6 +64,12 @@ targets:
           else
             echo "note: build/engines/docxide-pdf not found (run Engines/docxide/build.sh); .docx will use LibreOffice"
           fi
+      # macOS caches app icons by the bundle folder's date, which Xcode doesn't update when it rebuilds:
+      # without this, a changed icon kept showing the old one in Gota's About pane.
+      - name: Refresh the icon cache
+        basedOnDependencyAnalysis: false
+        script: |
+          touch "$TARGET_BUILD_DIR/$WRAPPER_NAME"
     info:
       path: Gota/Support/Info.plist
       properties:
